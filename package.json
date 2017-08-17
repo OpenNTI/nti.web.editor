@@ -1,0 +1,46 @@
+{
+  "name": "nti-web-editor",
+  "version": "0.0.0",
+  "description": "'Editor and plugins'",
+  "main": "index.js",
+  "scripts": {
+    "test": "nti-cmp-scripts test",
+    "start": "nti-cmp-scripts start",
+    "prepack": "nti-cmp-scripts build",
+    "build": "nti-cmp-scripts build",
+    "clean": "nti-cmp-scripts clean",
+    "check": "nti-cmp-scripts check",
+    "release": "nti-cmp-scripts release",
+    "install-snapshots": "nti-cmp-scripts install-snapshots"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NextThought/nti.web.component.editor.git"
+  },
+  "author": "nextthought",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/NextThought/nti.web.component.editor/issues"
+  },
+  "homepage": "https://github.com/NextThought/nti.web.component.editor#readme",
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "draft-js": "^0.10.1",
+    "draft-js-plugins-editor": "^2.0.0-beta1",
+    "fbjs": "^0.8.14",
+    "nti-commons": "^2.7.0",
+    "nti-lib-dom": "^1.6.10",
+    "nti-lib-locale": "^1.0.9",
+    "nti-style-common": "^1.2.6",
+    "nti-util-logger": "^1.1.2",
+    "nti-web-commons": "^0.4.0",
+    "prop-types": "^15.5.10",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "nti-cmp-scripts": "^1.0.30",
+    "enzyme": "^2.9.1",
+    "react": "^15.4.2",
+    "react-dom": "^15.6.1"
+  }
+}

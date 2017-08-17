@@ -1,0 +1,47 @@
+@import "~nti-style-common";
+
+.draft-core-type-button {
+
+	&.plain {
+		color: $secondary-grey;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		cursor: pointer;
+		background: {
+			color: inherit;
+			repeat: no-repeat;
+			position: center center;
+		}
+		text-align: left;
+	}
+
+	&.checkmark {
+		span {
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		&.disabled {
+			opacity: 0.6;
+			pointer-events: none;
+		}
+
+		&::before {
+			content: '\2713';
+			display: inline-block;
+			font-size: 1rem;
+			width: 2rem;
+			text-align: center;
+			color: $primary-blue;
+			vertical-align: middle;
+			opacity: 0;
+		}
+
+		&.active {
+			&::before {
+				opacity: 1;
+			}
+		}
+	}
+}

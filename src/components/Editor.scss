@@ -1,0 +1,53 @@
+@import "~nti-style-common";
+@import "~draft-js/dist/Draft.css";
+
+.nti-draft-core-container {
+	position: relative;
+
+	.nti-draft-core {
+		backgrouhnd: #fff;
+		position: relative;
+		z-index: 0;//counteract draft's styles having a z-index on them
+
+		-webkit-overflow-scrolling: touch;
+		overflow: {
+			x: hidden;
+			y: auto;
+		}
+
+		.public-DraftEditorPlaceholder-root {
+			color: $tertiary-grey;
+			font-style: italic;
+		}
+
+		&.hide-placeholder {
+			.public-DraftEditorPlaceholder-root {
+				display: none;
+			}
+		}
+
+
+		&.auto-hyphenate {
+			.public-DraftStyleDefault-block {
+				hyphens: auto;
+			}
+		}
+
+		.DraftEditor-root {
+			color: $primary-grey;
+			min-height: 3rem;
+			padding: 0.6rem;
+			padding-bottom: 2.5rem;//on android, the selection handlebars get in the way of the bottom toolbar.
+			line-height: normal;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			word-break: breack-word;
+			font: {
+				size: 1rem;
+				weight: normal;
+				style: normal;
+			}
+		}
+	}
+}
+

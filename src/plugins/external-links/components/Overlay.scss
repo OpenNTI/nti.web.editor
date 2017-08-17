@@ -1,0 +1,9 @@
+@import '~nti-style-common';
+
+.external-link-overlay {
+	position: absolute;
+
+	&.hidden {
+		display: none;
+	}
+}

@@ -1,0 +1,59 @@
+@import '~nti-style-common';
+
+.external-link-editor-container {
+	input[type=url] {
+		display: none;
+	}
+
+	.external-link-info {
+		padding: rem-calc(14px 20px);
+		font: normal 400 0.875rem/1.3 $body-font-family;
+
+		.link, .edit, .remove {
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.link {
+			color: $secondary-grey;
+			max-width: 280px;
+			overflow-x: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.link, .edit {
+			margin-right: 1rem;
+		}
+
+		.edit, .remove {
+			color: $primary-blue;
+			cursor: pointer;
+			font-size: 0.625rem;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+	}
+
+	.external-link-editor {
+		padding: rem-calc(10px);
+
+		.url-input, .display-input {
+			display: block;
+			margin-bottom: rem-calc(10px);
+
+			input {
+				width: 280px;
+			}
+		}
+
+		.buttons {
+			display: flex;
+			justify-content: space-between;
+
+			.cancel, .save {
+				flex: 0 0 135px;
+				text-align: center;
+			}
+		}
+	}
+}
