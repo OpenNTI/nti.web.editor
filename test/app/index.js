@@ -2,6 +2,7 @@
 // import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Errors} from 'nti-web-commons';
 
 import {
 	Editor,
@@ -24,9 +25,17 @@ import 'nti-style-common/all.scss';
 import 'nti-web-commons/lib/index.css';
 
 
+const {Field:{Factory:ErrorFactory}} = Errors;
+const errorFactory = new ErrorFactory();
+const error = errorFactory.make({NTIID: 'Fake ID', label: 'Fake Field'}, {Code: 'TooShort', message: 'Too Short'});
+
+
+const {ErrorMessage, WarningMessage} = Plugins.Messages.components;
+
 const plugins = [
 	Plugins.LimitStyles.create({allowed: STYLE_SET}),
-	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET})
+	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET}),
+	Plugins.Messages.create()
 ];
 
 class Test extends React.Component {
@@ -44,9 +53,15 @@ class Test extends React.Component {
 				{editor && (
 					<ContextProvider editor={editor}>
 						<div>
-							<BoldButton />
-							<ItalicButton />
-							<UnderlineButton />
+							<div>
+								<ErrorMessage error={error} />
+								<WarningMessage />
+							</div>
+							<div>
+								<BoldButton />
+								<ItalicButton />
+								<UnderlineButton />
+							</div>
 							<div>
 								<span>Active:</span>
 								<ActiveType />

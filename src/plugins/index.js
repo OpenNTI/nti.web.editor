@@ -9,4 +9,5 @@ export KeepFocusInView from './keep-focus-in-view';
 export LimitBlockTypes from './limit-block-types';
 export LimitLinks from './limit-links';
 export LimitStyles from './limit-styles';
+export * as Messages from './messages/';
 export SingleLine from './single-line';
