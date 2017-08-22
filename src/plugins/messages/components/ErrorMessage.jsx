@@ -11,11 +11,7 @@ export default class ErrorMessage extends React.Component {
 
 	static contextTypes = {
 		editorContext: PropTypes.shape({
-			plugins: PropTypes.shape({
-				messages: PropTypes.shape({
-					focusEdutor: PropTypes.func
-				})
-			})
+			focusEditor: PropTypes.func
 		})
 	}
 
@@ -23,17 +19,9 @@ export default class ErrorMessage extends React.Component {
 		return this.context.editorContext || {};
 	}
 
-	get pluginContext () {
-		return this.editorContext.plugins || {};
-	}
-
-	get messageContext () {
-		return this.pluginContext.messages || {};
-	}
-
 	focusEditor = () => {
 		debugger;
-		const {focusEditor} = this.messageContext;
+		const {focusEditor} = this.editorContext;
 
 		if (focusEditor) {
 			focusEditor();

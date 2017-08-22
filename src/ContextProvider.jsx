@@ -59,7 +59,8 @@ export default class ContextProvider extends React.Component {
 				editor,
 				plugins: pluginContext,
 				get editorState () { return editor && editor.editorState; },
-				getSelection: () => { return editor && editor.editorState && editor.editorState.getSelection(); }
+				getSelection: () => { return editor && editor.editorState && editor.editorState.getSelection(); },
+				focusEditor: () => { return editor && editor.focus(); }
 			}
 		};
 	}

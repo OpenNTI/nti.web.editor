@@ -31,11 +31,13 @@ const error = errorFactory.make({NTIID: 'Fake ID', label: 'Fake Field'}, {Code: 
 
 
 const {ErrorMessage, WarningMessage} = Plugins.Messages.components;
+const {CharacterCounter} = Plugins.Counter.components;
 
 const plugins = [
 	Plugins.LimitStyles.create({allowed: STYLE_SET}),
 	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET}),
-	Plugins.Messages.create()
+	Plugins.Messages.create(),
+	Plugins.Counter.create({character: {limit: 10}})
 ];
 
 class Test extends React.Component {
@@ -53,6 +55,9 @@ class Test extends React.Component {
 				{editor && (
 					<ContextProvider editor={editor}>
 						<div>
+							<div>
+								<CharacterCounter />
+							</div>
 							<div>
 								<ErrorMessage error={error} />
 								<WarningMessage />

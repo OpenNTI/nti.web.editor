@@ -1,5 +1,6 @@
 export BlockBreakOut from './block-break-out';
 export ContiguousEntities from './contiguous-entities';
+export * as Counter from './counter';
 export CustomBlocks from './custom-blocks';
 export ExternalLinks from './external-links';
 export FormatPasted from './format-pasted';
