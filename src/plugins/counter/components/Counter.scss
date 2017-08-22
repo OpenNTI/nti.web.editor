@@ -1,0 +1,9 @@
+@import "~nti-style-common";
+
+.draft-core-counter{
+	font-size: 0.875rem;
+
+	&.over {
+		color: $primary-red;
+	}
+}
