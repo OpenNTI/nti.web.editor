@@ -20,7 +20,6 @@ export default class ErrorMessage extends React.Component {
 	}
 
 	focusEditor = () => {
-		debugger;
 		const {focusEditor} = this.editorContext;
 
 		if (focusEditor) {
