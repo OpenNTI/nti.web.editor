@@ -46,6 +46,15 @@ class Test extends React.Component {
 	attachEditorRef = x => this.setState({editor: x})
 
 
+	onFocusToEnd = () => {
+		const {editor} = this.state;
+
+		if (editor) {
+			editor.focusToEnd();
+		}
+	}
+
+
 	render () {
 		const {editor} = this.state;
 
@@ -55,6 +64,9 @@ class Test extends React.Component {
 				{editor && (
 					<ContextProvider editor={editor}>
 						<div>
+							<div>
+								<button onClick={this.onFocusToEnd}>Focus to End</button>
+							</div>
 							<div>
 								<CharacterCounter />
 							</div>

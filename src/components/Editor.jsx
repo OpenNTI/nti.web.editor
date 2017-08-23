@@ -7,6 +7,7 @@ import {EditorState, RichUtils} from 'draft-js';
 import {buffer} from 'nti-commons';
 
 import ContextProvider from '../ContextProvider';
+import {moveSelectionToEnd} from '../utils';
 
 const CONTENT_CHANGE_BUFFER = 1000;
 
@@ -176,6 +177,16 @@ export default class DraftCoreEditor extends React.Component {
 
 		if (this.draftEditor) {
 			this.draftEditor.focus();
+		}
+	}
+
+
+	focusToEnd = () => {
+		const {editorState} = this;
+		const newState = moveSelectionToEnd(editorState);
+
+		if (newState !== editorState) {
+			this.onChange(newState);
 		}
 	}
 
