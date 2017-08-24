@@ -37,7 +37,8 @@ const plugins = [
 	Plugins.LimitStyles.create({allowed: STYLE_SET}),
 	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET}),
 	Plugins.Messages.create(),
-	Plugins.Counter.create({character: {limit: 10}})
+	Plugins.Counter.create({character: {limit: 10}}),
+	Plugins.InlineLinks.create()
 ];
 
 class Test extends React.Component {

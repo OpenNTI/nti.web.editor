@@ -5,6 +5,7 @@ export CustomBlocks from './custom-blocks';
 export ExternalLinks from './external-links';
 export FormatPasted from './format-pasted';
 export IgnoreDrop from './ignore-drop';
+export * as InlineLinks from './inline-links';
 export InsertBlock from './insert-block';
 export KeepFocusInView from './keep-focus-in-view';
 export LimitBlockTypes from './limit-block-types';
