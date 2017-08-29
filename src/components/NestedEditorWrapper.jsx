@@ -36,7 +36,8 @@ export default class NestedEditorWrapper extends React.Component {
 			if (onMouseDown) {
 				onMouseDown(e);
 			}
-		}
+		},
+		paste: stop
 	}
 
 
