@@ -4,7 +4,7 @@ export * from './components/entity';
 export * from './Constants';
 
 export * as Plugins from './plugins';
-export * as Parses from './parsers';
+export * as Parsers from './parsers';
 
 export Editor from './components/Editor';
 export PlaintextEditor from './components/PlaintextEditor';
