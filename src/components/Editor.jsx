@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
 import Editor from 'draft-js-plugins-editor';
-import {EditorState, RichUtils} from 'draft-js';
-import {buffer} from 'nti-commons';
+import {EditorState, RichUtils, getDefaultKeyBinding} from 'draft-js';
+import {buffer, Events} from 'nti-commons';
 
 import ContextProvider from '../ContextProvider';
 import {moveSelectionToEnd} from '../utils';
+
+const {getKeyCode} = Events;
 
 const CONTENT_CHANGE_BUFFER = 1000;
 
@@ -27,11 +29,14 @@ export default class DraftCoreEditor extends React.Component {
 
 		contentChangeBuffer: PropTypes.number,
 
+		customKeyBindings: PropTypes.object,
+
 		onChange: PropTypes.func,
 		onContentChange: PropTypes.func,
 		onBlur: PropTypes.func,
 		onFocus: PropTypes.func,
-		handleKeyCommand: PropTypes.func
+		handleKeyCommand: PropTypes.func,
+		keyBinding: PropTypes.func
 
 	}
 
@@ -242,12 +247,59 @@ export default class DraftCoreEditor extends React.Component {
 	}
 
 
+	handleReturn = (e) => {
+		const keyCode = getKeyCode(e);
+		const {customKeyBindings} = this.props;
+
+		if (customKeyBindings && customKeyBindings[keyCode]) {
+			if (customKeyBindings[keyCode](this.editorState)) {
+				e.preventDefault();
+				return true;
+			}
+		}
+	}
+
+
+	onTab = (e) => {
+		const keyCode = getKeyCode(e);
+		const {customKeyBindings} = this.props;
+
+		if (customKeyBindings && customKeyBindings[keyCode]) {
+			if (customKeyBindings[keyCode](this.editorState)) {
+				e.preventDefault();
+				return true;
+			}
+		}
+
+		const newState = RichUtils.onTab(e, this.editorState);
+
+		if (newState) {
+			this.onChange(newState);
+			return true;
+		}
+
+		return false;
+	}
+
+
 	handleKeyCommand = (command) => {
-		const {handleKeyCommand} = this.props;
+		const {handleKeyCommand, customKeyBindings} = this.props;
+		const override = (this.commandOverride || [])[command];
 
 		//If the prop handles the key command let it
 		if (handleKeyCommand && handleKeyCommand(command)) {
 			return true;
+		}
+
+		//customKeyBindings overrides.
+		const fn = customKeyBindings && (customKeyBindings[override] || customKeyBindings[command]);
+
+		if (fn) {
+			if (typeof fn === 'function') {
+				if (fn(this.editorState)) {
+					return true;
+				}
+			}
 		}
 
 		//Otherwise do the default
@@ -260,6 +312,28 @@ export default class DraftCoreEditor extends React.Component {
 		}
 
 		return false;
+	}
+
+
+	keyBinding = (e) => {
+		const keyCode = getKeyCode(e);
+		const {keyBinding, customKeyBindings} = this.props;
+
+		const defaults = getDefaultKeyBinding(e);
+
+		if (keyBinding) {
+			let result = keyBinding(e);
+
+			if (result) {
+				return result;
+			}
+		}
+
+		if (customKeyBindings && customKeyBindings[keyCode]) {
+			this.commandOverride = {[defaults]: keyCode};
+		}
+
+		return defaults;
 	}
 
 
@@ -295,7 +369,9 @@ export default class DraftCoreEditor extends React.Component {
 							onChange={this.onChange}
 							onFocus={this.onFocus}
 							onBlur={this.onBlur}
+							handleReturn={this.handleReturn}
 							handleKeyCommand={this.handleKeyCommand}
+							keyBindingFn={this.keyBinding}
 							placeholder={placeholder}
 							readOnly={readOnly}
 						/>
