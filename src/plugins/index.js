@@ -12,4 +12,5 @@ export LimitBlockTypes from './limit-block-types';
 export LimitLinks from './limit-links';
 export LimitStyles from './limit-styles';
 export * as Messages from './messages/';
+export * as Plaintext from './plaintext';
 export SingleLine from './single-line';

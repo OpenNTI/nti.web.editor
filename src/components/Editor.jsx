@@ -15,7 +15,23 @@ const CONTENT_CHANGE_BUFFER = 1000;
 
 const INTERNAL_CHANGE = Symbol('Internal Change');
 
-//TODO: move the allowed(InlineStyle, BlockTypes, Links) to plugins instead of props
+
+function parsePlugins (plugins) {
+	return plugins.reduce((acc, plugin) => {
+		const {composes} = plugin;
+
+		if (composes && Array.isArray(composes)) {
+			acc = [...acc, ...composes];
+		} else if (composes) {
+			acc = [...acc, composes];
+		}
+
+		acc = [...acc, plugin];
+
+		return acc;
+	}, []);
+}
+
 
 export default class DraftCoreEditor extends React.Component {
 	static propTypes = {
@@ -63,7 +79,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		this.state = {
 			currentEditorState: editorState,
-			currentPlugins: plugins
+			currentPlugins: parsePlugins(plugins)
 		};
 	}
 
@@ -161,7 +177,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		if (newPlugins !== oldPlugins) {
 			newState = newState || {};
-			newState.currentPlugins = newPlugins;
+			newState.currentPlugins = parsePlugins(newPlugins);
 		}
 
 		if (newState) {
