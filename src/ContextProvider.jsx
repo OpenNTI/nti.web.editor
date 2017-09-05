@@ -3,17 +3,14 @@ import PropTypes from 'prop-types';
 
 import IdRegistry from './IdRegistry';
 
-const registry = new IdRegistry();
-
-
 export default class ContextProvider extends React.Component {
 	static register (id, editor) {
-		registry.register(id, editor);
+		IdRegistry.register(id, editor);
 	}
 
 
 	static unregister (id, editor) {
-		registry.unregister(id, editor);
+		IdRegistry.unregister(id, editor);
 	}
 
 
@@ -67,14 +64,14 @@ export default class ContextProvider extends React.Component {
 
 
 	getEditor (props = this.props) {
-		let {editor, editorId} = props;
+		let {editor, editorID} = props;
 
 		while (editor && editor.editor) {
 			editor = editor.editor;
 		}
 
-		if (!editor && editorId) {
-			editor = registry.get(editorId);
+		if (!editor && editorID) {
+			editor = IdRegistry.get(editorID);
 		}
 
 		return editor;
@@ -102,23 +99,23 @@ export default class ContextProvider extends React.Component {
 
 
 	addRegistryListener (props = this.props) {
-		const {editorId, internal} = props;
+		const {editorID, internal} = props;
 
 		this.removeRegistryListener(props);
 
-		if (editorId && !internal) {
-			registry.addListener(registry.getRegisterEvent(editorId), this.onEditorRegistered);
-			registry.addListener(registry.getUnregisterEvent(editorId), this.onEditorUnregistered);
+		if (editorID && !internal) {
+			IdRegistry.addListener(IdRegistry.getRegisterEvent(editorID), this.onEditorRegistered);
+			IdRegistry.addListener(IdRegistry.getUnregisterEvent(editorID), this.onEditorUnregistered);
 		}
 	}
 
 
 	removeRegistryListener (props = this.props) {
-		const {editorId} = props;
+		const {editorID} = props;
 
-		if (editorId) {
-			registry.removeListener(registry.getRegisterEvent(editorId), this.onEditorRegistered);
-			registry.removeListener(registry.getUnregisterEvent(editorId), this.onEditorUnregistered);
+		if (editorID) {
+			IdRegistry.removeListener(IdRegistry.getRegisterEvent(editorID), this.onEditorRegistered);
+			IdRegistry.removeListener(IdRegistry.getUnregisterEvent(editorID), this.onEditorUnregistered);
 		}
 	}
 

@@ -6,10 +6,20 @@ const MAP = Symbol('Map');
 
 const log = Logger.get('web:content:editor:draft-core:IdMap');
 
-export default class IdRegistry extends EventEmitter {
+class IdRegistry extends EventEmitter {
 	constructor () {
 		super();
+
+		this.generatedCount = 0;
+
 		this[MAP] = {};
+	}
+
+
+	generateID () {
+		this.generatedCount += 1;
+
+		return `editor-${this.generatedCount}`;
 	}
 
 
@@ -51,3 +61,5 @@ export default class IdRegistry extends EventEmitter {
 		this.emit(this.getUnregisterEvent(id), editor);
 	}
 }
+
+export default new IdRegistry();

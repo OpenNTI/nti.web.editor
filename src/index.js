@@ -11,3 +11,7 @@ export PlaintextEditor from './components/PlaintextEditor';
 export NestedEditorWrapper from './components/NestedEditorWrapper';
 
 export ContextProvider from './ContextProvider';
+
+import IdRegistry from './IdRegistry';
+
+export const generateID = () => IdRegistry.generateID();

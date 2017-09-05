@@ -31,7 +31,7 @@ export default class TypeButton extends React.Component {
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
-				toggleBlockType: PropTypes.func.isRequired,
+				toggleBlockType: PropTypes.func,
 				currentBlockType: PropTypes.string,
 				allowedBlockTypes: PropTypes.object
 			})
@@ -67,9 +67,9 @@ export default class TypeButton extends React.Component {
 
 	get isAllowed () {
 		const {type} = this.props;
-		const {allowedBlockTypes} = this.pluginContext;
+		const {allowedBlockTypes, toggleBlockType} = this.pluginContext;
 
-		return allowedBlockTypes && allowedBlockTypes.has(type);
+		return allowedBlockTypes && allowedBlockTypes.has(type) && toggleBlockType;
 	}
 
 	get isCurrent () {
