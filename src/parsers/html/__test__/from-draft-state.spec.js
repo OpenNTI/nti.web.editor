@@ -8,7 +8,7 @@ import {
 import fromDraftState from '../from-draft-state';
 
 describe('DraftState to HTML', () => {
-	it('Should convert EditorState to NTI-body-content', ()=> {
+	test('Should convert EditorState to NTI-body-content', ()=> {
 		const rawContent = {
 			blocks: [
 				{ text: 'title', type: 'header-one', depth: 0, inlineStyleRanges: [], entityRanges: [] },
