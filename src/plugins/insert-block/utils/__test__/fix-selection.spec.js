@@ -29,7 +29,7 @@ describe('fixSelection for inserting a block', () => {
 
 		const fixed = fixSelection(null, selection);
 
-		expect(fixed).not.toEqual(selection);
+		expect(fixed).not.toBe(selection);
 		expect(fixed.getAnchorKey()).toEqual(focusKey);
 		expect(fixed.getAnchorOffset()).toEqual(focusOffset);
 		expect(fixed.getFocusKey()).toEqual(focusKey);
