@@ -17,5 +17,5 @@ export default function renderBlock (editorState, block, key) {
 
 	const [prefix, postfix] = getBlockTags(block, prev, next);
 
-	return `${prefix}${renderContentBlockContent(tree, block, content).trim()}${postfix}`;
+	return `${prefix}${renderContentBlockContent(tree, block, content)}${postfix}`;
 }
