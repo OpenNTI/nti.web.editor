@@ -1,6 +1,6 @@
 import {ContentState, EditorState, Modifier, convertFromHTML} from 'draft-js';
 
-import {EVENT_HANDLED} from '../Constants';
+import {HANDLED} from '../Constants';
 
 function cleanText (text) {
 	return `<p>${text.replace('\n', ' ')}</p>`;
@@ -32,13 +32,13 @@ export default {
 					'insert-fragment'
 				));
 
-				return EVENT_HANDLED;
+				return HANDLED;
 			},
 
 			handleReturn () {
 				//Block enters from being types
 				//by telling the editor we handled the event
-				return EVENT_HANDLED;
+				return HANDLED;
 			}
 		};
 	}

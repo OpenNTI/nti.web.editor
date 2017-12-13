@@ -2,7 +2,7 @@ import {genKey, ContentBlock, EditorState} from 'draft-js';
 //We don't really need immutable its just something draft needs so let draft depend on it
 import {List} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
 
-import {EVENT_HANDLED, EVENT_NOT_HANDLED} from '../Constants';
+import {HANDLED, NOT_HANDLED} from '../Constants';
 
 function getStartOrEnd (selection, currentBlock) {
 	const endOffset = selection.getEndOffset();
@@ -62,7 +62,7 @@ function getAugmentedState (currentBlock, newBlock, endOfBlock) {
  * @param  {String} breakToType    the type to break to
  * @param  {Object} editorState    the current state of the editor
  * @param  {Function} setEditorState call back to set the new editor state
- * @return {String}                [EVENT_HANDLED | EVENT_NOT_HANDLED] to indicate if we handled it
+ * @return {String}                [HANDLED | NOT_HANDLED] to indicate if we handled it
  */
 export default function (breakToType, editorState, setEditorState) {
 	const selection = editorState.getSelection();
@@ -70,7 +70,7 @@ export default function (breakToType, editorState, setEditorState) {
 	const currentBlock = currentContent.getBlockForKey(selection.getEndKey());
 	const {startOfBlock, endOfBlock} = getStartOrEnd(selection, currentBlock);
 
-	if (!startOfBlock && !endOfBlock) { return EVENT_NOT_HANDLED; }
+	if (!startOfBlock && !endOfBlock) { return NOT_HANDLED; }
 
 	const newBlock = buildNewBlock(breakToType);
 	const {before, after} = getBlocksAround(currentContent, currentBlock);
@@ -92,5 +92,5 @@ export default function (breakToType, editorState, setEditorState) {
 		EditorState.push(editorState, newState, 'split-block')
 	);
 
-	return EVENT_HANDLED;
+	return HANDLED;
 }

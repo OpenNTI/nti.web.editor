@@ -7,7 +7,7 @@ import {BLOCKS} from '../../Constants';
 
 const stop = e => (e.preventDefault(), e.stopPropagation());
 
-const Types = {
+export const Types = Object.freeze({
 	[BLOCKS.ATOMIC]: BLOCKS.ATOMIC,
 	[BLOCKS.BLOCKQUOTE]: BLOCKS.BLOCKQUOTE,
 	[BLOCKS.CODE]: BLOCKS.CODE,
@@ -21,7 +21,7 @@ const Types = {
 	[BLOCKS.PULLQUOTE]: BLOCKS.PULLQUOTE,
 	[BLOCKS.UNORDERED_LIST_ITEM]: BLOCKS.UNORDERED_LIST_ITEM,
 	[BLOCKS.UNSTYLED]: BLOCKS.UNSTYLED
-};
+});
 
 const t = scoped('nti-web-editor.components.type.TypeButton', Types);
 
@@ -31,7 +31,7 @@ export default class TypeButton extends React.Component {
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
-				toggleBlockType: PropTypes.func,
+				toggleBlockType: PropTypes.func.isRequired,
 				currentBlockType: PropTypes.string,
 				allowedBlockTypes: PropTypes.object
 			})
@@ -67,9 +67,9 @@ export default class TypeButton extends React.Component {
 
 	get isAllowed () {
 		const {type} = this.props;
-		const {allowedBlockTypes, toggleBlockType} = this.pluginContext;
+		const {allowedBlockTypes} = this.pluginContext;
 
-		return allowedBlockTypes && allowedBlockTypes.has(type) && toggleBlockType;
+		return allowedBlockTypes && allowedBlockTypes.has(type);
 	}
 
 	get isCurrent () {

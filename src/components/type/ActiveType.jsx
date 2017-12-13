@@ -4,10 +4,6 @@ import cx from 'classnames';
 
 const stop = e => (e.preventDefault(), e.stopPropagation());
 
-const defaultString = x => x;
-
-defaultString.isMissing = () => false;
-
 export default class ActiveType extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -25,9 +21,7 @@ export default class ActiveType extends React.Component {
 
 
 	get getString () {
-		const {getString} = this.props;
-
-		return getString ? getString : defaultString;
+		return this.props.getString;
 	}
 
 	get editorContext () {
@@ -69,7 +63,7 @@ export default class ActiveType extends React.Component {
 		const {className, ...otherProps} = this.props;
 		const {activeType} = this;
 		const cls = cx('draft-core-active-type', className, activeType, {empty: !activeType});
-		const label = activeType && !this.getString.isMissing(activeType) ? this.getString(activeType) : '';
+		const label = activeType && this.getString && !this.getString.isMissing(activeType) ? this.getString(activeType) : '';
 
 		delete otherProps.getString;
 		delete otherProps.onClick;

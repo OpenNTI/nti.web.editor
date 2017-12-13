@@ -9,7 +9,7 @@ export default class LinkButton extends React.Component {
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
-				toggleLink: PropTypes.func,
+				toggleLink: PropTypes.func.isRequired,
 				currentLink: PropTypes.string,
 				allowLinks: PropTypes.bool,
 				isEditingLink: PropTypes.bool
@@ -34,9 +34,9 @@ export default class LinkButton extends React.Component {
 
 
 	get isAllowed () {
-		const {allowLinks, toggleLink} = this.pluginContext;
+		const {allowLinks} = this.pluginContext;
 
-		return allowLinks && toggleLink;
+		return allowLinks;
 	}
 
 

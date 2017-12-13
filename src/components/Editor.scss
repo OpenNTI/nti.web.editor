@@ -1,6 +1,14 @@
 @import "~nti-style-common";
 @import "~draft-js/dist/Draft.css";
 
+.content-editing-editor-container {
+	.nti-draft-core-container {
+		.content-editing-rst-editor > .DraftEditor-root > .public-DraftEditorPlaceholder-root {
+			margin: 34px 0 0 20px;
+		}
+	}
+}
+
 .nti-draft-core-container {
 	position: relative;
 
@@ -9,11 +17,11 @@
 		position: relative;
 		z-index: 0;//counteract draft's styles having a z-index on them
 
-		-webkit-overflow-scrolling: touch;
-		overflow: {
-			x: hidden;
-			y: auto;
-		}
+		// -webkit-overflow-scrolling: touch;
+		// overflow: {
+		// 	x: hidden;
+		// 	y: auto;
+		// }
 
 		.public-DraftEditorPlaceholder-root {
 			color: $tertiary-grey;
@@ -50,4 +58,3 @@
 		}
 	}
 }
-

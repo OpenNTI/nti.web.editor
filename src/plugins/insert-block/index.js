@@ -1,4 +1,4 @@
-import {EVENT_HANDLED, EVENT_NOT_HANDLED} from '../Constants';
+import {HANDLED, NOT_HANDLED} from '../Constants';
 
 import Button from './components/Button';
 import BlockCount from './components/BlockCount';
@@ -27,10 +27,10 @@ export default {
 
 				if (handler) {
 					handler(selection);
-					return EVENT_HANDLED;
+					return HANDLED;
 				}
 
-				return EVENT_NOT_HANDLED;
+				return NOT_HANDLED;
 			},
 
 

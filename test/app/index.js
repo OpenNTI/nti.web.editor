@@ -15,6 +15,7 @@ import {
 	ActiveType,
 	TypeButton,
 	Plugins,
+	Parsers,
 	STYLE_SET,
 	BLOCK_SET,
 	BLOCKS
@@ -41,7 +42,7 @@ const plugins = [
 	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET}),
 	// Plugins.Plaintext.create(),
 	Plugins.Messages.create(),
-	Plugins.Counter.create({character: {limit: 10}}),
+	// Plugins.Counter.create({character: {limit: 10}}),
 	Plugins.InlineLinks.create()
 ];
 
@@ -62,7 +63,17 @@ class Test extends React.Component {
 	}
 
 
+	logHTMLValue = () => {
+		const {editor} = this.state;
+
+		this.setState({
+			html: Parsers.HTML.fromDraftState(editor.editorState)
+		});
+	}
+
+
 	render () {
+		const {html} = this.state;
 		const customKeyBindings = {
 			[getKeyCode.TAB]: () => console.log('TAB PRESSED')
 		};
@@ -101,6 +112,12 @@ class Test extends React.Component {
 							<TypeButton type={BLOCKS.HEADER_SIX} plain checkmark />
 							<TypeButton type={BLOCKS.ORDERED_LIST_ITEM} plain checkmark />
 							<TypeButton type={BLOCKS.UNORDERED_LIST_ITEM} plain checkmark />
+						</div>
+						<div>
+							<button onClick={this.logHTMLValue}>Log HTML Value</button>
+							<pre>
+								{html}
+							</pre>
 						</div>
 					</div>
 				</ContextProvider>

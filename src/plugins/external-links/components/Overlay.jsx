@@ -117,6 +117,8 @@ export default class ExternalLinkOverlay extends React.Component {
 				alignToArrow
 				constrain
 
+				reservedMargin={{bottom: 75}}
+
 				horizontalAlign={Flyout.ALIGNMENTS.LEFT_OR_RIGHT}
 			>
 				<Editor

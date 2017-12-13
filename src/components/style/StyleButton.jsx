@@ -20,7 +20,7 @@ export default class StyleButton extends React.Component {
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
-				toggleInlineStyle: PropTypes.func,
+				toggleInlineStyle: PropTypes.func.isRequired,
 				currentInlineStyles: PropTypes.object,
 				allowedInlineStyles: PropTypes.object
 			})
@@ -49,9 +49,9 @@ export default class StyleButton extends React.Component {
 	get isAllowed () {
 		const {style, shouldDisableForState} = this.props;
 		const {editorState} = this.editorContext;
-		const {allowedInlineStyles, toggleInlineStyle} = this.pluginContext;
+		const {allowedInlineStyles} = this.pluginContext;
 
-		return allowedInlineStyles && allowedInlineStyles.has(style) && !shouldDisableForState(editorState) && toggleInlineStyle;
+		return allowedInlineStyles && allowedInlineStyles.has(style) && !shouldDisableForState(editorState);
 	}
 
 

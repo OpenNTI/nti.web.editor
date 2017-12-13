@@ -3,7 +3,7 @@ import {
 } from 'draft-js';
 
 import {BLOCKS} from '../../Constants';
-import {EVENT_HANDLED, EVENT_NOT_HANDLED} from '../Constants';
+import {HANDLED, NOT_HANDLED} from '../Constants';
 
 import handleBreak from './handleBreak';
 import handleConvertIfEmpty from './handleConvertIfEmpty';
@@ -19,7 +19,8 @@ const DEFAULT_BREAK_TO = {
 
 const DEFAULT_CONVERT_IF_EMPTY = {
 	[BLOCKS.ORDERED_LIST_ITEM]: BLOCKS.UNSTYLED,
-	[BLOCKS.UNORDERED_LIST_ITEM]: BLOCKS.UNSTYLED
+	[BLOCKS.UNORDERED_LIST_ITEM]: BLOCKS.UNSTYLED,
+	[BLOCKS.BLOCKQUOTE]: BLOCKS.UNSTYLED
 };
 
 /**
@@ -41,16 +42,16 @@ export default {
 				const selection = editorState.getSelection();
 
 				//If the selection isn't collapsed there's nothing to do
-				if (!selection.isCollapsed()) { return EVENT_NOT_HANDLED; }
+				if (!selection.isCollapsed()) { return NOT_HANDLED; }
 
 				const currentBlockType = RichUtils.getCurrentBlockType(editorState);
-				let handled = EVENT_NOT_HANDLED;
+				let handled = NOT_HANDLED;
 
 				if (convertIfEmpty[currentBlockType]) {
 					handled = handleConvertIfEmpty(convertIfEmpty[currentBlockType], editorState, setEditorState);
 				}
 
-				if (handled !== EVENT_HANDLED && breakTo[currentBlockType]) {
+				if (handled !== HANDLED && breakTo[currentBlockType]) {
 					handled = handleBreak(breakTo[currentBlockType], editorState, setEditorState);
 				}
 
