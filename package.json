@@ -2,7 +2,7 @@
   "name": "nti-web-editor",
   "version": "0.1.0-alpha",
   "description": "'Editor and plugins'",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "test": "nti-cmp-scripts test",
     "start": "nti-cmp-scripts start",
