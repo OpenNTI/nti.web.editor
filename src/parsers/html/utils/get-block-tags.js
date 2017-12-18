@@ -30,6 +30,10 @@ export default function getBlockTags (block, prevBlock, nextBlock) {
 		[BLOCKS.UNORDERED_LIST_ITEM]: {
 			open: input => prevType !== BLOCKS.UNORDERED_LIST_ITEM ? ['ul', ...input] : input,
 			close: input => nextType !== BLOCKS.UNORDERED_LIST_ITEM ? [...input, 'ul'] : input
+		},
+		[BLOCKS.CODE]: {
+			open: input => prevType !== BLOCKS.CODE ? ['pre', ...input] : input,
+			close: input => nextType !== BLOCKS.CODE ? [...input, 'pre'] : input
 		}
 	};
 
