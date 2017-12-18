@@ -42,7 +42,7 @@ describe('DraftState to HTML', () => {
 				'<li>list-item</li></ul>',
 				'<ol><li>list-item</li>',
 				'<li>list-item</li></ol>',
-				'<pre>code</pre>',
+				'<pre><pre>code</pre></pre>',
 				'<blockquote>quote</blockquote>'
 			].join(''),
 			{
