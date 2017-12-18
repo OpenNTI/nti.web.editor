@@ -46,6 +46,7 @@ export default class TypeButton extends React.Component {
 		getString: PropTypes.func,
 		plain: PropTypes.bool,
 		checkmark: PropTypes.bool,
+		inlineStyle: PropTypes.bool,
 		onMouseDown: PropTypes.func
 	}
 
@@ -99,9 +100,9 @@ export default class TypeButton extends React.Component {
 
 
 	render () {
-		const {type = '_', className, plain, checkmark} = this.props;
+		const {type = '_', className, plain, checkmark, inlineStyle} = this.props;
 		const {isAllowed, isCurrent} = this;
-		const cls = cx('draft-core-type-button', className, type, {active: isCurrent, disabled: !isAllowed, plain, checkmark});
+		const cls = cx('draft-core-type-button', className, type, {inline: inlineStyle, active: isCurrent, disabled: !isAllowed, plain, checkmark});
 
 		return (
 			<button

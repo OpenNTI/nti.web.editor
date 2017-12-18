@@ -44,4 +44,62 @@
 			}
 		}
 	}
+
+	&.inline {
+		color: $secondary-grey;
+		font-weight: bold;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		width: 2rem;
+		height: 2rem;
+		line-height: 2rem;
+		text-align: center;
+		vertical-align: bottom;
+		min-width: inherit;
+		position: relative;
+		overflow: hidden;
+		cursor: pointer;
+		background: {
+			color: inherit;
+			repeat: no-repeat;
+			position: center center;
+		}
+
+		&:first-of-type {
+			border-radius: 2px 0 0 2px;
+		}
+
+		&:last-of-type {
+			border-radius: 0 2px 2px 0;
+		}
+
+		&:hover,
+		&:focus,
+		&:active,
+		.no-touch &:hover {
+			border-radius: 2px;
+			box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.21);
+		}
+
+		&:focus,
+		&:active,
+		&.active,
+		.no-touch &:hover {
+			color: $primary-blue;
+			box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 0 1px 0 #f3f3f3;
+		}
+
+
+		&.disabled {
+			opacity: 0.6;
+			cursor: none;
+			pointer-events: none;
+		}
+
+		i[class^="icon-"], i[class*=" icon-"] {
+			font-size: 1rem;
+			line-height: 2rem;
+		}
+	}
 }
