@@ -114,4 +114,18 @@ describe('HTML to DraftState', () => {
 		}
 
 	});
+
+	test('Code block', () => {
+		const html = '<pre><pre>Block 1</pre><pre>Block 2</pre><pre>  Block 3</pre></pre>';
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(3);
+
+		expect(blocks[0].getText()).toEqual('Block 1');
+		expect(blocks[1].getText()).toEqual('Block 2');
+		expect(blocks[2].getText()).toEqual('  Block 3');
+	});
 });

@@ -3,8 +3,11 @@ import {
 	DefaultDraftBlockRenderMap,
 	ContentState,
 	EditorState,
-	ContentBlock
+	ContentBlock,
+	CharacterMetadata,
+	genKey
 } from 'draft-js';
+import {List, Repeat} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
 
 import {BLOCKS} from '../../Constants';
 
@@ -36,9 +39,33 @@ export default function toDraftState (html) {
 
 	const blocks = convertFromHTML(html, void 0, BlockRenderMapWithParagraph)
 		.contentBlocks
-		.map(b => b.type === NTI_PARAGRAPH ? makeParagraphFrom(b) : b);
+		.map(b => {
+			if(b.type === NTI_PARAGRAPH) {
+				return makeParagraphFrom(b);
+			}
 
-	const content = ContentState.createFromBlockArray(blocks);
+			if(b.type === BLOCKS.CODE) {
+				const lines = b.text && b.text.split('\n');
+
+				return (lines || []).map(line => {
+					const characters = CharacterMetadata.create();
+					return new ContentBlock({
+						type: BLOCKS.CODE,
+						key: genKey(),
+						text: line,
+						characterList: List(Repeat(characters, line.length)),
+						depth: 0,
+						data: {}
+					});
+				});
+			}
+
+			return b;
+		});
+
+	const flattened = [].concat.apply([], blocks);
+
+	const content = ContentState.createFromBlockArray(flattened);
 
 	return EditorState.createWithContent(content);
 }
