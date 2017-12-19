@@ -53,7 +53,11 @@ const editorID = generateID();
 class Test extends React.Component {
 	state = {editor: null, editorState: EditorState.createEmpty()}
 
-	attachEditorRef = x => this.setState({editor: x})
+	attachEditorRef = x => {
+		global.EditorRef = x;
+		this.setState({editor: x});
+	}
+
 
 
 	onFocusToEnd = () => {

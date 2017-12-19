@@ -2,7 +2,7 @@ import {genKey, ContentBlock, ContentState, EditorState, Modifier, SelectionStat
 //We don't really need immutable its just something draft needs so let draft depend on it
 import {List, Map as ImmutableMap} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
 
-import {BLOCKS, CHANGE_TYPES} from '../../../Constants';
+import {BLOCKS} from '../../../Constants';
 
 import generateChecksFor from './generate-checks-for';
 
@@ -52,15 +52,20 @@ export default function ensureFocusableBlocks (around, between, editorState) {
 	//if we didn't add any new blocks
 	if (currentTotal === newBlocks.length && !toConvertFromPlaceholder.length) { return editorState; }
 
-	let newContent = ContentState.createFromBlockArray(newBlocks)
-		.merge({
-			selectionBefore: currentContent.getSelectionBefore(),
-			selectionAfter: currentContent.getSelectionAfter()
-		});
+	let newContent = ContentState.createFromBlockArray(newBlocks);
 
 	for (let key of toConvertFromPlaceholder) {
-		newContent = Modifier.setBlockData(newContent, SelectionState.createEmpty(key), new ImmutableMap({}));
+		newContent = Modifier
+			.setBlockData(newContent, SelectionState.createEmpty(key), new ImmutableMap({}));
 	}
 
-	return EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_FRAGMENT);
+	newContent = newContent.merge({
+		selectionBefore: currentContent.getSelectionBefore(),
+		selectionAfter: currentContent.getSelectionAfter()
+	});
+
+	return EditorState.set(editorState, {
+		currentContent: newContent,
+		selection: newContent.getSelectionAfter()
+	});
 }
