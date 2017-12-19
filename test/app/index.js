@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Events} from 'nti-commons';
 import {Errors} from 'nti-web-commons';
+import {EditorState} from 'draft-js';
 
 import {
 	Editor,
@@ -38,18 +39,19 @@ const {ErrorMessage, WarningMessage} = Plugins.Messages.components;
 const {CharacterCounter} = Plugins.Counter.components;
 
 const plugins = [
+	Plugins.EnsureFocusableBlock.create(),
 	Plugins.LimitStyles.create({allowed: STYLE_SET}),
 	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET}),
 	// Plugins.Plaintext.create(),
-	Plugins.Messages.create(),
+	// Plugins.Messages.create(),
 	// Plugins.Counter.create({character: {limit: 10}}),
-	Plugins.InlineLinks.create()
+	// Plugins.InlineLinks.create()
 ];
 
 const editorID = generateID();
 
 class Test extends React.Component {
-	state = {editor: null}
+	state = {editor: null, editorState: EditorState.createEmpty()}
 
 	attachEditorRef = x => this.setState({editor: x})
 
@@ -64,10 +66,17 @@ class Test extends React.Component {
 
 
 	logHTMLValue = () => {
-		const {editor} = this.state;
+		const {editorState} = this.state;
 
 		this.setState({
-			html: Parsers.HTML.fromDraftState(editor.editorState)
+			html: Parsers.HTML.fromDraftState(editorState)
+		});
+	}
+
+
+	onContentChange = (editorState) => {
+		this.setState({
+			editorState
 		});
 	}
 
@@ -80,7 +89,13 @@ class Test extends React.Component {
 
 		return (
 			<div>
-				<Editor ref={this.attachEditorRef} plugins={plugins} customKeyBindings={customKeyBindings} id={editorID} />
+				<Editor
+					ref={this.attachEditorRef}
+					plugins={plugins}
+					customKeyBindings={customKeyBindings}
+					id={editorID}
+					onContentChange={this.onContentChange}
+				/>
 				<ContextProvider editorID={editorID}>
 					<div>
 						<div>
@@ -103,6 +118,7 @@ class Test extends React.Component {
 							<ActiveType />
 						</div>
 						<div>
+							<TypeButton type={BLOCKS.CODE} plain checkmark />
 							<TypeButton type={BLOCKS.UNSTYLED} plain checkmark />
 							<TypeButton type={BLOCKS.HEADER_ONE} plain checkmark />
 							<TypeButton type={BLOCKS.HEADER_TWO} plain checkmark />

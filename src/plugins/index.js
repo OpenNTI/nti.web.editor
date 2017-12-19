@@ -2,6 +2,7 @@ export BlockBreakOut from './block-break-out';
 export ContiguousEntities from './contiguous-entities';
 export * as Counter from './counter';
 export CustomBlocks from './custom-blocks';
+export * as EnsureFocusableBlock from './ensure-focusable-block';
 export ExternalLinks from './external-links';
 export FormatPasted from './format-pasted';
 export IgnoreDrop from './ignore-drop';

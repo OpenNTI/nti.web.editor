@@ -11,6 +11,8 @@ import ContextProvider from '../ContextProvider';
 const CONTENT_CHANGE_BUFFER = 1000;
 
 const INTERNAL_CHANGE = Symbol('Internal Change');
+const TRANSFORM_OUTPUT = Symbol('Transform Output');
+const TRANSFORM_INPUT = Symbol('Transform Input');
 
 //TODO: move the allowed(InlineStyle, BlockTypes, Links) to plugins instead of props
 
@@ -56,7 +58,7 @@ export default class DraftCoreEditor extends React.Component {
 		this.onContentChangeBuffered = buffer(contentChangeBuffer, this.onContentChange);
 
 		this.state = {
-			currentEditorState: editorState,
+			currentEditorState: this[TRANSFORM_INPUT](editorState),
 			currentPlugins: plugins
 		};
 	}
@@ -87,6 +89,7 @@ export default class DraftCoreEditor extends React.Component {
 	}
 
 
+	//This is used internally by plugins so it needs to not transform the state
 	getEditorState = () => {
 		return this.editorState;
 	}
@@ -102,11 +105,37 @@ export default class DraftCoreEditor extends React.Component {
 
 		for (let plugin of plugins) {
 			if (plugin.onChange) {
-				plugin.onChange(editorState, pluginMethods);
+				editorState = plugin.onChange(editorState, pluginMethods);
 			}
 		}
 
 		this.onChange(editorState, cb);
+	}
+
+	[TRANSFORM_OUTPUT] (editorState) {
+		const {plugins} = this.props;
+		const pluginMethods = this.draftEditor && this.draftEditor.getPluginMethods();
+
+		for (let plugin of plugins) {
+			if (plugin.transformOutput) {
+				editorState = plugin.transformOutput(editorState, pluginMethods);
+			}
+		}
+
+		return editorState;
+	}
+
+	[TRANSFORM_INPUT] (editorState) {
+		const {plugins} = this.props;
+		const pluginMethods = this.draftEditor && this.draftEditor.getPluginMethods();
+
+		for (let plugin of plugins) {
+			if (plugin.transformInput) {
+				editorState = plugin.transformInput(editorState, pluginMethods);
+			}
+		}
+
+		return editorState;
 	}
 
 	componentDidMount () {
@@ -150,7 +179,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		if (newEditorState !== oldEditorState) {
 			newState = newState || {};
-			newState.currentEditorState = this.getNewState(newEditorState);
+			newState.currentEditorState = this.getNewState(this[TRANSFORM_INPUT](newEditorState));
 		}
 
 		if (newPlugins !== oldPlugins) {
@@ -185,7 +214,7 @@ export default class DraftCoreEditor extends React.Component {
 		const {currentEditorState} = this.state;
 
 		if (onContentChange) {
-			onContentChange(currentEditorState);
+			onContentChange(this[TRANSFORM_OUTPUT](currentEditorState));
 		}
 	}
 
@@ -203,7 +232,7 @@ export default class DraftCoreEditor extends React.Component {
 			}
 
 			if (onChange) {
-				onChange(editorState);
+				onChange(this[TRANSFORM_OUTPUT](editorState));
 			}
 
 			if (this.hasPendingChanges) {
