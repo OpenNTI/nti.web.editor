@@ -36,7 +36,7 @@ export default function ensureFocusableBlocks (around, between, editorState) {
 			newBlocks.push(createFocusable());
 		}
 
-		if (block.data.get('focusablePlaceholder') && block.text) {
+		if (block.data && block.data.get('focusablePlaceholder') && block.text) {
 			toConvertFromPlaceholder.push(block.getKey());
 		}
 
