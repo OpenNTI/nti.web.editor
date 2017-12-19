@@ -5,6 +5,7 @@ import {List, Map as ImmutableMap} from 'immutable';//eslint-disable-line import
 import {BLOCKS} from '../../../Constants';
 
 import generateChecksFor from './generate-checks-for';
+import isFocusablePlaceholder from './is-focusable-placeholder-block';
 
 function createFocusable () {
 	return new ContentBlock({
@@ -36,7 +37,7 @@ export default function ensureFocusableBlocks (around, between, editorState) {
 			newBlocks.push(createFocusable());
 		}
 
-		if (block.data && block.data.get('focusablePlaceholder') && block.text) {
+		if (isFocusablePlaceholder(block) && block.text) {
 			toConvertFromPlaceholder.push(block.getKey());
 		}
 

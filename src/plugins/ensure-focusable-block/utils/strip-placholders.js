@@ -1,5 +1,7 @@
 import {ContentState, EditorState} from 'draft-js';
 
+import isFocusablePlaceholder from './is-focusable-placeholder-block';
+
 export default function stripPlaceholders (editorState) {
 	const currentSelection = editorState.getSelection();
 	const currentContent = editorState.getCurrentContent();
@@ -7,7 +9,7 @@ export default function stripPlaceholders (editorState) {
 	let newBlocks = [];
 
 	for (let block of currentBlocks) {
-		if (!block.data.get('focusablePlaceholder')) {
+		if (!isFocusablePlaceholder(block)) {
 			newBlocks.push(block);
 		}
 	}
