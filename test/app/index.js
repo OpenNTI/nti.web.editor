@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Events} from 'nti-commons';
 import {Errors} from 'nti-web-commons';
-import {EditorState} from 'draft-js';
+import {EditorState, convertFromRaw} from 'draft-js';
 
 import {
 	Editor,
@@ -28,6 +28,32 @@ import 'nti-style-common/fonts.scss';
 import 'nti-style-common/all.scss';
 import 'nti-web-commons/lib/index.css';
 
+const rawContent = {
+	blocks: [
+		{ text: 'title', type: 'header-one', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'sub-title', type: 'header-two', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'list-item', type: 'unordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'list-item', type: 'unordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'code', type: 'code-block', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: 'quote', type: 'blockquote', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{ text: ' ', type: 'atomic', depth: 0, inlineStyleRanges: [], entityRanges: [ { offset: 0, length: 1, key: 0 } ] },
+		{ text: 'closing text', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+	],
+	entityMap: {
+		0: { type: 'some-cool-embed', mutability: 'IMMUTABLE', data: { MimeType: 'some-cool-embed', test: true } }
+	}
+};
+
+const content = convertFromRaw(rawContent);
+const testEditorState = EditorState.createWithContent(content);
+
+const value = Parsers.HTML.fromDraftState(testEditorState);
+
+console.log(value);
+
 const {getKeyCode} = Events;
 
 const {Field:{Factory:ErrorFactory}} = Errors;
@@ -50,8 +76,10 @@ const plugins = [
 
 const editorID = generateID();
 
+const initialState = Parsers.HTML.toDraftState('<p>NotCode</p><pre>Code\ncode 2</pre>');
+
 class Test extends React.Component {
-	state = {editor: null, editorState: EditorState.createEmpty()}
+	state = {editor: null, editorState: initialState}
 
 	attachEditorRef = x => {
 		global.EditorRef = x;
@@ -80,13 +108,13 @@ class Test extends React.Component {
 
 	onContentChange = (editorState) => {
 		this.setState({
-			editorState
+			editorState: Parsers.HTML.toDraftState(Parsers.HTML.fromDraftState(editorState))
 		});
 	}
 
 
 	render () {
-		const {html} = this.state;
+		const {html, editorState} = this.state;
 		const customKeyBindings = {
 			[getKeyCode.TAB]: () => console.log('TAB PRESSED')
 		};
@@ -95,6 +123,7 @@ class Test extends React.Component {
 			<div>
 				<Editor
 					ref={this.attachEditorRef}
+					editorState={editorState}
 					plugins={plugins}
 					customKeyBindings={customKeyBindings}
 					id={editorID}
