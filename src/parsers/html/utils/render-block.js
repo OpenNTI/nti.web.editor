@@ -17,5 +17,10 @@ export default function renderBlock (editorState, block, key) {
 
 	const [prefix, postfix] = getBlockTags(block, prev, next);
 
-	return `${prefix}${renderContentBlockContent(tree, block, content)}${postfix}`;
+	return {
+		type: block.type,
+		prefix,
+		postfix,
+		content: renderContentBlockContent(tree, block, content)
+	};
 }
