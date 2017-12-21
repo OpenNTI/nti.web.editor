@@ -1,6 +1,6 @@
 import {RichUtils} from 'draft-js';
 
-import {getAllowedSet, fixStateForAllowed} from './utils';
+import {getAllowedSet, fixStateForAllowed, getAllowedStylesForState} from './utils';
 
 export default {
 	create: (config = {}) => {
@@ -17,7 +17,7 @@ export default {
 			getContext (getEditorState, setEditorState) {
 				return {
 					get allowedInlineStyles () {
-						return allow;
+						return getAllowedStylesForState(getEditorState(), allow, byBlockType);
 					},
 
 
