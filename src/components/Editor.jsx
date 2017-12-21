@@ -285,7 +285,7 @@ export default class DraftCoreEditor extends React.Component {
 		const newState = RichUtils.handleKeyCommand(editorState, command);
 
 		if (newState) {
-			this.onChange(newState);
+			this[INTERNAL_CHANGE](newState);
 			return true;
 		}
 
