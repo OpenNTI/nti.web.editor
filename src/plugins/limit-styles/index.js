@@ -5,13 +5,13 @@ import {getAllowedSet, fixStateForAllowed} from './utils';
 export default {
 	create: (config = {}) => {
 		//TODO: add block type specific allowed or not
-		const {allowed, disallowed} = config;
+		const {allowed, disallowed, byBlockType = {}} = config;
 
 		const allow = getAllowedSet(allowed, disallowed);
 
 		return {
 			onChange (editorState) {
-				return fixStateForAllowed(editorState, allowed);
+				return fixStateForAllowed(editorState, allowed, byBlockType);
 			},
 
 			getContext (getEditorState, setEditorState) {

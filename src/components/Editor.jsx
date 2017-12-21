@@ -75,7 +75,7 @@ export default class DraftCoreEditor extends React.Component {
 	}
 
 	get readOnly () {
-		return this.draftEditor.state.readOnly;
+		return this.draftEditor && this.draftEditor.state && this.draftEditor.state.readOnly;
 	}
 
 
