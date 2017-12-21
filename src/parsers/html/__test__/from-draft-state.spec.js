@@ -42,7 +42,7 @@ describe('DraftState to HTML', () => {
 				'<li>list-item</li></ul>',
 				'<ol><li>list-item</li>',
 				'<li>list-item</li></ol>',
-				'<pre> code</pre>',//draft is removing the leading space so add one to prevent a user added space from being stripped
+				'<pre>\uFEFFcode</pre>',//draft is removing the leading space so add one to prevent a user added space from being stripped
 				'<blockquote>quote</blockquote>'
 			].join(''),
 			{
