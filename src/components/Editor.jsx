@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
-import Editor from 'draft-js-plugins-editor';
 import {EditorState, RichUtils} from 'draft-js';
 import {buffer} from 'nti-commons';
 
 import ContextProvider from '../ContextProvider';
+
+import Editor from './BaseEditor';
 
 const CONTENT_CHANGE_BUFFER = 1000;
 
@@ -71,6 +72,10 @@ export default class DraftCoreEditor extends React.Component {
 
 	get editorState () {
 		return this.state.currentEditorState;
+	}
+
+	get readOnly () {
+		return this.draftEditor.state.readOnly;
 	}
 
 
@@ -208,6 +213,12 @@ export default class DraftCoreEditor extends React.Component {
 		}
 	}
 
+	onSetReadOnly = () => {
+		if (this.editorContext) {
+			this.editorContext.updateExternalLinks();
+		}
+	}
+
 
 	onContentChange = () => {
 		const {onContentChange} = this.props;
@@ -317,6 +328,7 @@ export default class DraftCoreEditor extends React.Component {
 							handleKeyCommand={this.handleKeyCommand}
 							placeholder={placeholder}
 							readOnly={readOnly}
+							onSetReadOnly={this.onSetReadOnly}
 						/>
 					</div>
 				</ContextProvider>

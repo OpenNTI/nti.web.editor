@@ -56,6 +56,7 @@ export default class ContextProvider extends React.Component {
 				editor,
 				plugins: pluginContext,
 				get editorState () { return editor && editor.editorState; },
+				get readOnly () { return editor && editor.readOnly; },
 				getSelection: () => { return editor && editor.editorState && editor.editorState.getSelection(); },
 				focusEditor: () => { return editor && editor.focus(); }
 			}
@@ -84,17 +85,22 @@ export default class ContextProvider extends React.Component {
 			this.register(nextProps);
 		}
 
+		this.updateExternalLinks();
+	}
+	
+	componentWillUnmount () {
+		this.externalLinks = [];
+		this.unregister();
+		this.removeRegistryListener();
+	}
+	
+	
+	updateExternalLinks () {
 		for (let cmp of this.externalLinks) {
 			if (cmp) {
 				cmp.forceUpdate();
 			}
 		}
-	}
-
-	componentWillUnmount () {
-		this.externalLinks = [];
-		this.unregister();
-		this.removeRegistryListener();
 	}
 
 
