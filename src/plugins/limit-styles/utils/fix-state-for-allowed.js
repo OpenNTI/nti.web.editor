@@ -34,18 +34,24 @@ function cleanStyles (disallowed, content, range, block) {
 	return content;
 }
 
-export default function fixStateForAllowed (editorState, allowed) {
+export default function fixStateForAllowed (editorState, allowed, byBlockType) {
 	//TODO: instead of just checking the size check that they are the same set
-	if (!allowed || allowed.size === STYLE_SET.size) { return editorState; }
+	if ((!allowed || allowed.size === STYLE_SET.size) && !byBlockType) { return editorState; }
 
-	const disallowedStyles = computeDisallowedStyles(allowed);
-	const styleMap = setToMap(disallowedStyles);
+	const disallowedStyles = allowed && computeDisallowedStyles(allowed);
+	const styleMap = disallowedStyles && setToMap(disallowedStyles);
 
 	let content = editorState.getCurrentContent();
 	const originalContent = content;
 
 	for (let block of content.getBlocksAsArray()) {
 		const blockKey = block.getKey();
+		const type = block.getType();
+
+		const byType = byBlockType[type];
+		const disallowedByType = byType && computeDisallowedStyles(byType);
+		const typeStyleMap = disallowedByType && setToMap(disallowedByType);
+
 		const range = new SelectionState({
 			anchorKey: blockKey,
 			anchorOffset: 0,
@@ -53,8 +59,12 @@ export default function fixStateForAllowed (editorState, allowed) {
 			focusOffset: block.getLength()
 		});
 
-		if (disallowedStyles.length > 0) {
+		if (disallowedStyles && disallowedStyles.length > 0) {
 			content = cleanStyles(styleMap, content, range, block);
+		}
+
+		if (disallowedByType && disallowedByType.length > 0) {
+			content = cleanStyles(typeStyleMap, content, range, block);
 		}
 	}
 

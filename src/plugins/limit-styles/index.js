@@ -1,23 +1,23 @@
 import {RichUtils} from 'draft-js';
 
-import {getAllowedSet, fixStateForAllowed} from './utils';
+import {getAllowedSet, fixStateForAllowed, getAllowedStylesForState} from './utils';
 
 export default {
 	create: (config = {}) => {
 		//TODO: add block type specific allowed or not
-		const {allowed, disallowed} = config;
+		const {allowed, disallowed, byBlockType = {}} = config;
 
 		const allow = getAllowedSet(allowed, disallowed);
 
 		return {
 			onChange (editorState) {
-				return fixStateForAllowed(editorState, allowed);
+				return fixStateForAllowed(editorState, allowed, byBlockType);
 			},
 
 			getContext (getEditorState, setEditorState) {
 				return {
 					get allowedInlineStyles () {
-						return allow;
+						return getAllowedStylesForState(getEditorState(), allow, byBlockType);
 					},
 
 

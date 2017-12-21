@@ -13,7 +13,7 @@ export const create = (config = {}) => {
 
 
 		transformOutput (editorState) {
-			return editorState ? stripPlaceholders(editorState) : editorState;
+			return editorState ? stripPlaceholders(around, between, editorState) : editorState;
 		},
 
 		transformInput (editorState) {
