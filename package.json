@@ -1,6 +1,6 @@
 {
   "name": "nti-web-editor",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "'Editor and plugins'",
   "main": "./lib/index.js",
   "scripts": {
