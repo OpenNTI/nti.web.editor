@@ -24,6 +24,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		editorState: PropTypes.object.isRequired,
 		plugins: PropTypes.array,
+		customKeyBindings: PropTypes.object,
 		placeholder: PropTypes.string,
 		readOnly: PropTypes.bool,
 
@@ -294,7 +295,7 @@ export default class DraftCoreEditor extends React.Component {
 
 
 	render () {
-		const {className, placeholder, readOnly} = this.props;
+		const {className, placeholder, readOnly, customKeyBindings} = this.props;
 		const {currentEditorState:editorState, currentPlugins:plugins, busy} = this.state;
 
 		const contentState = editorState && editorState.getCurrentContent();
@@ -325,6 +326,7 @@ export default class DraftCoreEditor extends React.Component {
 							onChange={this.onChange}
 							onFocus={this.onFocus}
 							onBlur={this.onBlur}
+							customKeyBindings={customKeyBindings}
 							handleKeyCommand={this.handleKeyCommand}
 							placeholder={placeholder}
 							readOnly={readOnly}
