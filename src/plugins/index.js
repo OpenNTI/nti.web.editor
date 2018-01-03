@@ -15,3 +15,4 @@ export LimitStyles from './limit-styles';
 export * as Messages from './messages';
 export * as Plaintext from './plaintext';
 export SingleLine from './single-line';
+export CustomKeyBindings from './custom-key-bindings';
