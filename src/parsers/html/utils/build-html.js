@@ -20,7 +20,8 @@ export default function buildHTML (block) {
 	if (!block.prefix) { return block; }
 
 	// only for matching types and only if the block content does not already begin with U+FEFF, prepend U+FEFF
-	const pre = PREPEND_SPACE[block.type] && !startsWithNonSpaceSpace(block.content) ? NON_SPACE_SPACE : '';
+	// also for empty blocks, add this to indicate it is non-empty and we may want to retain that block (draft drops empty blocks)
+	const pre = block.content === '' || (PREPEND_SPACE[block.type] && !startsWithNonSpaceSpace(block.content)) ? NON_SPACE_SPACE : '';
 
 	return `${block.prefix}${pre}${block.content}${block.postfix}`;
 }

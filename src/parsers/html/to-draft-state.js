@@ -12,6 +12,7 @@ import {List, Repeat} from 'immutable';//eslint-disable-line import/no-extraneou
 import {BLOCKS} from '../../Constants';
 
 const NTI_PARAGRAPH = 'nti-paragraph';
+const BLANK_P_PLACEHOLDER = '_nti-blank-paragraph_1515431074979';
 
 /**
  * Draft will merge consecutive paragraphs together, which leads
@@ -37,9 +38,26 @@ function makeParagraphFrom (b) {
 export default function toDraftState (html) {
 	if (!html) { return EditorState.createEmpty(); }
 
-	const blocks = convertFromHTML(html, void 0, BlockRenderMapWithParagraph)
+	// a bit ugly but draft will drop the empty <p> tag, which can leave two separate code blocks
+	// adjacent to each other, which then merges them as one.  to get around that, inject a placeholder
+	// before using draft's converter, then strip out the placeholder after conversion
+	const modifiedHTML = html.replace(/<p>\uFEFF<\/p>/g, '<p>' + BLANK_P_PLACEHOLDER + '</p>');
+
+	const blocks = convertFromHTML(modifiedHTML, void 0, BlockRenderMapWithParagraph)
 		.contentBlocks
 		.map(b => {
+			// strip placeholder text
+			if(b.text === BLANK_P_PLACEHOLDER) {
+				return new ContentBlock({
+					type: BLOCKS.UNSTYLED,
+					key: b.key,
+					text: '',
+					characterList: List(),
+					depth: 0,
+					data: b.data
+				});
+			}
+
 			if(b.type === NTI_PARAGRAPH) {
 				return makeParagraphFrom(b);
 			}
