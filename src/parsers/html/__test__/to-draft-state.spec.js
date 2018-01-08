@@ -128,4 +128,18 @@ describe('HTML to DraftState', () => {
 		expect(blocks[1].getText()).toEqual('Block 2');
 		expect(blocks[2].getText()).toEqual('  Block 3');
 	});
+
+	test('Empty paragraph between two code blocks', () => {
+		const html = '<pre>First code block</pre><p>\uFEFF</p><pre>Second code block</pre>';
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(3);
+
+		expect(blocks[0].getText()).toEqual('First code block');
+		expect(blocks[1].getText()).toEqual('');
+		expect(blocks[2].getText()).toEqual('Second code block');
+	});
 });
