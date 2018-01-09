@@ -1,16 +1,16 @@
 /* eslint-env jest */
 
 import getAllowedSet from '../get-allowed-set';
-import { BLOCK_SET, BLOCKS } from '../../../../Constants';
+import { STYLE_SET, STYLES } from '../../../../Constants';
 
 describe('get allowed set', () => {
-	test('should return block set', () => {
+	test('should return style set', () => {
 		const allowedSet = getAllowedSet();
-		expect(allowedSet).toEqual(BLOCK_SET);
+		expect(allowedSet).toEqual(STYLE_SET);
 	});
 
 	test('should return allowed set', () => {
-		const allowed = new Set([BLOCKS.CODE, BLOCKS.UNSTYLED, BLOCKS.ATOMIC]);
+		const allowed = new Set([STYLES.BOLD, STYLES.STRIKETHROUGH]);
 
 		const allowedSet = getAllowedSet(allowed);
 		expect(allowedSet).toBe(allowed);

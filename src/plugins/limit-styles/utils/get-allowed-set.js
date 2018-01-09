@@ -4,6 +4,6 @@ export default function getAllowedSet (allow, disallow) {
 	if (!allow && !disallow) { return STYLE_SET; }
 
 	//TODO: union the allow and disallow and set
-
+	//TODO: write companion unit test
 	return allow;
 }
