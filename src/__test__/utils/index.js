@@ -1,4 +1,4 @@
-import {EditorState, convertFromRaw, convertToRaw} from 'draft-js';
+import {EditorState, convertFromRaw, convertToRaw, SelectionState} from 'draft-js';
 
 export getDefaultEditorState from './default-editor-state';
 
@@ -10,3 +10,6 @@ export function getRawFromState (editorState) {
 	return convertToRaw(editorState.getCurrentContent());
 }
 
+export function getNewStateFromSelection (editorState, selection) {
+	return EditorState.acceptSelection(editorState, new SelectionState(selection));
+}
