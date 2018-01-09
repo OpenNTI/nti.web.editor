@@ -13,11 +13,13 @@ export default {
 			return (cmp && cmp.getProps().customKeyBindings) || config;
 		};
 
+		let commandOverride = null;
+
 		return {
 			handleKeyCommand: (command, editorState, editorCmp) => {
-				const {commandOverride: {[command]: override} = {}} = this;
+				const {[command]: override} = (commandOverride || {});
 
-				delete this.commandOverride;
+				commandOverride = null;
 
 				const customKeyBindings = getCustomKeyBindings(editorCmp);
 
@@ -39,7 +41,7 @@ export default {
 				const customKeyBindings = getCustomKeyBindings(editorCmp);
 
 				if (customKeyBindings[keyCode]) {
-					this.commandOverride = {[defaults]: keyCode};
+					commandOverride = {[defaults]: keyCode};
 				}
 
 				return defaults;
