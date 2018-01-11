@@ -1,0 +1,44 @@
+/* eslint-env jest */
+import {convertFromRaw, EditorState} from 'draft-js';
+
+import singleLinePlugin from '../index';
+import {HANDLED} from '../../Constants';
+
+describe('singleLinePlugin', () => {
+	test('Test paste handler', () => {
+		const plugin = singleLinePlugin.create();
+
+		const rawContent = {
+			blocks: [
+				{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+			],
+			entityMap: {}
+		};
+
+		const content = convertFromRaw(rawContent);
+		const editorState = EditorState.createWithContent(content);
+
+		let newState;
+		const result = plugin.handlePastedText ('', '<p>some html</p>', editorState, {setEditorState: (val) => {
+			newState = val;
+		}});
+
+		const blocks = newState.getCurrentContent().getBlocksAsArray();
+
+		expect(blocks.length).toEqual(1);
+
+		// original paragraph plus a new <p> element should still be one block with the combined text
+		expect(blocks[0].text).toEqual('some htmlparagraph');
+
+		expect(result).toEqual(HANDLED);
+	});
+
+	test('Test return handler', () => {
+		const plugin = singleLinePlugin.create();
+
+		const result = plugin.handleReturn();
+
+		// handleReturn shouldn't do anything but tell us that the return event was handled
+		expect(result).toEqual(HANDLED);
+	});
+});
