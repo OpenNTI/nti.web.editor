@@ -19,7 +19,7 @@ export default function linkifyBlockInContent (block, content) {
 
 	for (let link of links) {
 		if (isExternalLink(link)) {
-			content = Modifier.applyEntity(content, getSelectionForLink(link, block), createLinkEntity(link.url));
+			content = Modifier.applyEntity(content, getSelectionForLink(link, block), createLinkEntity(content, link.url).getLastCreatedEntityKey());
 		}
 	}
 

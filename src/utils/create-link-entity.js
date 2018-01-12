@@ -1,9 +1,7 @@
-import {Entity} from 'draft-js';
-
 import {ENTITIES, MUTABILITY} from '../Constants';
 
-export default function createEntity (href, contiguous) {
+export default function createEntity (contentState, href, contiguous) {
 	//If the contiguous-entity plugin is included the contigous false flag will prevent
 	//the entity from expanding if you type after it
-	return Entity.create(ENTITIES.LINK, MUTABILITY.MUTABLE, {href, contiguous});
+	return contentState.createEntity(ENTITIES.LINK, MUTABILITY.MUTABLE, {href, contiguous});
 }
