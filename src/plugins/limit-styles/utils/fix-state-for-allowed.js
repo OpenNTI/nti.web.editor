@@ -36,8 +36,6 @@ function cleanStyles (disallowed, content, range, block) {
 
 export default function fixStateForAllowed (editorState, allowed, byBlockType) {
 	//TODO: instead of just checking the size check that they are the same set
-	if ((!allowed || allowed.size === STYLE_SET.size) && !byBlockType) { return editorState; }
-
 	const disallowedStyles = allowed && computeDisallowedStyles(allowed);
 	const styleMap = disallowedStyles && setToMap(disallowedStyles);
 

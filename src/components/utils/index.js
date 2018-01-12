@@ -1,0 +1,1 @@
+export decomposePlugins from './decompose-plugins';
