@@ -8,7 +8,6 @@ import {buffer} from 'nti-commons';
 import ContextProvider from '../ContextProvider';
 
 import { decomposePlugins } from './utils';
-
 import Editor from './BaseEditor';
 
 const CONTENT_CHANGE_BUFFER = 1000;
