@@ -25,7 +25,7 @@ const DEFAULT_TEXT = {
 	invalid: 'Please enter a valid url.'
 };
 
-const t = scoped('EXTERNAL_LINK_EDITOR', DEFAULT_TEXT);
+const t = scoped('nti-web-editor.plugins.external-links.components.Editor', DEFAULT_TEXT);
 
 const stop = e => e.preventDefault();
 

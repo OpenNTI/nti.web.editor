@@ -9,8 +9,7 @@ function changeBlockType (block, content, defaultType) {
 
 export default function fixStateForAllowed (editorState, allowed, defaultType) {
 	//TODO: instead of just checking the size check that they are the same set
-	if (allowed.size === 0 || allowed.size === BLOCK_SET.size) { return editorState; }
-
+	// if (allowed.size === 0 || allowed.size === BLOCK_SET.size) { return editorState; }
 
 	let content = editorState.getCurrentContent();
 	const originalContent = content;

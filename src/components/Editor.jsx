@@ -7,6 +7,8 @@ import {buffer} from 'nti-commons';
 
 import ContextProvider from '../ContextProvider';
 
+import { decomposePlugins } from './utils';
+
 import Editor from './BaseEditor';
 
 const CONTENT_CHANGE_BUFFER = 1000;
@@ -59,9 +61,11 @@ export default class DraftCoreEditor extends React.Component {
 
 		this.onContentChangeBuffered = buffer(contentChangeBuffer, this.onContentChange);
 
+		const currentPlugins = decomposePlugins(plugins);
+
 		this.state = {
 			currentEditorState: this[TRANSFORM_INPUT](editorState),
-			currentPlugins: plugins
+			currentPlugins
 		};
 	}
 
@@ -190,7 +194,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		if (newPlugins !== oldPlugins) {
 			newState = newState || {};
-			newState.currentPlugins = newPlugins;
+			newState.currentPlugins = decomposePlugins(newPlugins);
 		}
 
 		if (newState) {

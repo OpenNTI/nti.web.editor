@@ -5,9 +5,9 @@ import {getAllowedSet, fixStateForAllowed, getAllowedStylesForState} from './uti
 export default {
 	create: (config = {}) => {
 		//TODO: add block type specific allowed or not
-		const {allowed, disallowed, byBlockType = {}} = config;
+		const {allow, disallow, byBlockType = {}} = config;
 
-		const allow = getAllowedSet(allowed, disallowed);
+		const allowed = getAllowedSet(allow, disallow);
 
 		return {
 			onChange (editorState) {
