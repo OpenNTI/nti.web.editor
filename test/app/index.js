@@ -65,9 +65,9 @@ const {ErrorMessage, WarningMessage} = Plugins.Messages.components;
 const {CharacterCounter} = Plugins.Counter.components;
 
 const plugins = [
-	Plugins.EnsureFocusableBlock.create(),
-	Plugins.LimitStyles.create({allowed: STYLE_SET}),
-	Plugins.LimitBlockTypes.create({allowed: BLOCK_SET}),
+	// Plugins.EnsureFocusableBlock.create(),
+	Plugins.LimitStyles.create({allow: new Set()}),
+	Plugins.LimitBlockTypes.create({allow: new Set()}),
 	// Plugins.Plaintext.create(),
 	// Plugins.Messages.create(),
 	// Plugins.Counter.create({character: {limit: 10}}),
