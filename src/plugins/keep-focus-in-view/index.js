@@ -1,5 +1,5 @@
 import {getVisibleSelectionRect} from 'draft-js';
-import {getViewportHeight, getViewportWidth} from 'nti-lib-dom';
+import {getViewportHeight, getViewportWidth} from '@nti/lib-dom';
 
 //TODO: move this out into utility files
 function getScrollPosition (parent) {

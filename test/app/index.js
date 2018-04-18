@@ -2,8 +2,8 @@
 // import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Events} from 'nti-commons';
-import {Errors} from 'nti-web-commons';
+import {Events} from '@nti/lib-commons';
+import {Errors} from '@nti/web-commons';
 import {EditorState, convertFromRaw} from 'draft-js';
 
 import {
@@ -24,9 +24,9 @@ import {
 // import RSTTest from '../../src/RST/test';
 
 // import 'normalize.css';
-import 'nti-style-common/fonts.scss';
-import 'nti-style-common/all.scss';
-import 'nti-web-commons/lib/index.css';
+import '@nti/style-common/fonts.scss';
+import '@nti/style-common/all.scss';
+import '@nti/web-commons/lib/index.css';
 
 const rawContent = {
 	blocks: [

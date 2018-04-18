@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Flyout} from 'nti-web-commons';
+import {Flyout} from '@nti/web-commons';
 
 import {getEventFor} from '../../Store';
 import {getCmpForState} from '../utils';

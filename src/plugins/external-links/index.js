@@ -1,6 +1,6 @@
 import React from 'react';
 import {RichUtils} from 'draft-js';
-import {wait} from 'nti-commons';
+import {wait} from '@nti/lib-commons';
 
 import {createStore} from '../Store';
 

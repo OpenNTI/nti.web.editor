@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
-import {scoped} from 'nti-lib-locale';
+import {scoped} from '@nti/lib-locale';
 
 import {BLOCKS} from '../../Constants';
 
@@ -23,7 +23,7 @@ export const Types = Object.freeze({
 	[BLOCKS.UNSTYLED]: BLOCKS.UNSTYLED
 });
 
-const t = scoped('nti-web-editor.components.type.TypeButton', Types);
+const t = scoped('web-editor.components.type.TypeButton', Types);
 
 export default class TypeButton extends React.Component {
 	static Types = Types

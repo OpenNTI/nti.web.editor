@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
 import {EditorState, RichUtils} from 'draft-js';
-import {buffer} from 'nti-commons';
+import {buffer} from '@nti/lib-commons';
 
 import ContextProvider from '../ContextProvider';
 

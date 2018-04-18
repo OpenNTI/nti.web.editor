@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
 import {Entity} from 'draft-js';
-import {scoped} from 'nti-lib-locale';
-import {Button, Input} from 'nti-web-commons';
+import {scoped} from '@nti/lib-locale';
+import {Button, Input} from '@nti/web-commons';
 
 import {EditingEntityKey, SelectedEntityKey} from '../Constants';
 import {getEventFor} from '../../Store';
@@ -25,7 +25,7 @@ const DEFAULT_TEXT = {
 	invalid: 'Please enter a valid url.'
 };
 
-const t = scoped('nti-web-editor.plugins.external-links.components.Editor', DEFAULT_TEXT);
+const t = scoped('web-editor.plugins.external-links.components.Editor', DEFAULT_TEXT);
 
 const stop = e => e.preventDefault();
 
