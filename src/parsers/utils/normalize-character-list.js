@@ -34,7 +34,7 @@ function closeEntity (tagList, entity) {
 }
 
 function getStylesToClose (open, styles) {
-	const toClose = new Set(...open.style);
+	const toClose = new Set(open.style);
 
 	for (let style of styles) {
 		toClose.delete(style);
