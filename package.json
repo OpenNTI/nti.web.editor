@@ -40,7 +40,7 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "@nti/cmp-scripts": "^1.16.0",
+    "@nti/cmp-scripts": "^1.17.16",
     "@nti/style-common": "^1.2.6",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
