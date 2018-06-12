@@ -11,13 +11,31 @@ export default class NestedEditorWrapper extends React.Component {
 	static propTypes = {
 		children: PropTypes.node,
 		onMouseDown: PropTypes.func,
-		onClick: PropTypes.func
+		onClick: PropTypes.func,
+		onBlur: PropTypes.func,
+		onFocus: PropTypes.func
 	}
 
 	events = {
 		selectionchange: stop,
-		focusin: stop,
-		focusout: stop,
+		focusin: (e) => {
+			const {onFocus} = this.props;
+
+			stop(e);
+
+			if (onFocus) {
+				onFocus(e);
+			}
+		},
+		focusout: (e) => {
+			const {onBlur} = this.props;
+
+			stop(e);
+
+			if (onBlur) {
+				onBlur(e);
+			}
+		},
 		click: (e) => {
 			const {onClick} = this.props;
 
