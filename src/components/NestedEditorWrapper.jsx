@@ -21,7 +21,9 @@ export default class NestedEditorWrapper extends React.Component {
 		focusin: (e) => {
 			const {onFocus} = this.props;
 
-			stop(e);
+			// stop(e);
+
+			clearTimeout(this.blurTimeout);
 
 			if (onFocus) {
 				onFocus(e);
@@ -30,11 +32,14 @@ export default class NestedEditorWrapper extends React.Component {
 		focusout: (e) => {
 			const {onBlur} = this.props;
 
-			stop(e);
+			// stop(e);
 
-			if (onBlur) {
-				onBlur(e);
-			}
+			this.blurTimeout = setTimeout(() => {
+				if (onBlur) {
+					onBlur(e);
+				}
+			}, 100);
+
 		},
 		click: (e) => {
 			const {onClick} = this.props;
@@ -103,7 +108,7 @@ export default class NestedEditorWrapper extends React.Component {
 		delete otherProps.onClick;
 
 		return (
-			<div {...otherProps} ref={this.attachWrapperRef} >
+			<div {...otherProps} ref={this.attachWrapperRef} onSelect={this.events.selectionchange} >
 				{children}
 			</div>
 		);

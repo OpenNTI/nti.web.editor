@@ -17,7 +17,6 @@ const TRANSFORM_OUTPUT = Symbol('Transform Output');
 const TRANSFORM_INPUT = Symbol('Transform Input');
 
 //TODO: move the allowed(InlineStyle, BlockTypes, Links) to plugins instead of props
-
 export default class DraftCoreEditor extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -39,6 +38,7 @@ export default class DraftCoreEditor extends React.Component {
 
 	}
 
+
 	static defaultProps = {
 		editorState: EditorState.createEmpty(),
 		plugins: [],
@@ -49,9 +49,37 @@ export default class DraftCoreEditor extends React.Component {
 	}
 
 
+	static contextTypes = {
+		draftCoreEditor: PropTypes.shape({
+			parentEditor: PropTypes.shape({
+				deactivate: PropTypes.func,
+				activate: PropTypes.func
+			})
+		})
+	}
+
+
+	static childContextTypes = {
+		draftCoreEditor: PropTypes.shape({
+			parentEditor: PropTypes.shape({
+				deactivate: PropTypes.func,
+				activate: PropTypes.func
+			})
+		})
+	}
+
+
 	attachContextRef = (r) => this.editorContext = r
 	attachEditorRef = (r) => this.draftEditor = r
-	attachContainerRef = (r) => this.editorContainer = r
+	attachContainerRef = (r) => {
+		this.editorContainer = r;
+
+		if (r) {
+			this.setupContainerListeners(r);
+		} else {
+			this.removeContainerListeners();
+		}
+	}
 
 	constructor (props) {
 		super(props);
@@ -64,7 +92,8 @@ export default class DraftCoreEditor extends React.Component {
 
 		this.state = {
 			currentEditorState: this[TRANSFORM_INPUT](editorState),
-			currentPlugins
+			currentPlugins,
+			active: true
 		};
 	}
 
@@ -80,6 +109,48 @@ export default class DraftCoreEditor extends React.Component {
 
 	get readOnly () {
 		return this.draftEditor && this.draftEditor.state && this.draftEditor.state.readOnly;
+	}
+
+
+	get parentEditor () {
+		const {draftCoreEditor} = this.context;
+		const {parentEditor} = draftCoreEditor || {};
+
+		return parentEditor;
+	}
+
+
+	getChildContext () {
+		const {parentEditor} = this;
+
+		return {
+			draftCoreEditor: {
+				parentEditor: {
+					activate: () => {
+						const {active:wasActive} = this.state;
+
+						if (!wasActive) {
+							this.setState({active: true});
+						}
+
+						if (parentEditor) {
+							parentEditor.activate();
+						}
+					},
+					deactivate: () => {
+						const {active:wasActive} = this.state;
+
+						if (wasActive) {
+							this.setState({active: false});
+						}
+
+						if (parentEditor) {
+							parentEditor.deactivate();
+						}
+					}
+				}
+			}
+		};
 	}
 
 
@@ -217,6 +288,51 @@ export default class DraftCoreEditor extends React.Component {
 		}
 	}
 
+
+	setupContainerListeners (container) {
+		if (!this.parentEditor) { return; }
+
+		this.removeContainerListeners();
+
+		container.addEventListener('focusin', this.onContainerFocus, true);
+		container.addEventListener('focusout', this.onContainerBlur, true);
+
+		this.unsubscribeFromContainer = () => {
+			container.removeEventListener('focusin', this.onContainerFocus, true);
+			container.removeEventListener('focusout', this.onContainerBlur, true);
+		};
+	}
+
+
+	removeContainerListeners () {
+		if (this.unsubscribeFromContainer) {
+			this.unsubscribeFromContainer();
+			this.unsubscribeFromContainer = () => {};
+		}
+	}
+
+
+	onContainerFocus = (e) => {
+		e.stopPropagation();
+		const {parentEditor} = this;
+
+		if (parentEditor) {
+			parentEditor.deactivate();
+		}
+	}
+
+
+	onContainerBlur = (e) => {
+		e.stopPropagation();
+		const {parentEditor} = this;
+
+		if (parentEditor) {
+			parentEditor.activate();
+		}
+	}
+
+
+
 	onSetReadOnly = () => {
 		if (this.editorContext) {
 			this.editorContext.updateExternalLinks();
@@ -299,7 +415,7 @@ export default class DraftCoreEditor extends React.Component {
 
 	render () {
 		const {className, placeholder, readOnly, customKeyBindings} = this.props;
-		const {currentEditorState:editorState, currentPlugins:plugins, busy} = this.state;
+		const {currentEditorState:editorState, currentPlugins:plugins, busy, active} = this.state;
 
 		const contentState = editorState && editorState.getCurrentContent();
 		const hidePlaceholder = contentState && !contentState.hasText() && contentState.getBlockMap().first().getType() !== 'unstyled';
@@ -332,7 +448,7 @@ export default class DraftCoreEditor extends React.Component {
 							customKeyBindings={customKeyBindings}
 							handleKeyCommand={this.handleKeyCommand}
 							placeholder={placeholder}
-							readOnly={readOnly}
+							readOnly={readOnly || !active}
 							onSetReadOnly={this.onSetReadOnly}
 						/>
 					</div>
