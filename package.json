@@ -4,6 +4,9 @@
   "description": "'Editor and plugins'",
   "main": "lib/index-cjs.js",
   "module": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "cmp-scripts test",
     "start": "cmp-scripts start",
