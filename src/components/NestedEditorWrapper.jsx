@@ -59,8 +59,7 @@ export default class NestedEditorWrapper extends React.Component {
 			if (onMouseDown) {
 				onMouseDown(e);
 			}
-		},
-		paste: stop
+		}
 	}
 
 
@@ -90,7 +89,7 @@ export default class NestedEditorWrapper extends React.Component {
 		this.unsubscribe = () => {
 			this.forEachEvent((name, handler) => {
 				wrapper.removeEventListener(name, handler, false);
-				wrapper.addEventListener(name, handler, true);
+				wrapper.removeEventListener(name, handler, true);
 			});
 		};
 
@@ -98,6 +97,10 @@ export default class NestedEditorWrapper extends React.Component {
 			wrapper.addEventListener(name, handler, false);
 			wrapper.addEventListener(name, handler, true);
 		});
+	}
+
+	onPaste = (e) => {
+		stop(e);
 	}
 
 
@@ -108,7 +111,7 @@ export default class NestedEditorWrapper extends React.Component {
 		delete otherProps.onClick;
 
 		return (
-			<div {...otherProps} ref={this.attachWrapperRef} onSelect={this.events.selectionchange} >
+			<div {...otherProps} ref={this.attachWrapperRef} onSelect={this.events.selectionchange} onPaste={this.onPaste}>
 				{children}
 			</div>
 		);
