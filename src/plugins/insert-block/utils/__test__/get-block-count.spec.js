@@ -31,15 +31,25 @@ function createNonTarget () {
 		depth: 0,
 		text: 'Non-target Block',
 		inlineStyleRanges: [],
-		entityRantes: []
+		entityRanges: []
+	};
+}
+
+function createNested () {
+	return {
+		type: BLOCKS.ATOMIC,
+		depth: 0,
+		text: 'Nested Block',
+		inlineStyleRanges: [],
+		entityRanges: []
 	};
 }
 
 
-function getCount (blocks, group) {
+function getCount (blocks, group, getNested) {
 	const state = createState({blocks, entityMap: {}});
 
-	return getBlockCount(state, isBlock, group);
+	return getBlockCount(state, isBlock, group, getNested);
 }
 
 describe('getBlockCount', () => {
@@ -111,6 +121,37 @@ describe('getBlockCount', () => {
 			const blocks = [createTarget(), createTarget(), createTarget(), createTarget(), createTarget()];
 
 			expect(getCount(blocks, true)).toEqual(1);
+		});
+	});
+
+
+	describe('Nested Blocks', () => {
+		describe('non-grouped', () => {
+			test('Counts nested blocks', () => {
+				const blocks = [createNonTarget(), createTarget(), createNested()];
+
+				function getNested (block) {
+					if (block.getType() === BLOCKS.ATOMIC) {
+						return createState({blocks: [createNonTarget(), createTarget()], entityMap: {}});
+					}
+				}
+
+				expect(getCount(blocks, false, getNested)).toEqual(2);
+			});
+		});
+
+		describe('grouped', () => {
+			test('Counts nested blocks', () => {
+				const blocks = [createNonTarget(), createTarget(), createTarget(), createNested()];
+
+				function getNested (block) {
+					if (block.getType() === BLOCKS.ATOMIC) {
+						return createState({blocks: [createNonTarget(), createTarget(), createTarget()], entityMap: {}});
+					}
+				}
+
+				expect(getCount(blocks, true, getNested)).toEqual(2);
+			});
 		});
 	});
 });

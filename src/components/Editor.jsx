@@ -160,7 +160,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		for (let plugin of plugins) {
 			if (plugin.getContext) {
-				let pluginContext = plugin.getContext(() => this.getEditorState(), (state, cb) => this.setEditorState(state, cb), () => this.focus());
+				let pluginContext = plugin.getContext(() => this.getEditorState(), (state, cb) => this.setEditorState(state, cb), () => this.focus(), plugins);
 				context = {...context, ...pluginContext};
 			}
 		}
@@ -248,9 +248,10 @@ export default class DraftCoreEditor extends React.Component {
 	}
 
 
-	componentWillReceiveProps (nextProps) {
-		const {plugins:newPlugins, editorState:newEditorState, contentChangeBuffer:newContentChangeBuffer} = nextProps;
-		const {plugins:oldPlugins, editorState:oldEditorState, contentChangeBuffer:oldContentChangeBuffer} = this.props;
+	componentDidUpdate (prevProps) {
+		const {plugins:newPlugins, editorState:newEditorState, contentChangeBuffer:newContentChangeBuffer} = this.props;
+		const {plugins:oldPlugins, editorState:oldEditorState, contentChangeBuffer:oldContentChangeBuffer} = prevProps;
+
 		let newState = null;
 
 		if (newContentChangeBuffer !== oldContentChangeBuffer) {

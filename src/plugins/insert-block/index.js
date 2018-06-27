@@ -34,7 +34,25 @@ export default {
 			},
 
 
-			getContext (getEditorState, setEditorState, focus) {
+			getContext (getEditorState, setEditorState, focus, plugins = []) {
+				let getNestedStateFns = [];
+
+				for (let plugin of plugins) {
+					if (plugin.getNestedState) {
+						getNestedStateFns.push(plugin.getNestedState);
+					}
+				}
+
+				function getNestedState (block) {
+					for (let fn of getNestedStateFns) {
+						const blocks = fn(block);
+
+						if (blocks) {
+							return blocks;
+						}
+					}
+				}
+
 				return {
 					get allowInsertBlock () {
 						//TODO: add a config for disabling inserting blocks given certain selections
@@ -42,7 +60,7 @@ export default {
 					},
 
 					getInsertBlockCount: (predicate, group) => {
-						return getBlockCount(getEditorState(), predicate, group);
+						return getBlockCount(getEditorState(), predicate, group, getNestedState);
 					},
 
 

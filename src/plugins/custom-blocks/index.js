@@ -17,6 +17,16 @@ export default {
 				extraProps = {...extraProps, ...props};
 			},
 
+
+			getNestedState (block) {
+				for (let renderer of customRenderers) {
+					if (renderer.getNestedState) {
+						return renderer.getNestedState(block);
+					}
+				}
+			},
+
+
 			blockRendererFn: (contentBlock, pluginProps) => {
 				const {getEditorState, setEditorState} = pluginProps;
 				const editorState = getEditorState();
