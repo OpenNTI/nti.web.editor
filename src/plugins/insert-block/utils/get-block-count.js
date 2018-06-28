@@ -53,9 +53,9 @@ export default function getBlockCount (editorState, predicate, group, getNestedS
 
 		if (!state) { return null; }
 
-		const content = state.getCurrentContent ? state.getCurrentContent() : state;
+		const blockContent = state.getCurrentContent ? state.getCurrentContent() : state;
 
-		return content.getBlocksAsArray();
+		return blockContent.getBlocksAsArray();
 	}
 
 	return group ? getGroupedCount(blocks, predicate, getNestedBlocks) : getCount(blocks, predicate, getNestedBlocks);
