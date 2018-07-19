@@ -1,6 +1,6 @@
 {
   "name": "@nti/web-editor",
-  "version": "0.8.0",
+  "version": "0.9.0-alpha",
   "description": "'Editor and plugins'",
   "main": "lib/index-cjs.js",
   "module": "lib/index.js",
