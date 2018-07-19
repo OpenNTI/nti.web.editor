@@ -103,6 +103,10 @@ export default class NestedEditorWrapper extends React.Component {
 		stop(e);
 	}
 
+	onDrop = (e) => {
+		stop(e);
+	}
+
 
 	render () {
 		const {children, ...otherProps} = this.props;
@@ -111,7 +115,7 @@ export default class NestedEditorWrapper extends React.Component {
 		delete otherProps.onClick;
 
 		return (
-			<div {...otherProps} ref={this.attachWrapperRef} onSelect={this.events.selectionchange} onPaste={this.onPaste}>
+			<div {...otherProps} ref={this.attachWrapperRef} onSelect={this.events.selectionchange} onPaste={this.onPaste} onDrop={this.onDrop}>
 				{children}
 			</div>
 		);
