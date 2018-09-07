@@ -23,11 +23,6 @@ import {
 } from '../../src';
 // import RSTTest from '../../src/RST/test';
 
-// import 'normalize.css';
-import '@nti/style-common/fonts.scss';
-import '@nti/style-common/all.scss';
-import '@nti/web-commons/lib/index.css';
-
 const rawContent = {
 	blocks: [
 		{ text: 'title', type: 'header-one', depth: 0, inlineStyleRanges: [], entityRanges: [] },
