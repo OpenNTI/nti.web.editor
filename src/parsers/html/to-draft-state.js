@@ -36,7 +36,15 @@ function makeParagraphFrom (b) {
 }
 
 export default function toDraftState (html) {
-	if (!html) { return EditorState.createEmpty(); }
+	if (!html || html.length === 0) { return EditorState.createEmpty(); }
+
+	if (Array.isArray(html) && html.every(x => typeof x === 'string')) {
+		html = html.join('\n');
+	}
+
+	if (typeof html !== 'string') {
+		throw new TypeError('Invalid Argument, toDraftState() does not support mixed/model-body input.');
+	}
 
 	// a bit ugly but draft will drop the empty <p> tag, which can leave two separate code blocks
 	// adjacent to each other, which then merges them as one.  to get around that, inject a placeholder
