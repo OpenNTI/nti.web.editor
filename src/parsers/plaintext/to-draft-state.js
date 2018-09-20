@@ -5,7 +5,7 @@ import {BLOCKS} from '../../Constants';
 export default function toDraftState (text) {
 	if (!text) { return EditorState.createEmpty(); }
 
-	if (text.constructor === EditorState) {
+	if (text instanceof EditorState) {
 		return text;
 	}
 

@@ -42,7 +42,7 @@ export default function toDraftState (html) {
 		html = html.join('\n');
 	}
 
-	if (html.constructor === EditorState) {
+	if (html instanceof EditorState) {
 		return html;
 	}
 
