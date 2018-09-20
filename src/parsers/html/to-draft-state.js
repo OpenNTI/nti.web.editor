@@ -42,6 +42,10 @@ export default function toDraftState (html) {
 		html = html.join('\n');
 	}
 
+	if (html.constructor === EditorState) {
+		return html;
+	}
+
 	if (typeof html !== 'string') {
 		throw new TypeError('Invalid Argument, toDraftState() does not support mixed/model-body input.');
 	}

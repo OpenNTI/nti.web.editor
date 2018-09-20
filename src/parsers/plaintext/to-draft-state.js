@@ -5,6 +5,10 @@ import {BLOCKS} from '../../Constants';
 export default function toDraftState (text) {
 	if (!text) { return EditorState.createEmpty(); }
 
+	if (text.constructor === EditorState) {
+		return text;
+	}
+
 	const block = {type: BLOCKS.UNSTYLED, depth: 0, text, inlineStyleRanges: [], entityRanges: []};
 
 	const raw = {
