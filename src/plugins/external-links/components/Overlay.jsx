@@ -99,7 +99,7 @@ export default class ExternalLinkOverlay extends React.Component {
 
 
 	render () {
-		const {store, getEditorState, setEditorState, editor} = this.props;
+		const {store, getEditorState, setEditorState, editor, ...otherProps} = this.props;
 		const {entityCmp, entityKey, selection} = this.state;
 
 		if (!entityCmp || !editor) {
@@ -130,6 +130,7 @@ export default class ExternalLinkOverlay extends React.Component {
 					setEditorState={setEditorState}
 					onClose={this.onEditorClose}
 					onEntitySave={this.onEntitySave}
+					{...otherProps}
 				/>
 			</Flyout.Aligned>
 		);

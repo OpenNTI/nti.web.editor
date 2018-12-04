@@ -44,7 +44,9 @@ export default class ExternalLinkEditor extends React.Component {
 		getEditorState: PropTypes.func,
 		setEditorState: PropTypes.func,
 		onClose: PropTypes.func,
-		onEntitySave: PropTypes.func
+		onEntitySave: PropTypes.func,
+		onStartEdit: PropTypes.func,
+		onStopEdit: PropTypes.func
 	}
 
 
@@ -72,16 +74,14 @@ export default class ExternalLinkEditor extends React.Component {
 		};
 	}
 
+	componentDidUpdate (prevProps) {
+		const {entityKey, decoratedText} = this.props;
+		const {entityKey:oldKey, decoratedText:oldText} = prevProps;
 
-	componentWillReceiveProps (nextProps) {
-		const {entityKey:oldKey, decoratedText:oldText} = this.props;
-		const {entityKey:newKey, decoratedText:newText} = nextProps;
-
-		if (oldKey !== newKey || oldText !== newText) {
-			this.setState(this.getStateFor(nextProps));
+		if (oldKey !== entityKey || oldText !== decoratedText) {
+			this.setState(this.getStateFor(this.props));
 		}
 	}
-
 
 	componentDidMount () {
 		const {store} = this.props;
@@ -117,11 +117,19 @@ export default class ExternalLinkEditor extends React.Component {
 			return;
 		}
 
-		const {entityKey} = this.props;
+		const {entityKey, onStartEdit, onStopEdit} = this.props;
+		const {wasEditing} = this.state;
 		const editing = entityKey === key;
 
+		if (!wasEditing && editing) {
+			if (onStartEdit) { onStartEdit(); }
+		} else if (wasEditing && !editing) {
+			if (onStopEdit) { onStopEdit(); }
+		}
+
 		this.setState({
-			editing
+			editing,
+			wasEditing: editing
 		}, () => {
 			if (this.urlInput) {
 				this.urlInput.focus();

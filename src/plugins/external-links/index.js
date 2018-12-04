@@ -13,7 +13,7 @@ import Overlay from './components/Overlay';
 
 export default {
 	create: (config = {}) => {
-		const {allowedInBlockTypes} = config;
+		const {allowedInBlockTypes, onStartEdit, onStopEdit} = config;
 		const store = createStore(config.initialState);
 
 		let createdEntity;
@@ -49,7 +49,7 @@ export default {
 
 			overlayComponent: function OverlayWrapper (props) {
 				return (
-					<Overlay {...props} store={store} />
+					<Overlay {...props} store={store} onStartEdit={onStartEdit} onStopEdit={onStopEdit} />
 				);
 			},
 
