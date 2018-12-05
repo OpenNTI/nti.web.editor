@@ -1,4 +1,4 @@
-export linkifyContent from './linkify-content';
+export * as linkifyContent from './linkify-content';
 export createEntity from './create-entity';
 export createNewLinkAtOffset from './create-new-link-at-offset';
 export fixStateForAllowed from './fix-state-for-allowed';

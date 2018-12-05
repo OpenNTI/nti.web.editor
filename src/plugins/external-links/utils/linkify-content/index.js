@@ -1,1 +1,2 @@
-export default from './maybe_turn_last_word_into_link';
+export beforeInput from './maybe-linkify-before-input';
+export handleReturn from './maybe-linkify-handle-return';

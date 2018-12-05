@@ -54,6 +54,7 @@ export default {
 			}
 		];
 
+
 		return {
 			stateStore: store,
 
@@ -86,7 +87,7 @@ export default {
 					return NOT_HANDLED;
 				}
 
-				const {editorState: newEditorState, undo} = linkifyContent(chars, editorState) || {};
+				const {editorState: newEditorState, undo} = linkifyContent.beforeInput(chars, editorState) || {};
 
 				backspaceAction = undo;
 
@@ -99,6 +100,26 @@ export default {
 			},
 
 
+			handleReturn (chars, editorState, {setEditorState}) {
+				if (!autoLink) {
+					backspaceAction = null;
+					return NOT_HANDLED;
+				}
+
+				const {editorState: newEditorState, undo} = linkifyContent.handleReturn(editorState) || {};
+
+				backspaceAction = undo;
+
+				if (newEditorState) {
+					setEditorState(newEditorState);
+					return HANDLED;
+				}
+
+				return NOT_HANDLED;
+			},
+
+
+
 			decorators: [
 				{
 					strategy,
@@ -109,6 +130,7 @@ export default {
 					}
 				}
 			],
+
 
 			overlayComponent: function OverlayWrapper (props) {
 				return (
