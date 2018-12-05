@@ -2,26 +2,41 @@ import React from 'react';
 import {RichUtils} from 'draft-js';
 import {wait} from '@nti/lib-commons';
 
+import {HANDLED, NOT_HANDLED} from '../Constants';
 import {createStore} from '../Store';
 
-import {SelectedEntityKey, EditingEntityKey} from './Constants';
-import strategy from './strategy';
-import {getSelectedEntityKey, createEntity, getFirstSelectedEntityHref, isValidSelectionForLink, fixStateForAllowed} from './utils';
 import Link from './components/Link';
 import Overlay from './components/Overlay';
+import {SelectedEntityKey, EditingEntityKey} from './Constants';
+import strategy from './strategy';
+import {
+	getSelectedEntityKey,
+	createEntity,
+	getFirstSelectedEntityHref,
+	isValidSelectionForLink,
+	fixStateForAllowed,
+	linkifyContent
+} from './utils';
 
 
 export default {
 	create: (config = {}) => {
-		const {allowedInBlockTypes, onStartEdit, onStopEdit} = config;
+		const {
+			allowedInBlockTypes,
+			onStartEdit,
+			onStopEdit,
+			editable = true,
+			autoLink = true
+		} = config;
 		const store = createStore(config.initialState);
 
 		let createdEntity;
+		let backspaceAction;
 
-		return {
-			stateStore: store,
+		const modifiers = [
+			(editorState) => {
+				if (!editable) { return editorState; }
 
-			onChange (editorState) {
 				const entityKey = getSelectedEntityKey(editorState);
 
 				//Wait an event pump to give subsequent events a chance
@@ -32,9 +47,57 @@ export default {
 						createdEntity = null;
 					});
 
-
-				return fixStateForAllowed(editorState, allowedInBlockTypes);
+				return editorState;
 			},
+			(editorState) => {
+				return fixStateForAllowed(editorState, allowedInBlockTypes);
+			}
+		];
+
+		return {
+			stateStore: store,
+
+			onChange (editorState, ...args) {
+				return modifiers.reduce((editorStateAcc, modifier) => {
+					return modifier(editorStateAcc, ...args);
+				}, editorState);
+			},
+
+
+			handleKeyCommand (command, editorState, {setEditorState}) {
+				if (command !== 'backspace' || !backspaceAction) { return NOT_HANDLED; }
+
+				const newEditorState = backspaceAction(editorState);
+
+				backspaceAction = null;
+
+				if (newEditorState) {
+					setEditorState(newEditorState);
+					return HANDLED;
+				}
+
+				return NOT_HANDLED;
+			},
+
+
+			handleBeforeInput (chars, editorState, {setEditorState}) {
+				if (!autoLink) {
+					backspaceAction = null;
+					return NOT_HANDLED;
+				}
+
+				const {editorState: newEditorState, undo} = linkifyContent(chars, editorState) || {};
+
+				backspaceAction = undo;
+
+				if (newEditorState) {
+					setEditorState(newEditorState);
+					return HANDLED;
+				}
+
+				return NOT_HANDLED;
+			},
+
 
 			decorators: [
 				{
@@ -59,7 +122,7 @@ export default {
 					get allowLinks () {
 						const editorState = getEditorState();
 
-						return isValidSelectionForLink(editorState, allowedInBlockTypes);
+						return editable && isValidSelectionForLink(editorState, allowedInBlockTypes);
 					},
 					get currentLink () {
 						return getSelectedEntityKey(getEditorState());
@@ -68,6 +131,8 @@ export default {
 						return Boolean(store.getItem(EditingEntityKey));
 					},
 					toggleLink: (link) => {
+						if (!editable) { return; }
+
 						const editorState = getEditorState();
 						const selectedEntity = getSelectedEntityKey(editorState);
 

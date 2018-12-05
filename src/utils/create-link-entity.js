@@ -1,7 +1,7 @@
 import {ENTITIES, MUTABILITY} from '../Constants';
 
-export default function createEntity (contentState, href, contiguous) {
+export default function createEntity (contentState, href, contiguous, extraData) {
 	//If the contiguous-entity plugin is included the contigous false flag will prevent
 	//the entity from expanding if you type after it
-	return contentState.createEntity(ENTITIES.LINK, MUTABILITY.MUTABLE, {href, contiguous});
+	return contentState.createEntity(ENTITIES.LINK, MUTABILITY.MUTABLE, {href, contiguous, ...extraData});
 }
