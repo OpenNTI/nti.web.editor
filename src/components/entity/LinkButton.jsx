@@ -35,8 +35,9 @@ export default class LinkButton extends React.Component {
 
 	get isAllowed () {
 		const {allowLinks} = this.pluginContext;
+		const {readOnly} = this.editorContext;
 
-		return allowLinks;
+		return allowLinks && !readOnly;
 	}
 
 
