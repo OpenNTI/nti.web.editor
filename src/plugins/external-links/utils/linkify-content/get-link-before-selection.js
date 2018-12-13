@@ -46,13 +46,14 @@ export default function getLinkBeforeSelection (editorState) {
 	if (!links || !links.length) { return null; }
 
 	const link = links[0];
+	const newAnchorOffset = offset - word.length;
 
 	return {
 		selection: new SelectionState({
 			anchorKey: anchorKey,
-			anchorOffset: offset - link.lastIndex,
+			anchorOffset: newAnchorOffset,
 			focusKey: focusKey,
-			focusOffset: offset
+			focusOffset: newAnchorOffset + link.lastIndex
 		}),
 		url: link.url
 	};
