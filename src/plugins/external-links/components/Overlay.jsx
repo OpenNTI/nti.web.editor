@@ -109,10 +109,9 @@ export default class ExternalLinkOverlay extends React.Component {
 		return (
 			<Flyout.Aligned
 				className="external-link-overlay"
-				alignTo={entityCmp}
-				parent={editor && editor.container}
+				alignTo={entityCmp && entityCmp.node}
 
-				visible={entityCmp && editor ? true : false}
+				visible={entityCmp && entityCmp.node && editor ? true : false}
 				arrow
 				alignToArrow
 				constrain

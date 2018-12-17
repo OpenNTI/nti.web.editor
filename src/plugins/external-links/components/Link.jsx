@@ -41,6 +41,10 @@ export default class ExternalLink extends React.Component {
 		return this.props.decoratedText;
 	}
 
+	get node () {
+		return this.anchorRef;
+	}
+
 
 	getBoundingClientRect () {
 		return this.anchorRef && this.anchorRef.getBoundingClientRect ?
