@@ -37,6 +37,11 @@
 	.external-link-editor {
 		padding: rem-calc(10px);
 
+		.error {
+			color: $primary-red;
+			font: normal 400 0.875rem/1.3 $body-font-family;
+		}
+
 		.url-input, .display-input {
 			display: block;
 			margin-bottom: rem-calc(10px);
