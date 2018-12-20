@@ -87,7 +87,7 @@ export default {
 					return NOT_HANDLED;
 				}
 
-				const {editorState: newEditorState, undo} = linkifyContent.beforeInput(chars, editorState) || {};
+				const {editorState: newEditorState, undo} = linkifyContent.beforeInput(chars, editorState, allowedInBlockTypes) || {};
 
 				backspaceAction = undo;
 
@@ -106,7 +106,7 @@ export default {
 					return NOT_HANDLED;
 				}
 
-				const {editorState: newEditorState, undo} = linkifyContent.handleReturn(editorState) || {};
+				const {editorState: newEditorState, undo} = linkifyContent.handleReturn(editorState, allowedInBlockTypes) || {};
 
 				backspaceAction = undo;
 

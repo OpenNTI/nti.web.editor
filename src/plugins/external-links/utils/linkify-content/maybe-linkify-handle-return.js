@@ -7,8 +7,8 @@ import isSameState from './is-same-state';
 import applyLinkToContent from './apply-link-to-content';
 import removeLinkFromContent from './remove-link-from-content';
 
-export default function maybeLinkifyHandleReturn (editorState) {
-	const link = getLinkBeforeSelection(editorState);
+export default function maybeLinkifyHandleReturn (editorState, allowedInBlockTypes) {
+	const link = getLinkBeforeSelection(editorState, allowedInBlockTypes);
 
 	if (!link) { return null; }
 

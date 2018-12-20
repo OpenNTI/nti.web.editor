@@ -26,12 +26,13 @@ function getWordBeforeOffset (block, offset) {
 	return word;
 }
 
-export default function getLinkBeforeSelection (editorState) {
+export default function getLinkBeforeSelection (editorState, allowedIn) {
 	const selection = editorState.getSelection();
 	const focusKey = selection.getFocusKey();
 	const anchorKey = selection.getAnchorKey();
 
 	if (focusKey !== anchorKey) { return null; }
+
 
 	const focusOffset = selection.getFocusOffset();
 	const anchorOffset = selection.getAnchorOffset();
@@ -39,6 +40,8 @@ export default function getLinkBeforeSelection (editorState) {
 
 	const content = editorState.getCurrentContent();
 	const block = content.getBlockForKey(focusKey);
+
+	if (allowedIn && !allowedIn.has(block.getType())) { return null; }
 
 	const word = getWordBeforeOffset(block, offset);
 	const links = word && linkify.match(word);

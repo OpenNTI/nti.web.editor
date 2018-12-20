@@ -14,10 +14,10 @@ function endsInSpace (chars) {
 	return last === ' ';
 }
 
-export default function maybeLinkifyBeforeInput (chars, editorState) {
+export default function maybeLinkifyBeforeInput (chars, editorState, allowedInBlockTypes) {
 	if (!endsInSpace(chars)) { return null; }
 
-	const link = getLinkBeforeSelection(editorState);
+	const link = getLinkBeforeSelection(editorState, allowedInBlockTypes);
 
 	if (!link) { return null; }
 
