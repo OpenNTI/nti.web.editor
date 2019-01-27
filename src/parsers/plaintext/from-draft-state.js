@@ -1,4 +1,4 @@
-import {trimEmptiesOffEnd, joinTextBlocks} from '../html/utils';
+import {trimEmptiesOffEnd, joinWithSeparator} from '../html/utils';
 
 export default function fromDraftState (editorState) {
 	const content = editorState.getCurrentContent();
@@ -7,6 +7,8 @@ export default function fromDraftState (editorState) {
 		.map((block) => block.getText())
 		.toArray();
 
+	const join = joinWithSeparator('\n'); 
+
 	return trimEmptiesOffEnd(textBlocks)
-		.reduce(joinTextBlocks, []);
+		.reduce(join, []);
 }
