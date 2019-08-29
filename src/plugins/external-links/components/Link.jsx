@@ -16,8 +16,8 @@ export default class ExternalLink extends React.Component {
 		offsetKey: PropTypes.string,
 		decoratedText: PropTypes.string,
 		store: PropTypes.shape({
-			addListener: PropTypes.func,
-			removeListener: PropTypes.func
+			addListeners: PropTypes.func,
+			removeListeners: PropTypes.func
 		})
 	}
 

@@ -53,10 +53,11 @@ function getPreviousSelection (editorState, selectionState, newBlock) {
 		return selectionState;
 	}
 
-	return new SelectionState(Object.assign({}, selectionState.toJS(), {
+	return new SelectionState({
+		...selectionState.toJS(),
 		anchorKey: nextBlockKey,
 		focusKey: nextBlockKey,
-	}));
+	});
 }
 
 

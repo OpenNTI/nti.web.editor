@@ -14,8 +14,9 @@ const editingEntityKeyEvent = getEventFor(EditingEntityKey);
 export default class ExternalLinkOverlay extends React.Component {
 	static propTypes = {
 		store: PropTypes.shape({
-			addListener: PropTypes.func,
-			removeListener: PropTypes.func
+			addListeners: PropTypes.func,
+			removeListeners: PropTypes.func,
+			getItem: PropTypes.func
 		}),
 		getEditorState: PropTypes.func,
 		setEditorState: PropTypes.func,
