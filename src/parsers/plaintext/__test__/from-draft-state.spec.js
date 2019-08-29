@@ -24,7 +24,7 @@ describe('DraftState to plaintext', () => {
 		const value = fromDraftState(editorState);
 
 		expect(value).toEqual([
-			'textallconcatenated'
+			'text\nall\nconcatenated'
 		]);
 	});
 });

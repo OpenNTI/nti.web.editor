@@ -11,5 +11,5 @@ export default function fromDraftState (editorState) {
 
 
 	return trimEmptiesOffEnd(htmlBlocks)
-		.reduce(joinTextBlocks, []);
+		.reduce((out, item) => joinTextBlocks(out, item), []);
 }
