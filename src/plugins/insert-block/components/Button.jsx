@@ -33,7 +33,7 @@ export default class Button extends React.Component {
 	constructor (props) {
 		super(props);
 
-		this.dragInsertionId = uuid();
+		this.dragInsertionId = uuid.v4();
 	}
 
 
