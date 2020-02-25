@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import uuid from 'uuid';
+import {v4 as uuid} from 'uuid';
 import {DnD} from '@nti/web-commons';
 
 import {DRAG_DATA_TYPE} from '../Constants';
@@ -33,7 +33,7 @@ export default class Button extends React.Component {
 	constructor (props) {
 		super(props);
 
-		this.dragInsertionId = uuid.v4();
+		this.dragInsertionId = uuid();
 	}
 
 
