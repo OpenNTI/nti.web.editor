@@ -4,7 +4,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Events} from '@nti/lib-commons';
 import {Errors} from '@nti/web-commons';
-import {EditorState, convertFromRaw} from 'draft-js';
 
 import {
 	Editor,
@@ -15,39 +14,14 @@ import {
 	UnderlineButton,
 	ActiveType,
 	TypeButton,
+	LinkButton,
 	Plugins,
 	Parsers,
-	STYLE_SET,
+	BLOCKS,
 	BLOCK_SET,
-	BLOCKS
+	STYLE_SET
 } from '../../src';
 // import RSTTest from '../../src/RST/test';
-
-const rawContent = {
-	blocks: [
-		{ text: 'title', type: 'header-one', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'sub-title', type: 'header-two', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'list-item', type: 'unordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'list-item', type: 'unordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'code', type: 'code-block', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: 'quote', type: 'blockquote', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-		{ text: ' ', type: 'atomic', depth: 0, inlineStyleRanges: [], entityRanges: [ { offset: 0, length: 1, key: 0 } ] },
-		{ text: 'closing text', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] }
-	],
-	entityMap: {
-		0: { type: 'some-cool-embed', mutability: 'IMMUTABLE', data: { MimeType: 'some-cool-embed', test: true } }
-	}
-};
-
-const content = convertFromRaw(rawContent);
-const testEditorState = EditorState.createWithContent(content);
-
-const value = Parsers.HTML.fromDraftState(testEditorState);
-
-console.log(value);
 
 const {getKeyCode} = Events;
 
@@ -61,8 +35,9 @@ const {CharacterCounter} = Plugins.Counter.components;
 
 const plugins = [
 	// Plugins.EnsureFocusableBlock.create(),
-	Plugins.LimitStyles.create({allow: new Set()}),
-	Plugins.LimitBlockTypes.create({allow: new Set()}),
+	Plugins.LimitStyles.create({allow: STYLE_SET}),
+	Plugins.LimitBlockTypes.create({allow: BLOCK_SET}),
+	Plugins.ExternalLinks.create({allowedInBlockTypes: new Set([BLOCKS.UNSTYLED, BLOCKS.BLOCKQUOTE])}),
 	// Plugins.Plaintext.create(),
 	// Plugins.Messages.create(),
 	// Plugins.Counter.create({character: {limit: 10}}),
@@ -71,7 +46,7 @@ const plugins = [
 
 const editorID = generateID();
 
-const initialState = Parsers.HTML.toDraftState('<p>NotCode</p><pre>Code\ncode 2</pre>');
+const initialState = Parsers.HTML.toDraftState('');
 
 class Test extends React.Component {
 	state = {editor: null, editorState: initialState}
@@ -93,17 +68,17 @@ class Test extends React.Component {
 
 
 	logHTMLValue = () => {
-		const {editorState} = this.state;
+		const {editorState, modifiedEditorState} = this.state;
 
 		this.setState({
-			html: Parsers.HTML.fromDraftState(editorState)
+			html: Parsers.HTML.fromDraftState(modifiedEditorState || editorState)
 		});
 	}
 
 
 	onContentChange = (editorState) => {
 		this.setState({
-			editorState: Parsers.HTML.toDraftState(Parsers.HTML.fromDraftState(editorState))
+			modifiedEditorState: Parsers.HTML.toDraftState(Parsers.HTML.fromDraftState(editorState))
 		});
 	}
 
@@ -140,6 +115,7 @@ class Test extends React.Component {
 							<BoldButton />
 							<ItalicButton />
 							<UnderlineButton />
+							<LinkButton />
 						</div>
 						<div>
 							<span>Active:</span>
@@ -156,6 +132,7 @@ class Test extends React.Component {
 							<TypeButton type={BLOCKS.HEADER_SIX} plain checkmark />
 							<TypeButton type={BLOCKS.ORDERED_LIST_ITEM} plain checkmark />
 							<TypeButton type={BLOCKS.UNORDERED_LIST_ITEM} plain checkmark />
+							<TypeButton type={BLOCKS.BLOCKQUOTE} plain checkmark />
 						</div>
 						<div>
 							<button onClick={this.logHTMLValue}>Log HTML Value</button>
