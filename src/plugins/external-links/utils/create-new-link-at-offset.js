@@ -1,19 +1,23 @@
-import {SelectionState, RichUtils} from 'draft-js';
+import {SelectionState, EditorState, Modifier} from 'draft-js';
+
+import {CHANGE_TYPES} from '../../../Constants';
+import {createLinkEntity} from '../../../utils';
 
 import replaceEntityTextAtSelection from './replace-entity-text-at-selection';
 import getSelectionForEntityKeyAtOffset from './get-selection-for-entity-key-at-offset';
-import createLink from './create-entity';
-
 
 function createLinkAtSelection (link, text, editorState, selection) {
-	const entity = createLink(link);
-	const newState = RichUtils.toggleLink(editorState, selection, entity);
+	const content = editorState.getCurrentContent();
+	const entity = createLinkEntity(content, link, false, {}).getLastCreatedEntityKey();
+
+	const newContent = Modifier.applyEntity(content, selection, entity);
+	const newEditorState = EditorState.push(editorState, newContent, CHANGE_TYPES.APPLY_ENTITY);
 
 	if (!text) {
-		return newState;
+		return newEditorState;
 	}
 
-	return replaceEntityTextAtSelection(text, entity, selection, editorState);
+	return replaceEntityTextAtSelection(text, entity, selection, newEditorState);
 }
 
 

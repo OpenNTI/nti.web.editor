@@ -38,6 +38,7 @@ const plugins = [
 	Plugins.LimitStyles.create({allow: STYLE_SET}),
 	Plugins.LimitBlockTypes.create({allow: BLOCK_SET}),
 	Plugins.ExternalLinks.create({allowedInBlockTypes: new Set([BLOCKS.UNSTYLED, BLOCKS.BLOCKQUOTE])}),
+	Plugins.ContiguousEntities.create(),
 	// Plugins.Plaintext.create(),
 	// Plugins.Messages.create(),
 	// Plugins.Counter.create({character: {limit: 10}}),

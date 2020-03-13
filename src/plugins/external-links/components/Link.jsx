@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
-import {Entity} from 'draft-js';
 
 import {SelectedEntityKey, EditingEntityKey} from '../Constants';
 import {getEventFor} from '../../Store';
@@ -15,6 +14,7 @@ export default class ExternalLink extends React.Component {
 		children: PropTypes.any,
 		offsetKey: PropTypes.string,
 		decoratedText: PropTypes.string,
+		getEditorState: PropTypes.func,
 		store: PropTypes.shape({
 			addListeners: PropTypes.func,
 			removeListeners: PropTypes.func
@@ -26,9 +26,9 @@ export default class ExternalLink extends React.Component {
 	setAnchorRef = (x) => { this.anchorRef = x; }
 
 	get entityData () {
-		const {entityKey} = this.props;
+		const {getEditorState, entityKey} = this.props;
 
-		return Entity.get(entityKey).getData();
+		return getEditorState().getCurrentContent().getEntity(entityKey).getData();
 	}
 
 
@@ -59,13 +59,13 @@ export default class ExternalLink extends React.Component {
 	}
 
 
-	componentWillReceiveProps (nextProps) {
-		const {entityKey:oldKey} = this.props;
-		const {entityKey:newKey} = nextProps;
+	componentDidUpdate (prevProps) {
+		const {entityKey:newKey} = this.props;
+		const {entityKey:oldKey} = prevProps;
 
 		if (newKey !== oldKey) {
-			this.unregisterCmp(this.props);
-			this.registerCmp(nextProps);
+			this.unregisterCmp(prevProps);
+			this.registerCmp(this.props);
 		}
 	}
 

@@ -1,4 +1,4 @@
-import {EditorState, Modifier, Entity} from 'draft-js';
+import {EditorState, Modifier} from 'draft-js';
 
 import {MUTABILITY} from '../../../Constants';
 
@@ -19,7 +19,7 @@ export default function getStateForInput (input, editorState) {
 	//if there is no entity before or we are in the middle of an entity, there's nothing to do
 	if (!entityKeyBefore || entityKeyBefore === entityKeyAfter) { return; }
 
-	const entity = Entity.get(entityKeyBefore);
+	const entity = content.getEntity(entityKeyBefore);
 	const {contiguous = true} = entity.getData();
 
 	//If the entity isn't mutable or it is contiguous there is nothing to do

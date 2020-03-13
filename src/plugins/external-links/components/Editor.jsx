@@ -61,7 +61,7 @@ export default class ExternalLinkEditor extends React.Component {
 
 	getStateFor (props = this.props) {
 		const {entityKey, decoratedText, offsetKey, getEditorState} = props;
-		const entity = Entity.get(entityKey);
+		const entity = getEditorState().getCurrentContent().getEntity(entityKey);
 		const {data} = entity;
 
 		return {

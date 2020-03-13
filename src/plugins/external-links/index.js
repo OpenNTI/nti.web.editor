@@ -1,7 +1,9 @@
 import React from 'react';
-import {RichUtils} from 'draft-js';
+import {EditorState, Modifier} from 'draft-js';
 import {wait} from '@nti/lib-commons';
 
+import {CHANGE_TYPES} from '../../Constants';
+import {createLinkEntity} from '../../utils';
 import {HANDLED, NOT_HANDLED} from '../Constants';
 import {createStore} from '../Store';
 
@@ -11,7 +13,6 @@ import {SelectedEntityKey, EditingEntityKey} from './Constants';
 import strategy from './strategy';
 import {
 	getSelectedEntityKey,
-	createEntity,
 	getFirstSelectedEntityHref,
 	isValidSelectionForLink,
 	fixStateForAllowed,
@@ -65,7 +66,7 @@ export default {
 			},
 
 
-			handleKeyCommand (command, editorState, {setEditorState}) {
+			handleKeyCommand (command, editorState, eventTime, {setEditorState}) {
 				if (command !== 'backspace' || !backspaceAction) { return NOT_HANDLED; }
 
 				const newEditorState = backspaceAction(editorState);
@@ -81,7 +82,7 @@ export default {
 			},
 
 
-			handleBeforeInput (chars, editorState, {setEditorState}) {
+			handleBeforeInput (chars, editorState, eventTime, {setEditorState}) {
 				if (!autoLink) {
 					backspaceAction = null;
 					return NOT_HANDLED;
@@ -161,11 +162,17 @@ export default {
 						if (selectedEntity) {
 							store.setItem(EditingEntityKey, selectedEntity);
 						} else {
-							const entity = createEntity(link || getFirstSelectedEntityHref(editorState));
+							const href = link || getFirstSelectedEntityHref(editorState);
+
+							const content = editorState.getCurrentContent();
+							const entity = createLinkEntity(content, href, true, {}).getLastCreatedEntityKey();
 
 							createdEntity = entity;
 
-							setEditorState(RichUtils.toggleLink(editorState, editorState.getSelection(), entity));
+							const newContent = Modifier.applyEntity(content, editorState.getSelection(), entity);
+							const newEditorState = EditorState.push(editorState, newContent, CHANGE_TYPES.APPLY_ENTITY);
+
+							setEditorState(newEditorState);
 						}
 					}
 				};

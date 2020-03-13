@@ -16,7 +16,7 @@ export default {
 		let commandOverride = null;
 
 		return {
-			handleKeyCommand: (command, editorState, editorCmp) => {
+			handleKeyCommand: (command, editorState, eventTime, editorCmp) => {
 				const {[command]: override} = (commandOverride || {});
 
 				commandOverride = null;

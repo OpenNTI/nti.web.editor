@@ -1,13 +1,11 @@
-import {Entity} from 'draft-js';
-
 import {ENTITIES} from '../../Constants';
 
-export default function (contentBlock, callback) {
+export default function (contentBlock, callback, contentState) {
 	contentBlock.findEntityRanges(
 		(character) => {
 			const entityKey = character.getEntity();
 
-			return entityKey !== null && Entity.get(entityKey).getType() === ENTITIES.LINK;
+			return entityKey !== null && contentState.getEntity(entityKey).getType() === ENTITIES.LINK;
 		},
 		callback
 	);
