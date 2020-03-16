@@ -79,14 +79,13 @@ export default class ContextProvider extends React.Component {
 	}
 
 
-	componentWillReceiveProps (nextProps) {
-		if (nextProps.editor !== this.props.editor) {
+	componentDidUpdate (prevProps) {
+		if (prevProps.editor !== this.props.editor) {
 			this.unregister();
-			this.register(nextProps);
+			this.register(this.props);
 		}
-
-		this.updateExternalLinks();
 	}
+
 	
 	componentWillUnmount () {
 		this.externalLinks = [];

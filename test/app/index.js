@@ -19,7 +19,8 @@ import {
 	Parsers,
 	BLOCKS,
 	BLOCK_SET,
-	STYLE_SET
+	STYLE_SET,
+	ENTITIES
 } from '../../src';
 // import RSTTest from '../../src/RST/test';
 
@@ -39,6 +40,7 @@ const plugins = [
 	Plugins.LimitBlockTypes.create({allow: BLOCK_SET}),
 	Plugins.ExternalLinks.create({allowedInBlockTypes: new Set([BLOCKS.UNSTYLED, BLOCKS.BLOCKQUOTE])}),
 	Plugins.ContiguousEntities.create(),
+	Plugins.Tagging.create({trigger: '@', type: Plugins.Tagging.Mention})
 	// Plugins.Plaintext.create(),
 	// Plugins.Messages.create(),
 	// Plugins.Counter.create({character: {limit: 10}}),

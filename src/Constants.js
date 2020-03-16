@@ -24,7 +24,9 @@ export const STYLES = {
 
 export const ENTITIES = {
 	LINK: 'LINK',
-	IMAGE: 'IMAGE'
+	IMAGE: 'IMAGE',
+	TAG: 'TAG',
+	MENTION: 'MENTION'
 };
 
 export const MUTABILITY = {
