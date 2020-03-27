@@ -116,6 +116,7 @@ export default class ExternalLinkOverlay extends React.Component {
 				arrow
 				alignToArrow
 				constrain
+				focusOnOpen={false}
 
 				reservedMargin={{bottom: 75}}
 
