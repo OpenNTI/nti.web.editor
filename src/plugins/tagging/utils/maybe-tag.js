@@ -1,33 +1,46 @@
-function getCharInfoAt (content, blockKey, index) {
-	if (index < 0) { return null; }
+import {EditorState, Modifier, SelectionState} from 'draft-js';
 
-	const block = content.getBlockForKey(blockKey);
+import {CHANGE_TYPES, MUTABILITY} from '../../../Constants';
 
-	const meta = block?.getCharacterList()?.get(index)?.toJS();
+import {findNewTagBeforeSelection} from './find-tags';
 
-	if (!meta) { return null; }
-
-	return {
-		...meta,
-		char: block?.getText()?.charAt(index)
-	};
+function createTagEntity (content, strat) {
+	return content.createEntity(strat.type, MUTABILITY.MUTABLE, {...strat}).getLastCreatedEntityKey();
 }
 
-function getCharInfoBefore (content, selection) {
-	const blockKey = selection.getStartKey();
-	const offset = selection.getStartOffset();
-
-
-	return getCharInfoAt(content, blockKey, offset - 1);
+export function onChange (strategies, editorState) {
+	//TODO: fill this in
+	return editorState;
 }
 
-export function beforeInput (strat, chars, editorState) {
+export function beforeInput (strategies, chars, editorState) {
 	const content = editorState.getCurrentContent();
 	const selection = editorState.getSelection();
 
-	const prevChar = getCharInfoBefore(content, selection);
+	const nextEditorState = EditorState.push(
+		editorState,
+		Modifier.insertText(content, selection, chars, editorState.getCurrentInlineStyle(), null),
+		CHANGE_TYPES.INSERT_CHARACTERS
+	);
 
-	//check if we are in a tag, or if a new tag can be started
+	const newTag = findNewTagBeforeSelection(strategies, nextEditorState);
+	
+	if (!newTag) { return null; }
+
+	let newContent = Modifier.insertText(content, selection, chars, null, null);
+	newContent = Modifier.applyEntity(newContent, newTag.selection, createTagEntity(newContent, newTag.strategy));
+
+	const newEditorState = EditorState.push(editorState, newContent, CHANGE_TYPES.APPLY_ENTITY);
+
+	return EditorState.forceSelection(
+		newEditorState,
+		new SelectionState({
+			focusKey: selection.getFocusKey(),
+			focusOffset: selection.getFocusOffset() + chars.length,
+			anchorKey: selection.getAnchorKey(),
+			anchorOffset: selection.getAnchorOffset() + chars.length
+		})
+	);
 }
 
 export function afterInput () {

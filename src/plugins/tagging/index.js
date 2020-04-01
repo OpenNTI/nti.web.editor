@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ENTITIES} from '../../Constants';
+import {ENTITIES, BLOCK_SET} from '../../Constants';
 import {HANDLED, NOT_HANDLED} from '../Constants';
 import {createStore} from '../Store';
 
@@ -29,25 +29,58 @@ export const create = (strategies) => {
 	for (let strat of strategies) {
 		if (!strat.trigger) { throw new Error('Tagging Strategies must be given a trigger'); }
 		if (!strat.type) { throw new Error('Tagging Strategies must be given a type'); }
+
+		if (!strat.allowedInBlockTypes) {
+			strat.allowedInBlockTypes = BLOCK_SET;
+		}
+
+		strat.contiguous = strat.contiguous ?? true;
 	}
 
 	const store = createStore({});
+	let handled = false;
+	let lastEditorState = null;
 
 	return {
+		onChange (editorState) {
+			const oldEditorState = lastEditorState;
+			lastEditorState = editorState;
+
+			//If we already handled the change
+			if (handled) {
+				handled = false;
+				return editorState;
+			}
+
+			//If the content hasn't changed from the last change
+			if (oldEditorState && editorState.getCurrentContent() === oldEditorState.getCurrentContent()) {
+				return editorState;
+			}
+
+
+			const updatedEditorState = MaybeTag.onChange(strategies, editorState);
+
+			return updatedEditorState || editorState;
+		},
+
+
 		handleBeforeInput (chars, editorState, time, {setEditorState}) {
-			let newEditorState = editorState;
+			const newEditorState = MaybeTag.beforeInput(strategies, chars, editorState);
 
-			for (let strat of strategies) {
-				const {editorState: updatedState} = MaybeTag.beforeInput(strat, chars, editorState) || {};
+			handled = true;
 
-				updatedState
+			if (newEditorState) {
+				console.log('NEW TAG!: ', newEditorState.getCurrentContent().toJS());
+				setEditorState(newEditorState);
+				return HANDLED;
 			}
 
 			return NOT_HANDLED;
 		},
 
+
 		handleReturn () {
-			debugger;
+			console.log('TAGGING RETURN');
 		},
 
 		decorators: strategies.map((s) => ({
@@ -55,9 +88,9 @@ export const create = (strategies) => {
 			component: function TagWrapper (props) {
 				debugger;
 				return (
-					<div>
-						Tag
-					</div>
+					<span style={{color: 'blue'}}>
+						{props.children}
+					</span>
 				);
 			}
 		}))

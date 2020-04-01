@@ -4,6 +4,10 @@ export default function createDecoratorStrategy (tagStrat) {
 			(character) => {
 				const entityKey = character.getEntity();
 
+				if (entityKey) {
+					debugger;
+				}
+
 				return entityKey !== null && contentState?.getEntity(entityKey)?.getType() === tagStrat.type;
 			},
 			callback
