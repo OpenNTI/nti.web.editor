@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Events} from '@nti/lib-commons';
 import {Errors} from '@nti/web-commons';
+import '@nti/style-common/variables.css';
 
 import {
 	Editor,
@@ -34,13 +35,30 @@ const error = errorFactory.make({NTIID: 'Fake ID', label: 'Fake Field'}, {Code: 
 const {ErrorMessage, WarningMessage} = Plugins.Messages.components;
 const {CharacterCounter} = Plugins.Counter.components;
 
+function SuggestedUsers ({search}) {
+	return (
+		<div>
+			{search}
+		</div>
+	);
+}
+
 const plugins = [
 	// Plugins.EnsureFocusableBlock.create(),
 	Plugins.LimitStyles.create({allow: STYLE_SET}),
 	Plugins.LimitBlockTypes.create({allow: BLOCK_SET}),
 	Plugins.ExternalLinks.create({allowedInBlockTypes: new Set([BLOCKS.UNSTYLED, BLOCKS.BLOCKQUOTE])}),
 	Plugins.ContiguousEntities.create(),
-	Plugins.Tagging.create({trigger: '@', type: Plugins.Tagging.Mention})
+	Plugins.Tagging.create([
+		Plugins.Tagging.BuildStrategy({trigger: '#', type: Plugins.Tagging.HashTag}),
+		Plugins.Tagging.BuildStrategy({
+			trigger: '@',
+			type: Plugins.Tagging.Mention,
+			SuggestionsCmp: SuggestedUsers,
+			suggestedOnly: true,
+			allowWhiteSpace: true
+		})
+	])
 	// Plugins.Plaintext.create(),
 	// Plugins.Messages.create(),
 	// Plugins.Counter.create({character: {limit: 10}}),

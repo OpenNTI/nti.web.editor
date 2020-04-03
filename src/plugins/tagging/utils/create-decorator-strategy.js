@@ -3,12 +3,9 @@ export default function createDecoratorStrategy (tagStrat) {
 		contentBlock.findEntityRanges(
 			(character) => {
 				const entityKey = character.getEntity();
+				const entity = entityKey && contentState?.getEntity(entityKey);
 
-				if (entityKey) {
-					debugger;
-				}
-
-				return entityKey !== null && contentState?.getEntity(entityKey)?.getType() === tagStrat.type;
+				return entity !== null && tagStrat.coversEntity(entity);
 			},
 			callback
 		);

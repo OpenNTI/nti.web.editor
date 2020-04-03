@@ -1,7 +1,5 @@
 import {SelectionState} from 'draft-js';
 
-const IsNonWhiteSpace = /\S/;
-
 function getCharInfoAt (content, blockKey, index) {
 	if (index < 0) { return null; }
 
@@ -18,11 +16,11 @@ function getCharInfoAt (content, blockKey, index) {
 }
 
 function isValidNewTagMember (charInfo, strat) {
-	return IsNonWhiteSpace.test(charInfo.char);
+	return strat.isValidMember(charInfo.char);
 }
 
 function isValidNewTagStart (charInfo, strat) {
-	return !charInfo.entity && charInfo.char === strat.trigger;
+	return !charInfo.entity && strat.isValidStart(charInfo.char);
 }
 
 export function findNewTagBeforeSelection (strategies, editorState) {
@@ -45,11 +43,9 @@ export function findNewTagBeforeSelection (strategies, editorState) {
 	//While we have strategies still possible and characters to look at
 	while (validStrategies.size > 0 && charInfo) {
 		for (let strat of validStrategies) {
-			const length = start - pointer;
-
 			//If its the valid start of a strategy and there was more text than
 			//just the trigger we found a valid tag!
-			if (isValidNewTagStart(charInfo, strat) && length > 1) {
+			if (isValidNewTagStart(charInfo, strat)) {
 				return {
 					selection: new SelectionState({
 						anchorKey: blockKey,
@@ -67,9 +63,10 @@ export function findNewTagBeforeSelection (strategies, editorState) {
 				validStrategies.delete(strat);
 			}
 
-			pointer -= 1;
-			charInfo = getCharInfoAt(content, blockKey, pointer);
 		}
+
+		pointer -= 1;
+		charInfo = getCharInfoAt(content, blockKey, pointer);
 	}
 
 	return null;
@@ -77,4 +74,28 @@ export function findNewTagBeforeSelection (strategies, editorState) {
 
 export function findAllNewTags (strategies, editorState) {
 
+}
+
+export function findExistingTagBeforeSelection (strategies, editorState) {
+	const content = editorState.getCurrentContent();
+	const selection = editorState.getSelection();
+
+	const blockKey = selection.getStartKey();
+	const offset = selection.getStartOffset();
+
+	const charInfo = getCharInfoAt(content, blockKey, offset - 1);
+
+	const entity = charInfo?.entity ? content.getEntity(charInfo.entity) : null;
+
+	for (let strat of strategies) {
+		if (strat.coversEntity(entity)) {
+			return {
+				entity: charInfo.entity,
+				selection,
+				strategy: strat
+			};
+		}
+	}
+
+	return null;
 }
