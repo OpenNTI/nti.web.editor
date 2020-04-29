@@ -2,8 +2,9 @@
 // import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import {Events} from '@nti/lib-commons';
-import {Errors} from '@nti/web-commons';
+import {Errors, List} from '@nti/web-commons';
 import '@nti/style-common/variables.css';
 
 import {
@@ -25,6 +26,8 @@ import {
 } from '../../src';
 // import RSTTest from '../../src/RST/test';
 
+console.log('Two React Versions: ', window.React1 !== React);
+
 const {getKeyCode} = Events;
 
 const {Field:{Factory:ErrorFactory}} = Errors;
@@ -35,11 +38,52 @@ const error = errorFactory.make({NTIID: 'Fake ID', label: 'Fake Field'}, {Code: 
 const {ErrorMessage, WarningMessage} = Plugins.Messages.components;
 const {CharacterCounter} = Plugins.Counter.components;
 
-function SuggestedUsers ({search}) {
+const Users = [
+	'Rosenda Ocon',
+	'Vertie Rowell',
+	'Denise Cogswell',
+	'Orpha Sweat',
+	'Tijuana Yin',
+	'Diego Mota',
+	'Lenita Crosley',
+	'Julietta Carrier',
+	'Odell Rego',
+	'Junita Aikin',
+	'Luana Vince',
+	'Kiara Darrington',
+	'Amal Brodnax',
+	'Sherill Kolstad',
+	'Allyn Dansereau',
+	'Riva Adamek',
+	'Ingeborg Paules',
+	'Corrie Whiteley',
+	'Davis Bainter',
+	'Byron Kukla'
+];
+
+const userSearch = (search) => {
+	if (!search) { return [...Users]; }
+
+	const term = search.toLowerCase();
+
+	return Users.filter(u => u.toLowerCase().indexOf(term) === 0);
+};	
+
+SuggestedUsers.propTypes = {
+	search: PropTypes.string,
+	applySuggestion: PropTypes.func
+};
+function SuggestedUsers ({search, applySuggestion}) {
+	const users = userSearch((search || '').replace('@', ''));
+
+	const onSelectedChange = (value) => applySuggestion(value);
+
 	return (
-		<div>
-			{search}
-		</div>
+		<List.Selectable controlledBy={global} onSelectedChange={onSelectedChange}>
+			{users.map((u) => (
+				<List.Selectable.Item key={u} value={u}><span>{u}</span></List.Selectable.Item>
+			))}
+		</List.Selectable>
 	);
 }
 
