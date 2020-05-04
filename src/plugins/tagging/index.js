@@ -99,6 +99,23 @@ export const create = (strategies) => {
 		},
 
 
+		handleKeyCommand (command, editorState, eventTime, {setEditorState}) {
+			let newEditorState = null;
+
+			if (command === 'backspace') {
+				handled = true;
+				newEditorState = MaybeTag.onBackspace(strategies, editorState);
+			}
+
+			if (newEditorState) {
+				setEditorState(newEditorState);
+				return HANDLED;
+			}
+
+			return NOT_HANDLED;
+		},
+
+
 		handleBeforeInput (chars, editorState, time, {setEditorState}) {
 			const newEditorState = MaybeTag.beforeInput(strategies, chars, editorState);
 

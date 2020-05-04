@@ -15,10 +15,11 @@ ClosedSuggestionTag.propTypes = {
 	blockKey: PropTypes.string,
 	offsetKey: PropTypes.string,
 	subscribeToSelection: PropTypes.func,
-	getEditorState: PropTypes.func
+	getEditorState: PropTypes.func,
+	setEditorState: PropTypes.func
 };
 export default function ClosedSuggestionTag (props) {
-	const {strategy, entityKey, blockKey, offsetKey, subscribeToSelection, getEditorState} = props;
+	const {strategy, entityKey, blockKey, offsetKey, subscribeToSelection, getEditorState, setEditorState} = props;
 
 	const [selection, setSelection] = React.useState(null);
 
@@ -27,7 +28,9 @@ export default function ClosedSuggestionTag (props) {
 	}, []);
 
 	const editorState = getEditorState();
-	const suggestion = Suggestions.getSuggestion(strategy, entityKey, blockKey, offsetKey, editorState, selection);
+	const suggestionArgs = [strategy, entityKey, blockKey, offsetKey, editorState, selection];
+
+	const suggestion = Suggestions.getSuggestion(...suggestionArgs);
 
 	if (suggestion) {
 		return (
@@ -39,10 +42,8 @@ export default function ClosedSuggestionTag (props) {
 
 	const {SuggestionsCmp} = strategy;
 
-	const search = Suggestions.getSuggestionSearch(strategy, entityKey, blockKey, offsetKey, editorState, selection);
-	const applySuggestion = (newSuggestion) => {
-		debugger;
-	};
+	const search = Suggestions.getSuggestionSearch(...suggestionArgs);
+	const applySuggestion = newSuggestion => setEditorState(Suggestions.setSuggestion(newSuggestion, ...suggestionArgs));
 
 	return (
 		<Flyout.Triggered

@@ -8,6 +8,10 @@ function buildIsValidMember ({allowWhiteSpace = false}) {
 	return (chars) => IsNonWhiteSpace.test(chars);
 }
 
+function getDefaultMutability ({suggestionsOnly}) {
+	return suggestionsOnly ? MUTABILITY.IMMUTABLE : MUTABILITY.MUTABLE;
+}
+
 //NOTE: Facebook tagging gets the search term
 //from the @ character to wherever the cursor is
 
@@ -25,22 +29,24 @@ export default class TaggingStrategy {
 
 	#isValidMember = null;
 
-	constructor ({
-		trigger,
-		type,
-		mutability = MUTABILITY.MUTABLE,
-		allowedInBlockTypes = BLOCK_SET,
-		DisplayCmp,
-		SuggestionsCmp,
-		suggestedOnly,
-		...config
-	}) {
+	constructor (configArg) {
+		const {
+			trigger,
+			type,
+			mutability = MUTABILITY.MUTABLE,
+			allowedInBlockTypes = BLOCK_SET,
+			DisplayCmp,
+			SuggestionsCmp,
+			suggestedOnly,
+			...config
+		} = configArg;
+
 		if (!trigger) { throw new Error('Tagging Strategies must be given a trigger.'); }
 		if (!type) { throw new Error('Tagging Strategies must be given a type.'); }
 
 		this.#trigger = trigger;
 		this.#type = type;
-		this.#mutability = mutability;
+		this.#mutability = mutability || getDefaultMutability(configArg);
 		this.#allowedInBlockTypes = allowedInBlockTypes;
 
 		this.#DisplayCmp = DisplayCmp;

@@ -62,3 +62,7 @@ export function beforeInput (strategies, chars, editorState) {
 export function afterInput () {
 	debugger;
 }
+
+export function onBackspace () {
+	debugger;
+}

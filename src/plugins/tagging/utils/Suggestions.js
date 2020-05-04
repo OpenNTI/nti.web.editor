@@ -1,3 +1,14 @@
+import {EditorState} from 'draft-js';
+
+import {CHANGE_TYPES} from '../../../Constants';
+
+export function setSuggestion (suggestion, strategy, entityKey, blockKey, offsetKey, editorState) {
+	const content = editorState.getCurrentContent();
+	const newContent = content.mergeEntityData(entityKey, {suggestion});
+
+	return EditorState.push(editorState, newContent, CHANGE_TYPES.CHANGE_BLOCK_DATA);
+}
+
 export function getSuggestion (strategy, entityKey, blockKey, offsetKey, editorState) {
 	const content = editorState.getCurrentContent();
 
