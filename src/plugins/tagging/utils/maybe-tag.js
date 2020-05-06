@@ -41,7 +41,7 @@ export function beforeInput (strategies, chars, editorState) {
 
 	const newTag = findNewTagBeforeSelection(strategies, nextEditorState);
 	
-	if (!newTag) { return nextEditorState; }
+	if (!newTag) { return null; }
 
 	let newContent = Modifier.insertText(content, selection, chars, null, null);
 	newContent = Modifier.applyEntity(newContent, newTag.selection, createTagEntity(newContent, newTag.strategy));

@@ -99,3 +99,24 @@ export function findExistingTagBeforeSelection (strategies, editorState) {
 
 	return null;
 }
+
+export function getSelectionForTag (entityKey, editorState, blockKey) {
+	const content = editorState.getCurrentContent();
+
+	const block = content.getBlockForKey(blockKey);//if not given a block key find the block that has the entity
+
+	let start = null;
+	let end = null;
+
+	block.findEntityRanges(
+		(char) => char.getEntity() === entityKey,
+		(s, e) => (start = s, end = e)
+	);
+
+	return new SelectionState({
+		anchorKey: block.getKey(),
+		focusKey: block.getKey(),
+		anchorOffset: start,
+		focusOffset: end
+	});
+}

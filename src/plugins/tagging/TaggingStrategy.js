@@ -8,8 +8,8 @@ function buildIsValidMember ({allowWhiteSpace = false}) {
 	return (chars) => IsNonWhiteSpace.test(chars);
 }
 
-function getDefaultMutability ({suggestionsOnly}) {
-	return suggestionsOnly ? MUTABILITY.IMMUTABLE : MUTABILITY.MUTABLE;
+function getDefaultMutability ({suggestedOnly}) {
+	return suggestedOnly ? MUTABILITY.IMMUTABLE : MUTABILITY.MUTABLE;
 }
 
 //NOTE: Facebook tagging gets the search term
@@ -23,6 +23,7 @@ export default class TaggingStrategy {
 	#allowedInBlockTypes = null;
 
 	#DisplayCmp = null;
+	#getDisplayText = null;
 
 	#SuggestionsCmp = null;
 	#suggestedOnly = true;
@@ -33,9 +34,10 @@ export default class TaggingStrategy {
 		const {
 			trigger,
 			type,
-			mutability = MUTABILITY.MUTABLE,
+			mutability,
 			allowedInBlockTypes = BLOCK_SET,
 			DisplayCmp,
+			getDisplayText,
 			SuggestionsCmp,
 			suggestedOnly,
 			...config
@@ -50,6 +52,7 @@ export default class TaggingStrategy {
 		this.#allowedInBlockTypes = allowedInBlockTypes;
 
 		this.#DisplayCmp = DisplayCmp;
+		this.#getDisplayText = getDisplayText;
 
 		this.#SuggestionsCmp = SuggestionsCmp;
 		this.#suggestedOnly = suggestedOnly;
@@ -65,6 +68,9 @@ export default class TaggingStrategy {
 	get allowedInBlockTypes () { return this.#allowedInBlockTypes; }
 
 	get DisplayCmp () { return this.#DisplayCmp; }
+	getDisplayText (suggestion) {
+		return this.#getDisplayText?.(suggestion) ?? suggestion;
+	}
 
 	get hasSuggestions () { return Boolean(this.#SuggestionsCmp); }
 	get SuggestionsCmp () { return this.#SuggestionsCmp; }
