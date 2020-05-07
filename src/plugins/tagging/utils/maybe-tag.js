@@ -16,13 +16,14 @@ export function onChange (strategies, editorState) {
 export function beforeInput (strategies, chars, editorState) {
 	const content = editorState.getCurrentContent();
 	const selection = editorState.getSelection();
+	const modify = selection.isCollapsed() ? Modifier.insertText : Modifier.replaceText;
 
 	const existingTag = findExistingTagBeforeSelection(strategies, editorState);
 
 	if (existingTag) {
 		return EditorState.push(
 			editorState,
-			Modifier.insertText(
+			modify(
 				content,
 				selection,
 				chars,
@@ -35,7 +36,7 @@ export function beforeInput (strategies, chars, editorState) {
 
 	const nextEditorState = EditorState.push(
 		editorState,
-		Modifier.insertText(content, selection, chars, editorState.getCurrentInlineStyle(), null),
+		modify(content, selection, chars, editorState.getCurrentInlineStyle(), null),
 		CHANGE_TYPES.INSERT_CHARACTERS
 	);
 
@@ -43,7 +44,7 @@ export function beforeInput (strategies, chars, editorState) {
 	
 	if (!newTag) { return null; }
 
-	let newContent = Modifier.insertText(content, selection, chars, null, null);
+	let newContent = modify(content, selection, chars, null, null);
 	newContent = Modifier.applyEntity(newContent, newTag.selection, createTagEntity(newContent, newTag.strategy));
 
 	const newEditorState = EditorState.push(editorState, newContent, CHANGE_TYPES.APPLY_ENTITY);
@@ -60,9 +61,5 @@ export function beforeInput (strategies, chars, editorState) {
 }
 
 export function afterInput () {
-	debugger;
-}
-
-export function onBackspace () {
-	debugger;
+	// debugger;
 }

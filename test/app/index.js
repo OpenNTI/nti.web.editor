@@ -79,7 +79,7 @@ function SuggestedUsers ({search, applySuggestion}) {
 	const onSelectedChange = (value) => applySuggestion(value);
 
 	return (
-		<List.Selectable controlledBy={global} onSelectedChange={onSelectedChange}>
+		<List.Selectable controlledBy={global} onSelectedChange={onSelectedChange} autoFocus>
 			{users.map((u) => (
 				<List.Selectable.Item key={u} value={u}><span>{u}</span></List.Selectable.Item>
 			))}
