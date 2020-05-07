@@ -5,7 +5,6 @@ import {CHANGE_TYPES} from '../../../Constants';
 import {getSelectionForTag} from './find-tags';
 
 export function setSuggestion (suggestion, appliedSearch = '', strategy, entityKey, blockKey, offsetKey, editorState) {
-	debugger;
 	const content = editorState.getCurrentContent();
 	const selection = getSelectionForTag(entityKey, editorState, blockKey);
 
@@ -26,7 +25,15 @@ export function setSuggestion (suggestion, appliedSearch = '', strategy, entityK
 		entityKey
 	);
 
-	return EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_CHARACTERS);
+	return EditorState.forceSelection(
+		EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_CHARACTERS),
+		new SelectionState({
+			anchorKey: selection.getAnchorKey(),
+			focusKey: selection.getFocusKey(),
+			anchorOffset: selection.getAnchorOffset() + displayText.length,
+			focusOffset: selection.getAnchorOffset() + displayText.length
+		})
+	);
 }
 
 export function getSuggestion (strategy, entityKey, blockKey, offsetKey, editorState) {
