@@ -38,6 +38,7 @@
     "@nti/util-logger": "^1.1.2",
     "@nti/web-commons": "0.x.x",
     "classnames": "^2.2.5",
+    "draft-convert": "^2.1.10",
     "draft-js": "^0.11.0",
     "draft-js-plugins-editor": "^3.0.0",
     "fbjs": "^0.8.14",

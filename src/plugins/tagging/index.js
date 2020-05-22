@@ -1,6 +1,4 @@
 import React from 'react';
-import {wait} from '@nti/lib-commons';
-
 
 import {ENTITIES} from '../../Constants';
 import {HANDLED, NOT_HANDLED} from '../Constants';
@@ -112,10 +110,6 @@ export const create = (strategies) => {
 			return NOT_HANDLED;
 		},
 
-
-		handleReturn () {
-			console.log('TAGGING RETURN');
-		},
 
 		decorators: strategies.map((s) => ({
 			strategy: createDecoratorStrategy(s),

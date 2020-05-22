@@ -1,8 +1,22 @@
+// import {EditorState} from 'draft-js';
+// import {convertFromHTML} from 'draft-convert';
+
+// import {getEmptyState} from '../utils';
+
+// export default function toDraftState (html) {
+// 	if (!html || (Array.isArray(html) && html.length === 0)) { return getEmptyState(); }
+
+// 	const converted = convertFromHTML(html);
+
+// 	console.log(converted.getBlocksAsArray().map(x => x.toJS()));
+
+// 	return EditorState.createWithContent(converted);
+// }
+
 import {
 	convertFromHTML,
-	DefaultDraftBlockRenderMap,
-	ContentState,
 	EditorState,
+	DefaultDraftBlockRenderMap,
 	ContentBlock,
 	CharacterMetadata,
 	genKey
@@ -10,7 +24,9 @@ import {
 import {List, Repeat} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
 
 import {BLOCKS} from '../../Constants';
+import {getEmptyState, getStateForBlocks, appendAtomicBlock} from '../utils';
 
+const NTI_CODE = 'nti-code';
 const NTI_PARAGRAPH = 'nti-paragraph';
 const BLANK_P_PLACEHOLDER = '_nti-blank-paragraph_1515431074979';
 
@@ -35,20 +51,8 @@ function makeParagraphFrom (b) {
 	});
 }
 
-export default function toDraftState (html) {
-	if (!html || html.length === 0) { return EditorState.createEmpty(); }
-
-	if (Array.isArray(html) && html.every(x => typeof x === 'string')) {
-		html = html.join('\n');
-	}
-
-	if (html instanceof EditorState) {
-		return html;
-	}
-
-	if (typeof html !== 'string') {
-		throw new TypeError('Invalid Argument, toDraftState() does not support mixed/model-body input.');
-	}
+function getBlocksForHTML (html) {
+	if (!html || html.length === 0) { return ; }
 
 	// a bit ugly but draft will drop the empty <p> tag, which can leave two separate code blocks
 	// adjacent to each other, which then merges them as one.  to get around that, inject a placeholder
@@ -59,7 +63,7 @@ export default function toDraftState (html) {
 		.contentBlocks
 		.map(b => {
 			// strip placeholder text
-			if(b.text === BLANK_P_PLACEHOLDER) {
+			if (b.text === BLANK_P_PLACEHOLDER) {
 				return new ContentBlock({
 					type: BLOCKS.UNSTYLED,
 					key: b.key,
@@ -70,12 +74,17 @@ export default function toDraftState (html) {
 				});
 			}
 
-			if(b.type === NTI_PARAGRAPH) {
+			if (b.type === NTI_PARAGRAPH) {
 				return makeParagraphFrom(b);
 			}
 
-			if(b.type === BLOCKS.CODE) {
+			if (b.type === NTI_CODE) {
+				console.log('NTI CODE: ', b.text);
+			}
+
+			if (b.type === BLOCKS.CODE || b.type === NTI_CODE) {
 				const lines = b.text && b.text.split('\n');
+				console.log('CODE BLOCKS: ', lines, b.type);
 
 				return (lines || []).map(line => {
 					const characters = CharacterMetadata.create();
@@ -93,9 +102,42 @@ export default function toDraftState (html) {
 			return b;
 		});
 
-	const flattened = [].concat.apply([], blocks);
+	return blocks.flat();
+}
 
-	const content = ContentState.createFromBlockArray(flattened);
+export default function toDraftState (html) {
+	if (!html || html.length === 0) { return getEmptyState(); }
+	if (html instanceof EditorState) { return html; }
 
-	return EditorState.createWithContent(content);
+	if (!Array.isArray(html)) { html = [html]; }
+
+	let editorState = null;
+	let lastBlockWasAtomic = false;
+
+	console.log('INITIAL HTML: ', html);
+	for (let part of html) {
+		if (typeof part === 'string') {
+			const existingBlocks = editorState ? editorState.getCurrentContent().getBlocksAsArray() : [];
+			const blocks = getBlocksForHTML(part);
+			console.log('BLOCKS: ', blocks);
+			// Inserting atomic blocks also inserts a blank text block after it...
+			// if we encounter that block, drop it because we have text here (and we
+			// don't want to add additional lines when we don't have to)
+			const lastBlock = existingBlocks[existingBlocks.length - 1];
+			if (lastBlockWasAtomic && lastBlock?.getText() === '' && lastBlock?.type === BLOCKS.UNSTYLED) {
+				existingBlocks.pop();
+			}
+
+			lastBlockWasAtomic = false;
+			editorState = getStateForBlocks([
+				...existingBlocks,
+				...blocks
+			]);
+		} else {
+			lastBlockWasAtomic = true;
+			editorState = appendAtomicBlock(editorState || getEmptyState(), part);
+		}
+	}
+
+	return editorState;
 }
