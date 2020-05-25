@@ -63,9 +63,7 @@ function convertCharlist (charList) {
 
 export default function nodeToBlock (node) {
 	const blockType = getBlockTypeForNode(node);
-	const {text, charList} = parseText(node)
-
-	if (text === '\uFEFF')
+	const {text, charList} = parseText(node);
 
 	return new ContentBlock({
 		type: blockType,

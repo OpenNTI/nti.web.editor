@@ -122,7 +122,7 @@ describe('HTML to DraftState', () => {
 		const content = editorState.getCurrentContent();
 		const blocks = content.getBlocksAsArray();
 
-		expect(blocks.length).toEqual(4);
+		expect(blocks.length).toEqual(3);
 
 		expect(blocks[0].getText()).toEqual('Block 1');
 		expect(blocks[1].getText()).toEqual('Block 2');
