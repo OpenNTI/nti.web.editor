@@ -1,5 +1,4 @@
-import {genKey, ContentBlock, CharacterMetadata} from 'draft-js';
-import {List} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
+import {genKey} from 'draft-js';
 
 import {getBlockTypeForNode} from './BlockTypes';
 import {getStyleForNode} from './StyleTypes';
@@ -14,7 +13,7 @@ const getEntityKey = () => {
 const repeat = (value, times) => Array(times).fill(value);
 const createCharInfo = (styles = [], entity) => ({styles, entity});
 
-function parseText (node, styles = []) {
+function parseText (node, styles = [], entity, entityMap) {
 	const tagName = getTagName(node);
 
 	if (tagName === '#text') {
@@ -45,31 +44,61 @@ function parseText (node, styles = []) {
 	return {text, charList};	
 }
 
-function convertCharlist (charList) {
-	return List(
-		charList.map(char => {
-			let meta = CharacterMetadata.create({});
 
-			meta = CharacterMetadata.applyEntity(meta, char.entity);
+function getInlineStyleRanges (charList) {
+	const styleRanges = [];
 
-			for ( let style of char.styles) {
-				meta = CharacterMetadata.applyStyle(meta, style);
+	const getLength = (start, style) => {
+		let length = 0;
+
+		for (let i = start; i < charList.length; i++) {
+			const char = charList[i];
+			const styles = new Set(char.styles || []);
+		
+			if (styles.has(style)) {
+				length += 1;
+			} else {
+				break;
 			}
+		}
 
-			return meta;
-		})
-	);
+		return length;
+	};
+
+	for (let i = 0; i < charList.length; i++) {
+		const char = charList[i];
+		const styles = char.styles || [];
+
+		for (let style of styles) {
+			styleRanges.push({
+				style,
+				offset: i,
+				length: getLength(i, style)
+			});
+		}
+	}
+
+	return styleRanges;
+}
+
+function getEntityRanges (charList) {
+	return [];
 }
 
 export default function nodeToBlock (node) {
+	const entityMap = {};
 	const blockType = getBlockTypeForNode(node);
-	const {text, charList} = parseText(node);
+	const {text, charList} = parseText(node, [], null, entityMap);
 
-	return new ContentBlock({
-		type: blockType,
-		key: genKey(),
-		depth: 0,
-		text: text === '\uFEFF' ? '' : text,
-		characterList: convertCharlist(charList)
-	});
+	return {
+		block: {
+			type: blockType,
+			key: genKey(),
+			text: text === '\uFEFF' ? '' : text,
+			depth: 0,
+			inlineStyleRanges: getInlineStyleRanges(charList),
+			entityRanges: getEntityRanges(charList)
+		},
+		entityMap: {...entityMap}
+	};
 }

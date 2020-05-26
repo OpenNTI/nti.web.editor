@@ -24,8 +24,9 @@ for (let [key, value] of Object.entries(BlocksToTag)) {
 	TagsToBlocks[value] = [...(TagsToBlocks[value] || []),key];
 }
 
+
 const validNodesSelector = 'p, blockquote, pre, h1, h2, h3, h4, h5, h6, li';
-export function getValidNodes (node) {
+export function getValidNodes (node, wrapper) {
 	const nodes = Array.from(node.querySelectorAll(validNodesSelector))
 		.reduce((acc, valid) => {
 			const subValid = getValidNodes(valid);
