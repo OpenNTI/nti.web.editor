@@ -142,4 +142,44 @@ describe('HTML to DraftState', () => {
 		expect(blocks[1].getText()).toEqual('');
 		expect(blocks[2].getText()).toEqual('Second code block');
 	});
+
+	test('link', () => {
+		const html = '<p>Paragraph with a <a href="www.google.com" data-entity-type="link" data-entity-mutability="mutable" data-entity-username="test">link.</a>';
+		const linkStart = 17;
+		const linkEnd = 221;
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(1);
+
+		const block = blocks[0];
+		const text = block.getText();
+		const raw = block.toJS();
+		let entityKey = null;
+
+		expect(text).toEqual('Paragraph with a link.');
+
+		for (let i = 0; i < text.length; i++) {
+			const charInfo = raw.characterList[i];
+
+			if (i >= linkStart && i <= linkEnd) {
+				if (entityKey === null) {
+					expect(charInfo.entity).toBeTruthy();
+					entityKey = charInfo.entity;
+				} else {
+					expect(charInfo.entity).toEqual(entityKey);
+				}
+			} else {
+				expect(charInfo.entity).toBeFalsy();
+			}
+		}
+
+		const entity = content.getEntity(entityKey);
+
+		expect(entity?.getType()).toBe('link');
+		expect(entity?.getMutability()).toBe('mutable');
+		expect(entity?.getData()?.username).toBe('test');
+	});
 });

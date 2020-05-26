@@ -2,6 +2,7 @@ import {genKey} from 'draft-js';
 
 import {getBlockTypeForNode} from './BlockTypes';
 import {getStyleForNode} from './StyleTypes';
+import {getEntityForNode} from './EntityTypes';
 import getTagName from './get-tag-name';
 
 const getEntityKey = () => {
@@ -13,7 +14,7 @@ const getEntityKey = () => {
 const repeat = (value, times) => Array(times).fill(value);
 const createCharInfo = (styles = [], entity) => ({styles, entity});
 
-function parseText (node, styles = [], entity, entityMap) {
+function parseText (node, styles = [], entity, createEntity) {
 	const tagName = getTagName(node);
 
 	if (tagName === '#text') {
@@ -21,11 +22,12 @@ function parseText (node, styles = [], entity, entityMap) {
 
 		return {
 			text,
-			charList: repeat(createCharInfo(styles), text.length)
+			charList: repeat(createCharInfo(styles, entity), text.length)
 		};
 	}
 
 	const style = getStyleForNode(node);
+	const newEntity = createEntity(getEntityForNode(node));
 	const children = Array.from(node.childNodes);
 
 	let text = '';
@@ -34,7 +36,9 @@ function parseText (node, styles = [], entity, entityMap) {
 	for (let child of children) {
 		const parsed = parseText(
 			child,
-			style ? ([...styles, style]) : ([...styles])
+			style ? ([...styles, style]) : ([...styles]),
+			newEntity,
+			createEntity
 		);
 
 		text += parsed.text;
@@ -82,13 +86,43 @@ function getInlineStyleRanges (charList) {
 }
 
 function getEntityRanges (charList) {
-	return [];
+	const entityRanges = [];
+
+	for (let i = 0; i < charList.length; i++) {
+		const char = charList[i];
+		const {entity} = char;
+
+		if (!entity) { continue; }
+
+		const lastEntity = entityRanges[entityRanges.length - 1];
+
+		if (lastEntity?.key === entity) {
+			lastEntity.length += 1;
+		} else {
+			entityRanges.push({
+				offset: i,
+				length: 1,
+				key: entity
+			});
+		}
+	}
+
+	return entityRanges;
 }
 
 export default function nodeToBlock (node) {
 	const entityMap = {};
+	const createEntity = (data) => {
+		if (!data) { return null; }
+
+		const key = getEntityKey();
+
+		entityMap[key] = data;
+		return key;
+	};
+
 	const blockType = getBlockTypeForNode(node);
-	const {text, charList} = parseText(node, [], null, entityMap);
+	const {text, charList} = parseText(node, [], null, createEntity);
 
 	return {
 		block: {
