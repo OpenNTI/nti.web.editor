@@ -1,2 +1,2 @@
-export  * as BlockTypes from './BlockTypes';
+export getNodesFromHTML from './get-nodes-from-html';
 export nodeToBlock from './node-to-block';

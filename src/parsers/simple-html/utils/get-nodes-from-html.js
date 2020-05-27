@@ -1,5 +1,18 @@
 import getTagName from './get-tag-name';
 
+const NewLineRegex = /[\r|\n]/;
+const ConsecutiveWhitespace = /\s+/;
+
+const AllowedInline = new Set([
+	'a',
+	'b',
+	'i',
+	'u',
+	'em',
+	'code',
+	's',
+]);
+
 const BlockElements = new Set([
 	'blockquote',
 	'div',
@@ -16,6 +29,9 @@ const BlockElements = new Set([
 	'ul'
 ]);
 
+const PreserveWhitespace = new Set(['pre']);
+const PreserveNewLines = new Set(['pre']);
+
 const BlockPrecedence = {
 	'pre': 100,
 	'h1': 100,
@@ -27,19 +43,17 @@ const BlockPrecedence = {
 	'ol': 100,
 	'ul': 100,
 	'blockquote': 100,
-	'p': 100,
+	'p': 50,
 	'div': 0,
 };
+
 
 const blockSelector = Array.from(BlockElements).join(', ');
 
 const getNodePrecedence = node => BlockPrecedence[getTagName(node)] ?? -1;
 
-const isEmptyTextNode = node => {
-	if (getTagName(node) !== '#text') { return false; }
-
-	return node.textContent.trim() === '';
-};
+const isTextNode = node => getTagName(node) === '#text';
+const isEmptyTextNode = node => isTextNode(node) && node.textContent.trim() === '';
 
 const isBody = node => getTagName(node) === 'body';
 const isBlock = node => BlockElements.has(getTagName(node));
@@ -60,33 +74,74 @@ function getSafeBody (html) {
 	}
 }
 
+
 class InputCleaner {
 	_cleanBody = null;
-	_stack = [];
+	_blockStack = [];
+	_inlineStack = [];
 
-	pop () {
-		return this._stack.pop();
+	popBlock () {
+		return this._blockStack.pop();
 	}
 
-	push (node) {
-		const current = this._stack[this._stack.length - 1];
+	pushBlock (node) {
+		const current = this._blockStack[this._blockStack.length - 1];
 
 		if (current) { current.closed = true; }
 
-		this._stack.push({node, closed: false});
+		this._blockStack.push({node, closed: false});
 		this.appendChild(node);
 		return node;
 	}
 
-	get current () {
-		const current = this._stack[this._stack.length - 1];
+	get currentBlock () {
+		const current = this._blockStack[this._blockStack.length - 1];
 
 		if (!current) { return null; }
 		if (!current.closed) { return current.node; }
 
-		this.pop();
-		return this.push(this.cloneNode(current.node)).node;
+		this.popBlock();
+		return this.pushBlock(this.cloneNode(current.node)).node;
 	}
+
+	popInline () {
+		this._inlineStack.pop();
+	}
+
+	pushInline (node) {
+		const currentInline = this.currentInline;
+		const currentBlock = this.currentBlock;
+
+		if (!currentBlock) {
+			throw new Error('Cannot push inline without a block on the stack.');
+		}
+
+		this._inlineStack.push(node);
+
+		if (currentInline) { currentInline.appendChild(node); }
+		else { currentBlock.appendChild(node); }
+	}
+
+	get currentInline () {
+		return this._inlineStack[this._inlineStack.length - 1];
+	}
+
+	splitCurrentBlock () {
+		const currentInline = this._inlineStack;
+		const {currentBlock} = this;
+
+		const clone = this.cloneNode(currentBlock, false);
+
+		this.popBlock();
+		this.pushBlock(clone);
+
+		this._inlineStack = [];
+
+		for (let inline of currentInline) {
+			this.pushInline(this.cloneNode(inline, false));
+		}
+	}
+
 
 	get cleanDocument () {
 		return this._cleanBody.ownerDocument;
@@ -119,7 +174,6 @@ class InputCleaner {
 
 
 	cleanHTML (html) {
-		console.log('Parsing HTML: ', html);
 		this._stack = [];
 		this._cleanBody = getSafeBody('');
 
@@ -128,36 +182,90 @@ class InputCleaner {
 		return this._cleanBody;
 	}
 
-	cleanInline (node) {
-		let current = this.current;
+	cleanTextNode (node) {
+		const text = node.textContent;
 
-		if (!current && isEmptyTextNode(node)) { return; }
+		const preserveNewLines = PreserveNewLines.has(getTagName(this.currentBlock));
+		const preserveWhitespace = PreserveWhitespace.has(getTagName(this.currentBlock));
 
-		if (!current) {
-			current = this.appendChild(this.createImplicit());
+		const lines = preserveNewLines ? text.split(NewLineRegex) : [text.replace(new RegExp(NewLineRegex, 'g'), '')];
+
+		for (let i = 0; i < lines.length; i++) {
+			if (i > 0) { this.splitCurrentBlock(); }
+
+			const {currentBlock, currentInline} = this;
+			const current = currentInline || currentBlock;
+
+			if (preserveWhitespace) {
+				current.appendChild(this.cleanDocument.createTextNode(lines[i]));
+			} else {
+				const collapsed = lines[i].replace(ConsecutiveWhitespace, ' ');
+				const startsWithWhitespace = collapsed.startsWith(' ');
+
+				const existingText = currentBlock.textContent || '';
+				const existingEndsWithWhitespace = existingText.endsWith(' ');
+
+				let fixedText = '';
+
+				if (startsWithWhitespace && !existingText) {
+					fixedText = collapsed.trimStart();
+				} else if (startsWithWhitespace && existingEndsWithWhitespace) {
+					fixedText = collapsed.trimStart();
+				} else {
+					fixedText = collapsed;
+				}
+
+				current.appendChild(
+					this.cleanDocument.createTextNode(fixedText)
+				);
+			}
 		}
-		console.log('Adding Inline: ', node.textContent, this.cloneNode(node, true).textContent);
-		current.appendChild(this.cloneNode(node, true));
+	}
 
-		console.log('Added Inline: ', current.textContent);
+	cleanInline (node) {
+		let current = this.currentBlock;
+		const implicit = !current;
+
+		if (implicit && isEmptyTextNode(node)) { return; }
+
+		if (implicit) {
+			current = this.push(this.createImplicit());
+		}
+
+		if (isTextNode(node)) { this.cleanTextNode(node); }
+
+		const keep = AllowedInline.has(getTagName(node));
+
+		if (keep) {
+			this.pushInline(this.cloneNode(node, false));
+		}
+
+		const children = Array.from(node.childNodes);
+
+		for (let child of children) {
+			this.cleanInline(child);
+		}
+
+		if (keep) {
+			this.popInline();
+		}
+
+		if (implicit) {
+			this.popBlock();
+		}
 	}
 
 	cleanBlock (node) {
 		if (!node) { return; }
 
-		const current = this.current;
+		const current = this.currentBlock;
 		const keep = (!current || getNodePrecedence(node) >= getNodePrecedence(current)) && !isBody(node);
-		
-		console.log('Parsing Node: ', getTagName(node), keep);
 
 		if (keep) {
-			this.push(this.cloneNode(node));
+			this.pushBlock(this.cloneNode(node));
 		}
 
-
 		const children = Array.from(node.childNodes);
-
-		console.log('Cleaning Children: ', children.map(x => getTagName(x)));
 
 		for (let child of children) {
 
@@ -167,14 +275,13 @@ class InputCleaner {
 		}
 
 		if (keep) {
-			this.pop();
+			this.popBlock();
 		}
 	}
 
 	cleanList (node) {
 
 	}
-
 }	
 
 
