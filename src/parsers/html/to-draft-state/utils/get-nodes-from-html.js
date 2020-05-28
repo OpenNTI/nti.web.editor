@@ -290,7 +290,7 @@ class InputNormalizer {
 		const preserveNewLines = PreserveNewLines.has(getTagName(this.currentBlock));
 		const preserveWhitespace = PreserveWhitespace.has(getTagName(this.currentBlock));
 
-		const lines = preserveNewLines ? text.split(NewLineRegex) : [text.replace(new RegExp(NewLineRegex, 'g'), ' ')];
+		const lines = preserveNewLines ? text.split(NewLineRegex) : [text.replace(new RegExp(NewLineRegex, 'g'), '')];
 
 		for (let i = 0; i < lines.length; i++) {
 			if (i > 0) { this.splitCurrentBlock(); }

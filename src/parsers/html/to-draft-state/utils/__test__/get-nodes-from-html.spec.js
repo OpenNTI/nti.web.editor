@@ -123,7 +123,7 @@ implicit block 2
 </ul>`			
 		);
 
-		expect(nodes.length).toBe(6);
+		expect(nodes.length).toBe(5);
 
 		for (let node of nodes) {
 			expect(getTagName(node)).toBe('li');
@@ -153,8 +153,5 @@ implicit block 2
 		expect(nodes[4].textContent).toBe('item 1-3');
 		expect(isUnorderedListItem(nodes[4])).toBeTruthy();
 		expect(getDepth(nodes[4])).toBe(0);
-
-		
-		expect(nodes[5].textContent).toBe('');
 	});
 });
