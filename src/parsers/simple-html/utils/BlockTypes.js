@@ -46,6 +46,20 @@ export function getBlockTypeForNode (node) {
 	throw new Error(`Unknown node type: ${tagName}`);
 }
 
+export function getBlockDepthForNode (node) {
+	const tagName = getTagName(node);
+
+	if (tagName !== 'li') { return 0; }
+
+	const listParent = parent(node, 'ul,ol');
+
+	if (listParent.hasAttribute('data-depth')) {
+		return parseInt(listParent.getAttribute('data-depth'), 10);
+	}
+
+	return 0;
+}
+
 export function getTagNameForBlockType (blockType) {
 
 }

@@ -1,6 +1,6 @@
 import {genKey} from 'draft-js';
 
-import {getBlockTypeForNode} from './BlockTypes';
+import {getBlockTypeForNode, getBlockDepthForNode} from './BlockTypes';
 import {getStyleForNode} from './StyleTypes';
 import {getEntityForNode} from './EntityTypes';
 import getTagName from './get-tag-name';
@@ -122,6 +122,7 @@ export default function nodeToBlock (node) {
 	};
 
 	const blockType = getBlockTypeForNode(node);
+	const depth = getBlockDepthForNode(node);
 	const {text, charList} = parseText(node, [], null, createEntity);
 
 	return {
@@ -129,7 +130,7 @@ export default function nodeToBlock (node) {
 			type: blockType,
 			key: genKey(),
 			text: text === '\uFEFF' ? '' : text,
-			depth: 0,
+			depth,
 			inlineStyleRanges: getInlineStyleRanges(charList),
 			entityRanges: getEntityRanges(charList)
 		},

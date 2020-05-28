@@ -96,7 +96,7 @@ class InputCleaner {
 
 		if (current) { current.closed = true; }
 
-		this._blockStack.push({node, closed: false});
+		this._blockStack.push({node, closed: false, doNotAppend});
 		
 		if (!doNotAppend) {
 			this.appendChild(node);
@@ -111,6 +111,7 @@ class InputCleaner {
 
 		if (!current) { return null; }
 		if (!current.closed) { return current.node; }
+		if (current.doNotAppend) { return null; }
 
 		this.popBlock();
 		return this.pushBlock(this.cloneNode(current.node)).node;
@@ -335,6 +336,15 @@ class InputCleaner {
 			if (isList(child)) { this.cleanList(child); }
 			else if (isBlock(child)) { this.cleanBlock(child); }
 			else { this.cleanInline(child); }
+
+			//If the list item got closed without adding any content
+			//that means there was only blocks that don't go in the li
+			//so this li needs to be removed
+			const {node:cleanNode, closed} = this.latestBlock;
+
+			if (closed && cleanNode.textContent === '') {
+				cleanNode.parentNode?.removeChild(cleanNode);
+			}
 		}
 
 		this.popBlock();
@@ -371,6 +381,7 @@ class InputCleaner {
 
 export default function getNodesFromHTML (html) {
 	const cleaner = new InputCleaner();
+	const clean = cleaner.cleanHTML(html);
 
-	return Array.from(cleaner.cleanHTML(html).querySelectorAll(blockSelector));
+	return Array.from(clean.querySelectorAll(blockSelector));
 }

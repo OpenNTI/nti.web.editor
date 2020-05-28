@@ -58,6 +58,7 @@ describe('HTML to DraftState', () => {
 
 			expect(b.getText()).toEqual(items[i]);
 			expect(b.getType()).toEqual(BLOCKS.ORDERED_LIST_ITEM);
+			expect(b.getDepth()).toEqual(0);
 		}
 	});
 
@@ -77,7 +78,45 @@ describe('HTML to DraftState', () => {
 
 			expect(b.getText()).toEqual(items[i]);
 			expect(b.getType()).toEqual(BLOCKS.UNORDERED_LIST_ITEM);
+			expect(b.getDepth()).toEqual(0);
 		}
+	});
+
+	test('Nested Lists', () => {
+		const html = `
+<ul>
+	<li>item 1</li>
+	<li>
+		<ol>
+			<li>item 1-1</li>
+			<li>item 1-2</li>
+		</ol>
+	</li>
+	<li>item 2</li>
+</ul>
+`;
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(4);
+
+		expect(blocks[0].getType()).toEqual(BLOCKS.UNORDERED_LIST_ITEM);
+		expect(blocks[0].getText()).toEqual('item 1');
+		expect(blocks[0].getDepth()).toEqual(0);
+
+		expect(blocks[1].getType()).toEqual(BLOCKS.ORDERED_LIST_ITEM);
+		expect(blocks[1].getText()).toEqual('item 1-1');
+		expect(blocks[1].getDepth()).toEqual(1);
+
+		expect(blocks[2].getType()).toEqual(BLOCKS.ORDERED_LIST_ITEM);
+		expect(blocks[2].getText()).toEqual('item 1-2');
+		expect(blocks[2].getDepth()).toEqual(1);
+
+		expect(blocks[3].getType()).toEqual(BLOCKS.UNORDERED_LIST_ITEM);
+		expect(blocks[3].getText()).toEqual('item 2');
+		expect(blocks[3].getDepth()).toEqual(0);
 	});
 
 	test('Inline Styles', () => {
