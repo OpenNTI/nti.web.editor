@@ -37,10 +37,19 @@ const BlockElements = new Set([
 const PreserveWhitespace = new Set(['pre']);
 const PreserveNewLines = new Set(['pre']);
 
-//Used to determine when a block tag should break out of
-//its parent. For example:
-// 1.) <li><pre>Tag</pre></li> => <li>Tag</li> because li has a higher precedence than pre
-// 2.) <h1>Heading <pre>Tag</pre> Text</h1> => <h1>Heading</h1><pre>Tag</pre><h1>Text</h1> because h1 and pre have the same precedence
+//Used to determine when a block node should break out of
+//its parent. Some block nodes carry more weight for its contents.
+//Since draft-js blocks are not allowed to be nested, when we see
+//nested block nodes we have to decide how to flatten them. The precedence
+//is used to determine when a nested block should append its contents to its
+//parent, or when it split the parent and add itself and its contents to
+//the body.
+//
+//<h1><p>text</p></h1> should the treat the text has h1 not a p
+//
+//More Examples:
+// 1.) <li><pre>code</pre></li> => <li>code</li> because li has a higher precedence than pre
+// 2.) <h1>Heading <pre>code</pre> Text</h1> => <h1>Heading</h1><pre>code</pre><h1>Text</h1> because h1 and pre have the same precedence
 const BlockPrecedence = {
 	'ol': 200,
 	'ul': 200,
@@ -347,9 +356,7 @@ class InputNormalizer {
 		if (isTextNode(node)) { 
 			this.normalizeTextNode(node);
 		} else {
-			const children = Array.from(node.childNodes);
-			
-			for (let child of children) {
+			for (let child of node.childNodes) {
 				this.normalizeInline(child);
 			}
 		}
@@ -382,9 +389,7 @@ class InputNormalizer {
 			this.pushBlock(this.cloneNode(node));
 		}
 
-		const children = Array.from(node.childNodes);
-
-		for (let child of children) {
+		for (let child of node.childNodes) {
 			if (isList(child)) { this.normalizeList(child); }
 			else if (isListItem(child)) { this.normalizeListItem(child); }
 			else if (isBlock(child)) { this.normalizeBlock(child); }
@@ -397,7 +402,7 @@ class InputNormalizer {
 				//content we need to remove the cleaned node.
 				//I.E:
 				//<p>
-				//  <p>Nested Paragraph
+				//  <p>Nested Paragraph</p>
 				//</p>
 				//
 				//would go to
@@ -433,9 +438,7 @@ class InputNormalizer {
 		currentList.appendChild(clone);
 		this.pushBlock(clone, true);
 
-		const children = Array.from(node.childNodes);
-
-		for (let child of children) {
+		for (let child of node.childNodes) {
 			if (isList(child)) { this.normalizeList(child); }
 			else if (isBlock(child)) { this.normalizeBlock(child); }
 			else { this.normalizeInline(child); }
@@ -474,9 +477,7 @@ class InputNormalizer {
 		this.setCurrentList(clone);
 		this.pushBlock(clone);
 
-		const children = Array.from(node.childNodes);
-
-		for (let child of children) {
+		for (let child of node.childNodes) {
 			if (isListItem(child)) { this.normalizeListItem(child); }
 		}
 
@@ -490,7 +491,12 @@ class InputNormalizer {
 	}
 }	
 
-
+/**
+ * Get a flat list of dom nodes that directly relate 1-1 to draft-js state.
+ * 
+ * @param  {String} html content to flatten and get nodes from
+ * @return {[Object]}    the flat list of nodes
+ */
 export default function getNodesFromHTML (html) {
 	const cleaner = new InputNormalizer();
 	const clean = cleaner.normalizeHTML(html);
