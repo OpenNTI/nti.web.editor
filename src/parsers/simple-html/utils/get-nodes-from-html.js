@@ -40,7 +40,7 @@ const PreserveNewLines = new Set(['pre']);
 //Used to determine when a block tag should break out of
 //its parent. For example:
 // 1.) <li><pre>Tag</pre></li> => <li>Tag</li> because li has a higher precedence than pre
-// 2.) <h1>Heading <pre>Tag</pre></h1> => <h1>Heading</h1><pre>Tag</pre> because h1 and pre have the same precedence
+// 2.) <h1>Heading <pre>Tag</pre> Text</h1> => <h1>Heading</h1><pre>Tag</pre><h1>Text</h1> because h1 and pre have the same precedence
 const BlockPrecedence = {
 	'ol': 200,
 	'ul': 200,

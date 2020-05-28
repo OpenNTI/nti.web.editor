@@ -154,6 +154,48 @@ describe('HTML to DraftState', () => {
 
 	});
 
+	test('Nested Inline Styles', () => {
+		const html = '<p>This is <b>b<u>bu<em>buem</em></u></b> tests</p>';
+		const styles = {
+			8: [STYLES.BOLD],
+			9: [STYLES.BOLD, STYLES.UNDERLINE],
+			10: [STYLES.BOLD, STYLES.UNDERLINE],
+			11: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
+			12: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
+			13: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
+			14: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC]
+		};
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(1);
+
+		const block = blocks[0];
+		const text = block.getText();
+		const raw = block.toJS();
+
+		expect(text).toEqual('This is bbubuem tests');
+
+		for (let i = 0; i < text.length; i++) {
+			const style = styles[i];
+			const charList = raw.characterList[i];
+
+			if (style) {
+				expect(charList.style.length).toEqual(style.length);
+				const set = new Set(charList.style);
+
+				for (let s of style) {
+					expect(set.has(s)).toBeTruthy();
+				}
+
+			} else {
+				expect(charList.style.length).toEqual(0);
+			}
+		}
+	});
+
 	test('Code block', () => {
 		const html = '<pre><pre>Block 1</pre><pre>Block 2</pre><pre>  Block 3</pre></pre>';
 
