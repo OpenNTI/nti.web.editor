@@ -3,6 +3,9 @@ import getTagName from './get-tag-name';
 const NewLineRegex = /[\r|\n]/;
 const ConsecutiveWhitespace = /\s+/;
 
+//Tags that we will allow into the content of block tags.
+//All other non-block tags will add their content, but not
+//the tags themselves.
 const AllowedInline = new Set([
 	'a',
 	'b',
@@ -13,6 +16,8 @@ const AllowedInline = new Set([
 	's',
 ]);
 
+//All the tags that we treat as block elements. Other tags
+//get treated as inline.
 const BlockElements = new Set([
 	'blockquote',
 	'div',
@@ -32,6 +37,10 @@ const BlockElements = new Set([
 const PreserveWhitespace = new Set(['pre']);
 const PreserveNewLines = new Set(['pre']);
 
+//Used to determine when a block tag should break out of
+//its parent. For example:
+// 1.) <li><pre>Tag</pre></li> => <li>Tag</li> because li has a higher precedence than pre
+// 2.) <h1>Heading <pre>Tag</pre></h1> => <h1>Heading</h1><pre>Tag</pre> because h1 and pre have the same precedence
 const BlockPrecedence = {
 	'ol': 200,
 	'ul': 200,
@@ -64,6 +73,8 @@ const isList = (node) => {
 	return tag === 'ul' || tag === 'ol';
 };
 
+//Creates a safe html document that we can manipulate without affecting the
+//current page document
 function getSafeBody (html) {
 	try {
 		const doc = document?.implementation?.createHTMLDocument?.('scratchpad');
@@ -75,11 +86,14 @@ function getSafeBody (html) {
 	}
 }
 
-
-class InputCleaner {
+/**
+ * Utility class for normalizing html input
+ */
+class InputNormalizer {
 	_cleanBody = null;
-	_blockStack = [];
-	_inlineStack = [];
+	
+	_blockStack = [];//Keep track of block nodes we've opened
+	_inlineStack = [];//Keep track of inline nodes we've opened
 
 	_currentList = null;
 
@@ -91,6 +105,15 @@ class InputCleaner {
 		return this._blockStack.pop();
 	}
 
+	/**
+	 * Push a block node to the stack, and maybe append it to the
+	 * clean document. If there is already a block on the stack 
+	 * mark it as closed.
+	 *
+	 * @param  {Object} node        block node to push
+	 * @param  {Boolean} doNotAppend do not auto add the node to the clean body
+	 * @return {Object}             the node in the clean document that as added
+	 */
 	pushBlock (node, doNotAppend) {
 		const current = this.latestBlock;
 
@@ -105,12 +128,20 @@ class InputCleaner {
 		return node;
 	}
 
-
+	/**
+	 * Return the current block on the stack. If the current block has been closed
+	 * add a clone of it to the stack.
+	 * 
+	 * @return {Object} current block node
+	 */
 	get currentBlock () {
 		const current = this.latestBlock;
 
 		if (!current) { return null; }
 		if (!current.closed) { return current.node; }
+
+		//if the block is closed, but it wasn't appended to the body.
+		//we don't want to clone and append it here either...
 		if (current.doNotAppend) { return null; }
 
 		this.popBlock();
@@ -121,6 +152,14 @@ class InputCleaner {
 		this._inlineStack.pop();
 	}
 
+	/**
+	 * Push an inline node to the stack. There must be a block node on the block
+	 * stack. If there is already an inline node, add the new one to it. Otherwise
+	 * add the new one to the current block.
+	 *
+	 * @param  {Object} node inline block to add
+	 * @return {[type]}      [description]
+	 */
 	pushInline (node) {
 		const currentInline = this.currentInline;
 		const currentBlock = this.currentBlock;
@@ -143,6 +182,13 @@ class InputCleaner {
 		return this._currentList;
 	}
 
+	/**
+	 * Set a list as the current one being normalized, and added it to the clean
+	 * body.
+	 *
+	 * @param {node} list the list being normalized.
+	 * @return {void}
+	 */
 	setCurrentList (list) {
 		this._currentList = list;
 
@@ -151,6 +197,14 @@ class InputCleaner {
 		}
 	}
 
+	/**
+	 * Close the current block and inline tags, clone(shallow) them and append it
+	 * to the body. For example:
+	 *
+	 * <pre>Test\nline</pre> => <pre>Test</pre><pre>line</pre>
+	 *
+	 * @return {void}
+	 */
 	splitCurrentBlock () {
 		const currentInline = this._inlineStack;
 		const {currentBlock} = this;
@@ -203,22 +257,31 @@ class InputCleaner {
 	}
 
 
-	cleanHTML (html) {
+	normalizeHTML (html) {
 		this._stack = [];
 		this._cleanBody = getSafeBody('');
 
-		this.cleanBlock(getSafeBody(html));
+		this.normalizeBlock(getSafeBody(html));
 
 		return this._cleanBody;
 	}
 
-	cleanTextNode (node) {
+	/**
+	 * Normalize a text node. Depending on the current block this will either:
+	 *
+	 * 1.) Collapse the text to one line, or split the current block for each line of text.
+	 * 2.) Collapse consecutive whitespace (it tries to match how the html would be displayed), or keep the whitespace as is.
+	 *
+	 * @param  {Object} node textNode to add
+	 * @return {void}
+	 */
+	normalizeTextNode (node) {
 		const text = node.textContent;
 
 		const preserveNewLines = PreserveNewLines.has(getTagName(this.currentBlock));
 		const preserveWhitespace = PreserveWhitespace.has(getTagName(this.currentBlock));
 
-		const lines = preserveNewLines ? text.split(NewLineRegex) : [text.replace(new RegExp(NewLineRegex, 'g'), '')];
+		const lines = preserveNewLines ? text.split(NewLineRegex) : [text.replace(new RegExp(NewLineRegex, 'g'), ' ')];
 
 		for (let i = 0; i < lines.length; i++) {
 			if (i > 0) { this.splitCurrentBlock(); }
@@ -229,6 +292,9 @@ class InputCleaner {
 			if (preserveWhitespace) {
 				current.appendChild(this.cleanDocument.createTextNode(lines[i]));
 			} else {
+				//Collapse multiple white space characters to one space, then look
+				//at the existing content to see if we need to trim the leading
+				//whitespace or not
 				const collapsed = lines[i].replace(ConsecutiveWhitespace, ' ');
 				const startsWithWhitespace = collapsed.startsWith(' ');
 
@@ -252,11 +318,22 @@ class InputCleaner {
 		}
 	}
 
-	cleanInline (node) {
+	/**
+	 * Normalize an inline node. If there is not a current block, we create an implicit div.
+	 * If the inline node is one of the allowed tags, we add the tag to the stack. Otherwise
+	 * we just add its contents to the current block. All children will be treated like inline
+	 * nodes, regardless of if they are in the Block set or not.
+	 *
+	 * @param  {Object} node inline node to add
+	 * @return {void}
+	 */
+	normalizeInline (node) {
 		let current = this.currentBlock;
 		const implicit = !current;
 		const keep = AllowedInline.has(getTagName(node));
 
+		//if there's no current block and the nodes is an empty text node
+		//there's no need to add it.
 		if (implicit && isEmptyTextNode(node)) { return; }
 
 		if (implicit) {
@@ -268,12 +345,12 @@ class InputCleaner {
 		}
 
 		if (isTextNode(node)) { 
-			this.cleanTextNode(node);
+			this.normalizeTextNode(node);
 		} else {
 			const children = Array.from(node.childNodes);
 			
 			for (let child of children) {
-				this.cleanInline(child);
+				this.normalizeInline(child);
 			}
 		}
 
@@ -286,7 +363,15 @@ class InputCleaner {
 		}
 	}
 
-	cleanBlock (node) {
+	/**
+	 * Normalize a block node. If the node is of higher or egual precedence to the current block node,
+	 * add it to the stack and continue normalizing its contents. If the current block is higher precedence,
+	 * the nodes contents will be normalized into the current block.
+	 * 
+	 * @param  {Object} node block node to normalize
+	 * @return {void}
+	 */
+	normalizeBlock (node) {
 		if (!node) { return; }
 
 		const current = this.currentBlock;
@@ -300,16 +385,29 @@ class InputCleaner {
 		const children = Array.from(node.childNodes);
 
 		for (let child of children) {
-			if (isList(child)) { this.cleanList(child); }
-			else if (isListItem(child)) { this.cleanListItem(child); }
-			else if (isBlock(child)) { this.cleanBlock(child); }
-			else { this.cleanInline(child); } 
+			if (isList(child)) { this.normalizeList(child); }
+			else if (isListItem(child)) { this.normalizeListItem(child); }
+			else if (isBlock(child)) { this.normalizeBlock(child); }
+			else { this.normalizeInline(child); } 
 		
 			if (keep) {
 				const {node: cleanNode, closed} = this.latestBlock;
 
-				//If a child block closed this context, and we didn't get any
-				//content... Go ahead and remove the node
+				//If the child closed this context, and we didn't get any
+				//content we need to remove the cleaned node.
+				//I.E:
+				//<p>
+				//  <p>Nested Paragraph
+				//</p>
+				//
+				//would go to
+				//
+				//<p>Nested Paragraph</p>
+				//
+				//not
+				//
+				//<p></p>
+				//<p>Nested Paragraph</p>
 				if (closed && cleanNode.textContent === '') {
 					this.removeChild(cleanNode);
 				}
@@ -321,8 +419,13 @@ class InputCleaner {
 		}
 	}
 
-
-	cleanListItem (node) {
+	/**
+	 * Normalize a list item node. The node will be pushed to the block stack, but added to the current list.
+	 *
+	 * @param  {Object} node list item to add
+	 * @return {void}
+	 */
+	normalizeListItem (node) {
 		const {currentList} = this;
 
 		const clone = this.cloneNode(node);
@@ -333,9 +436,9 @@ class InputCleaner {
 		const children = Array.from(node.childNodes);
 
 		for (let child of children) {
-			if (isList(child)) { this.cleanList(child); }
-			else if (isBlock(child)) { this.cleanBlock(child); }
-			else { this.cleanInline(child); }
+			if (isList(child)) { this.normalizeList(child); }
+			else if (isBlock(child)) { this.normalizeBlock(child); }
+			else { this.normalizeInline(child); }
 
 			//If the list item got closed without adding any content
 			//that means there was only blocks that don't go in the li
@@ -350,7 +453,16 @@ class InputCleaner {
 		this.popBlock();
 	}
 
-	cleanList (node) {
+	/**
+	 * Normalize a list node. If there is a current list, this list will be
+	 * appended to the body with a higher data-depth attribute. After parsing
+	 * this list's children, the current list will be cloned and added as the
+	 * current list.
+	 *
+	 * @param  {Object} node the list to normalize
+	 * @return {void}
+	 */
+	normalizeList (node) {
 		const {currentList} = this;
 
 		const currentDepth = currentList ? parseInt(currentList.getAttribute('data-depth'), 10) : -1;
@@ -365,7 +477,7 @@ class InputCleaner {
 		const children = Array.from(node.childNodes);
 
 		for (let child of children) {
-			if (isListItem(child)) { this.cleanListItem(child); }
+			if (isListItem(child)) { this.normalizeListItem(child); }
 		}
 
 		if (currentList) {
@@ -380,8 +492,8 @@ class InputCleaner {
 
 
 export default function getNodesFromHTML (html) {
-	const cleaner = new InputCleaner();
-	const clean = cleaner.cleanHTML(html);
+	const cleaner = new InputNormalizer();
+	const clean = cleaner.normalizeHTML(html);
 
 	return Array.from(clean.querySelectorAll(blockSelector));
 }
