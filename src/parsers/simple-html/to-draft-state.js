@@ -2,23 +2,11 @@ import {convertFromRaw, ContentState, EditorState} from 'draft-js';
 
 import {BLOCKS} from '../../Constants';
 
-import {nodeToBlock, BlockTypes} from './utils';
+import {nodeToBlock, getNodesFromHTML} from './utils';
 
-function getSafeBody (html) {
-	try {
-		const doc = document?.implementation?.createHTMLDocument?.('scratchpad');
-		doc.documentElement.innerHTML = html;
-
-		return doc.getElementsByTagName('body')[0];
-	} catch (e) {
-		return null;
-	}
-
-}
 
 function getContentForHTML (html) {
-	const body = getSafeBody(html);
-	const nodes = BlockTypes.getValidNodes(body);
+	const nodes = getNodesFromHTML(html);
 
 	const rawContent = nodes.reduce(({blocks, entityMap:existingEntities}, node) => {
 		const {block, entityMap} = nodeToBlock(node);

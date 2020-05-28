@@ -18,26 +18,14 @@ const BlocksToTag = {
 	[BLOCKS.UNORDERED_LIST_ITEM]: 'li'
 };
 
-const TagsToBlocks = {};
+const TagsToBlocks = {
+	'div': BLOCKS.UNSTYLED
+};
 
 for (let [key, value] of Object.entries(BlocksToTag)) {
 	TagsToBlocks[value] = [...(TagsToBlocks[value] || []),key];
 }
 
-
-const validNodesSelector = 'p, blockquote, pre, h1, h2, h3, h4, h5, h6, li';
-export function getValidNodes (node, wrapper) {
-	const nodes = Array.from(node.querySelectorAll(validNodesSelector))
-		.reduce((acc, valid) => {
-			const subValid = getValidNodes(valid);
-
-			if (subValid.length > 0) { return [...acc, ...subValid]; }
-
-			return [...acc, valid];
-		}, []);
-
-	return Array.from(new Set(nodes));
-}
 
 export function getBlockTypeForNode (node) {
 	const tagName = getTagName(node);

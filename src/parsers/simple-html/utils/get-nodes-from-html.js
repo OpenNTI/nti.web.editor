@@ -33,22 +33,22 @@ const PreserveWhitespace = new Set(['pre']);
 const PreserveNewLines = new Set(['pre']);
 
 const BlockPrecedence = {
+	'ol': 200,
+	'ul': 200,
+	'li': 200,
 	'pre': 100,
 	'h1': 100,
 	'h2': 100,
 	'h3': 100,
 	'h4': 100,
 	'h6': 100,
-	'li': 100,
-	'ol': 100,
-	'ul': 100,
 	'blockquote': 100,
 	'p': 50,
 	'div': 0,
 };
 
 
-const blockSelector = Array.from(BlockElements).join(', ');
+const blockSelector = 'blockquote, div, h1, h2, h3, h4, h5, h6, li, p, pre';
 
 const getNodePrecedence = node => BlockPrecedence[getTagName(node)] ?? -1;
 
@@ -57,6 +57,7 @@ const isEmptyTextNode = node => isTextNode(node) && node.textContent.trim() === 
 
 const isBody = node => getTagName(node) === 'body';
 const isBlock = node => BlockElements.has(getTagName(node));
+const isListItem = node => getTagName(node) === 'li';
 const isList = (node) => {
 	const tag = getTagName(node);
 
@@ -80,22 +81,33 @@ class InputCleaner {
 	_blockStack = [];
 	_inlineStack = [];
 
+	_currentList = null;
+
+	get latestBlock () {
+		return this._blockStack[this._blockStack.length - 1];
+	}
+
 	popBlock () {
 		return this._blockStack.pop();
 	}
 
-	pushBlock (node) {
-		const current = this._blockStack[this._blockStack.length - 1];
+	pushBlock (node, doNotAppend) {
+		const current = this.latestBlock;
 
 		if (current) { current.closed = true; }
 
 		this._blockStack.push({node, closed: false});
-		this.appendChild(node);
+		
+		if (!doNotAppend) {
+			this.appendChild(node);
+		}
+
 		return node;
 	}
 
+
 	get currentBlock () {
-		const current = this._blockStack[this._blockStack.length - 1];
+		const current = this.latestBlock;
 
 		if (!current) { return null; }
 		if (!current.closed) { return current.node; }
@@ -124,6 +136,18 @@ class InputCleaner {
 
 	get currentInline () {
 		return this._inlineStack[this._inlineStack.length - 1];
+	}
+
+	get currentList () {
+		return this._currentList;
+	}
+
+	setCurrentList (list) {
+		this._currentList = list;
+
+		if (list) {
+			this.appendChild(list);
+		}
 	}
 
 	splitCurrentBlock () {
@@ -161,6 +185,11 @@ class InputCleaner {
 
 	appendChild (node) {
 		this._cleanBody.appendChild(node);
+		return node;
+	}
+
+	removeChild (node) {
+		this._cleanBody.removeChild(node);
 		return node;
 	}
 
@@ -225,25 +254,26 @@ class InputCleaner {
 	cleanInline (node) {
 		let current = this.currentBlock;
 		const implicit = !current;
+		const keep = AllowedInline.has(getTagName(node));
 
 		if (implicit && isEmptyTextNode(node)) { return; }
 
 		if (implicit) {
-			current = this.push(this.createImplicit());
+			current = this.pushBlock(this.createImplicit());
 		}
-
-		if (isTextNode(node)) { this.cleanTextNode(node); }
-
-		const keep = AllowedInline.has(getTagName(node));
 
 		if (keep) {
 			this.pushInline(this.cloneNode(node, false));
 		}
 
-		const children = Array.from(node.childNodes);
-
-		for (let child of children) {
-			this.cleanInline(child);
+		if (isTextNode(node)) { 
+			this.cleanTextNode(node);
+		} else {
+			const children = Array.from(node.childNodes);
+			
+			for (let child of children) {
+				this.cleanInline(child);
+			}
 		}
 
 		if (keep) {
@@ -259,7 +289,8 @@ class InputCleaner {
 		if (!node) { return; }
 
 		const current = this.currentBlock;
-		const keep = (!current || getNodePrecedence(node) >= getNodePrecedence(current)) && !isBody(node);
+
+		const keep = (!current || getNodePrecedence(node) >= getNodePrecedence(current)) && !isBody(node) && !isList(node) && !isListItem(node);
 
 		if (keep) {
 			this.pushBlock(this.cloneNode(node));
@@ -268,10 +299,20 @@ class InputCleaner {
 		const children = Array.from(node.childNodes);
 
 		for (let child of children) {
-
 			if (isList(child)) { this.cleanList(child); }
+			else if (isListItem(child)) { this.cleanListItem(child); }
 			else if (isBlock(child)) { this.cleanBlock(child); }
 			else { this.cleanInline(child); } 
+		
+			if (keep) {
+				const {node: cleanNode, closed} = this.latestBlock;
+
+				//If a child block closed this context, and we didn't get any
+				//content... Go ahead and remove the node
+				if (closed && cleanNode.textContent === '') {
+					this.removeChild(cleanNode);
+				}
+			}
 		}
 
 		if (keep) {
@@ -279,8 +320,51 @@ class InputCleaner {
 		}
 	}
 
-	cleanList (node) {
 
+	cleanListItem (node) {
+		const {currentList} = this;
+
+		const clone = this.cloneNode(node);
+
+		currentList.appendChild(clone);
+		this.pushBlock(clone, true);
+
+		const children = Array.from(node.childNodes);
+
+		for (let child of children) {
+			if (isList(child)) { this.cleanList(child); }
+			else if (isBlock(child)) { this.cleanBlock(child); }
+			else { this.cleanInline(child); }
+		}
+
+		this.popBlock();
+	}
+
+	cleanList (node) {
+		const {currentList} = this;
+
+		const currentDepth = currentList ? parseInt(currentList.getAttribute('data-depth'), 10) : -1;
+		const nextDepth = currentDepth + 1;
+
+		const clone = this.cloneNode(node, false);
+		clone.setAttribute('data-depth', nextDepth);
+
+		this.setCurrentList(clone);
+		this.pushBlock(clone);
+
+		const children = Array.from(node.childNodes);
+
+		for (let child of children) {
+			if (isListItem(child)) { this.cleanListItem(child); }
+		}
+
+		if (currentList) {
+			this.setCurrentList(this.cloneNode(currentList, false));
+		} else {
+			this.setCurrentList(null);
+		}
+
+		this.popBlock();
 	}
 }	
 
