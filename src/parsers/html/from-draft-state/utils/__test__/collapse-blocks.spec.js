@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {BLOCKS} from '../../../../Constants';
+import {BLOCKS} from '../../../../../Constants';
 import collapseCodeBlocks from '../collapse-blocks';
 
 describe('collapseCodeBlocks', () => {

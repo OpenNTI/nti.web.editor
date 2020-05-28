@@ -5,7 +5,7 @@ import {
 } from 'draft-js';
 
 
-import fromDraftState from '../from-draft-state';
+import fromDraftState from '../index';
 
 describe('DraftState to HTML', () => {
 	test('Should convert EditorState to NTI-body-content', ()=> {

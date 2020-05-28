@@ -1,4 +1,4 @@
-import {BLOCKS} from '../../../Constants';
+import {BLOCKS} from '../../../../Constants';
 
 const PREPEND_SPACE = {
 	[BLOCKS.CODE]: true

@@ -356,7 +356,7 @@ class InputNormalizer {
 		if (isTextNode(node)) { 
 			this.normalizeTextNode(node);
 		} else {
-			for (let child of node.childNodes) {
+			for (let child of Array.from(node.childNodes)) {
 				this.normalizeInline(child);
 			}
 		}
@@ -389,7 +389,7 @@ class InputNormalizer {
 			this.pushBlock(this.cloneNode(node));
 		}
 
-		for (let child of node.childNodes) {
+		for (let child of Array.from(node.childNodes)) {
 			if (isList(child)) { this.normalizeList(child); }
 			else if (isListItem(child)) { this.normalizeListItem(child); }
 			else if (isBlock(child)) { this.normalizeBlock(child); }
@@ -438,7 +438,7 @@ class InputNormalizer {
 		currentList.appendChild(clone);
 		this.pushBlock(clone, true);
 
-		for (let child of node.childNodes) {
+		for (let child of Array.from(node.childNodes)) {
 			if (isList(child)) { this.normalizeList(child); }
 			else if (isBlock(child)) { this.normalizeBlock(child); }
 			else { this.normalizeInline(child); }
@@ -477,7 +477,7 @@ class InputNormalizer {
 		this.setCurrentList(clone);
 		this.pushBlock(clone);
 
-		for (let child of node.childNodes) {
+		for (let child of Array.from(node.childNodes)) {
 			if (isListItem(child)) { this.normalizeListItem(child); }
 		}
 

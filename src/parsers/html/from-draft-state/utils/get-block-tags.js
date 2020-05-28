@@ -1,4 +1,4 @@
-import {BLOCKS} from '../../../Constants';
+import {BLOCKS} from '../../../../Constants';
 
 import openTag from './open-tag';
 import closeTag from './close-tag';

@@ -1,6 +1,6 @@
 /* eslint-env jest */
-import toDraftState from '../to-draft-state';
-import {BLOCKS, STYLES} from '../../../Constants';
+import toDraftState from '../index';
+import {BLOCKS, STYLES} from '../../../../Constants';
 
 describe('HTML to DraftState', () => {
 	test('Headers', () => {
@@ -58,6 +58,7 @@ describe('HTML to DraftState', () => {
 
 			expect(b.getText()).toEqual(items[i]);
 			expect(b.getType()).toEqual(BLOCKS.ORDERED_LIST_ITEM);
+			expect(b.getDepth()).toEqual(0);
 		}
 	});
 
@@ -77,7 +78,45 @@ describe('HTML to DraftState', () => {
 
 			expect(b.getText()).toEqual(items[i]);
 			expect(b.getType()).toEqual(BLOCKS.UNORDERED_LIST_ITEM);
+			expect(b.getDepth()).toEqual(0);
 		}
+	});
+
+	test('Nested Lists', () => {
+		const html = `
+<ul>
+	<li>item 1</li>
+	<li>
+		<ol>
+			<li>item 1-1</li>
+			<li>item 1-2</li>
+		</ol>
+	</li>
+	<li>item 2</li>
+</ul>
+`;
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(4);
+
+		expect(blocks[0].getType()).toEqual(BLOCKS.UNORDERED_LIST_ITEM);
+		expect(blocks[0].getText()).toEqual('item 1');
+		expect(blocks[0].getDepth()).toEqual(0);
+
+		expect(blocks[1].getType()).toEqual(BLOCKS.ORDERED_LIST_ITEM);
+		expect(blocks[1].getText()).toEqual('item 1-1');
+		expect(blocks[1].getDepth()).toEqual(1);
+
+		expect(blocks[2].getType()).toEqual(BLOCKS.ORDERED_LIST_ITEM);
+		expect(blocks[2].getText()).toEqual('item 1-2');
+		expect(blocks[2].getDepth()).toEqual(1);
+
+		expect(blocks[3].getType()).toEqual(BLOCKS.UNORDERED_LIST_ITEM);
+		expect(blocks[3].getText()).toEqual('item 2');
+		expect(blocks[3].getDepth()).toEqual(0);
 	});
 
 	test('Inline Styles', () => {
@@ -115,6 +154,48 @@ describe('HTML to DraftState', () => {
 
 	});
 
+	test('Nested Inline Styles', () => {
+		const html = '<p>This is <b>b<u>bu<em>buem</em></u></b> tests</p>';
+		const styles = {
+			8: [STYLES.BOLD],
+			9: [STYLES.BOLD, STYLES.UNDERLINE],
+			10: [STYLES.BOLD, STYLES.UNDERLINE],
+			11: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
+			12: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
+			13: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
+			14: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC]
+		};
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(1);
+
+		const block = blocks[0];
+		const text = block.getText();
+		const raw = block.toJS();
+
+		expect(text).toEqual('This is bbubuem tests');
+
+		for (let i = 0; i < text.length; i++) {
+			const style = styles[i];
+			const charList = raw.characterList[i];
+
+			if (style) {
+				expect(charList.style.length).toEqual(style.length);
+				const set = new Set(charList.style);
+
+				for (let s of style) {
+					expect(set.has(s)).toBeTruthy();
+				}
+
+			} else {
+				expect(charList.style.length).toEqual(0);
+			}
+		}
+	});
+
 	test('Code block', () => {
 		const html = '<pre><pre>Block 1</pre><pre>Block 2</pre><pre>  Block 3</pre></pre>';
 
@@ -122,7 +203,7 @@ describe('HTML to DraftState', () => {
 		const content = editorState.getCurrentContent();
 		const blocks = content.getBlocksAsArray();
 
-		expect(blocks.length).toEqual(4);
+		expect(blocks.length).toEqual(3);
 
 		expect(blocks[0].getText()).toEqual('Block 1');
 		expect(blocks[1].getText()).toEqual('Block 2');
@@ -141,5 +222,45 @@ describe('HTML to DraftState', () => {
 		expect(blocks[0].getText()).toEqual('First code block');
 		expect(blocks[1].getText()).toEqual('');
 		expect(blocks[2].getText()).toEqual('Second code block');
+	});
+
+	test('link', () => {
+		const html = '<p>Paragraph with a <a href="www.google.com" data-entity-type="link" data-entity-mutability="mutable" data-entity-username="test">link.</a>';
+		const linkStart = 17;
+		const linkEnd = 221;
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(1);
+
+		const block = blocks[0];
+		const text = block.getText();
+		const raw = block.toJS();
+		let entityKey = null;
+
+		expect(text).toEqual('Paragraph with a link.');
+
+		for (let i = 0; i < text.length; i++) {
+			const charInfo = raw.characterList[i];
+
+			if (i >= linkStart && i <= linkEnd) {
+				if (entityKey === null) {
+					expect(charInfo.entity).toBeTruthy();
+					entityKey = charInfo.entity;
+				} else {
+					expect(charInfo.entity).toEqual(entityKey);
+				}
+			} else {
+				expect(charInfo.entity).toBeFalsy();
+			}
+		}
+
+		const entity = content.getEntity(entityKey);
+
+		expect(entity?.getType()).toBe('link');
+		expect(entity?.getMutability()).toBe('mutable');
+		expect(entity?.getData()?.username).toBe('test');
 	});
 });

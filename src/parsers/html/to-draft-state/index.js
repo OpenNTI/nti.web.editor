@@ -1,6 +1,6 @@
 import {convertFromRaw, ContentState, EditorState} from 'draft-js';
 
-import {BLOCKS} from '../../Constants';
+import {BLOCKS} from '../../../Constants';
 
 import {nodeToBlock, getNodesFromHTML} from './utils';
 

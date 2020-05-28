@@ -1,4 +1,4 @@
-import {STYLES} from '../../../Constants';
+import {STYLES} from '../../../../Constants';
 
 import getTagName from './get-tag-name';
 

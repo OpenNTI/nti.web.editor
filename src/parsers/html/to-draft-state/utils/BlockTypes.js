@@ -1,6 +1,6 @@
 import {parent} from '@nti/lib-dom';
 
-import {BLOCKS} from '../../../Constants';
+import {BLOCKS} from '../../../../Constants';
 
 import getTagName from './get-tag-name';
 

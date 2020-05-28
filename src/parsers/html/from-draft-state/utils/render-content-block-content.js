@@ -1,5 +1,5 @@
-import {STYLES, ENTITIES} from '../../../Constants';
-import {normalizeCharacterList} from '../../utils';
+import {STYLES, ENTITIES} from '../../../../Constants';
+import {normalizeCharacterList} from '../../../utils';
 
 import openTag from './open-tag';
 import closeTag from './close-tag';

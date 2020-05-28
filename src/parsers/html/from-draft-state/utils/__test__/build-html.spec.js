@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {BLOCKS} from '../../../../Constants';
+import {BLOCKS} from '../../../../../Constants';
 import buildHTML from '../build-html';
 
 describe('buildHTML', () => {

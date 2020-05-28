@@ -1,4 +1,4 @@
-import {BLOCKS} from '../../../Constants';
+import {BLOCKS} from '../../../../Constants';
 
 const COLLAPSE_TYPES = {
 	[BLOCKS.CODE]: true
