@@ -1,4 +1,6 @@
 export default function getCurrentBlockType (editorState) {
+	if (!editorState) { return ''; }
+
 	const selection = editorState.getSelection();
 	const content = editorState.getCurrentContent();
 	const start = selection.getStartKey();
