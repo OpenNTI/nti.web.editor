@@ -1,4 +1,4 @@
-import {trimEmptiesOffEnd, joinWithSeparator} from '../html/utils';
+import {trimEmptiesOffEnd, joinWithSeparator} from '../html/from-draft-state/utils';
 
 export default function fromDraftState (editorState) {
 	const content = editorState.getCurrentContent();
