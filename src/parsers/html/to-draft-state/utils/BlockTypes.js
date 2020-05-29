@@ -19,7 +19,7 @@ const BlocksToTag = {
 };
 
 const TagsToBlocks = {
-	'div': BLOCKS.UNSTYLED
+	'div': [BLOCKS.UNSTYLED]
 };
 
 for (let [key, value] of Object.entries(BlocksToTag)) {

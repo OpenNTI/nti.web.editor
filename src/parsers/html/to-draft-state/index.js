@@ -1,6 +1,7 @@
 import {convertFromRaw, ContentState, EditorState} from 'draft-js';
 
 import {BLOCKS} from '../../../Constants';
+import {getEmptyState} from '../../utils';
 
 import {nodeToBlock, getNodesFromHTML} from './utils';
 
@@ -21,6 +22,8 @@ function getContentForHTML (html) {
 }
 
 export default function toDraftState (html) {
+	if (html === '') { return getEmptyState(); }
+
 	if (!Array.isArray(html)) { html = [html]; }
 
 	let editorState = null;
