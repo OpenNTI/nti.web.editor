@@ -28,7 +28,7 @@ describe('customKeyBindings', () => {
 
 		keyBindingsPlugin.keyBindingFn(event, editorState, cmp);
 
-		const result = keyBindingsPlugin.handleKeyCommand('nti-Enter', editorState, cmp);
+		const result = keyBindingsPlugin.handleKeyCommand('nti-Enter', editorState, Date.now(), cmp);
 
 		expect(result).toEqual(HANDLED);
 	});
@@ -40,7 +40,7 @@ describe('customKeyBindings', () => {
 
 		keyBindingsPlugin.keyBindingFn(event, editorState, cmp);
 
-		const result = keyBindingsPlugin.handleKeyCommand('nti-Backspace', editorState, cmp);
+		const result = keyBindingsPlugin.handleKeyCommand('nti-Backspace', editorState, Date.now(), cmp);
 
 		expect(result).toEqual(NOT_HANDLED);
 	});
@@ -60,7 +60,7 @@ describe('customKeyBindings', () => {
 
 		keyBindingsPluginWithConfig.keyBindingFn(event, editorState, cmpNoBindings);
 
-		const result = keyBindingsPluginWithConfig.handleKeyCommand('nti-Enter', editorState, cmpNoBindings);
+		const result = keyBindingsPluginWithConfig.handleKeyCommand('nti-Enter', editorState, Date.now(), cmpNoBindings);
 
 		expect(result).toEqual(HANDLED);
 	});
