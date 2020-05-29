@@ -3,9 +3,9 @@ import {EditorState, AtomicBlockUtils} from 'draft-js';
 import {MUTABILITY} from '../../Constants';
 
 export default function appendAtomicBlock (editorState, data) {
-	const withEntity = EditorState
+	const withEntity = editorState
 		.getCurrentContent()
-		.createEntity(data.MimeType || 'unknown', MUTABILITY.IMMUTABLE, data);
+		.createEntity(data.MimeType || 'unknown', data.mutabiility || MUTABILITY.IMMUTABLE, data);
 
 	const entityKey = withEntity.getLastCreatedEntityKey();
 

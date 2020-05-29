@@ -1,7 +1,7 @@
 import {convertFromRaw, ContentState, EditorState} from 'draft-js';
 
 import {BLOCKS} from '../../../Constants';
-import {getEmptyState} from '../../utils';
+import {getEmptyState, appendAtomicBlock} from '../../utils';
 
 import {nodeToBlock, getNodesFromHTML} from './utils';
 
@@ -58,6 +58,9 @@ export default function toDraftState (html) {
 
 			lastBlockWasAtomic = false;
 			editorState = EditorState.createWithContent(combinedContent);
+		} else {
+			lastBlockWasAtomic = true;
+			editorState = appendAtomicBlock(editorState || getEmptyState(), part);
 		}
 	}
 

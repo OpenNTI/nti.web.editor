@@ -263,4 +263,32 @@ describe('HTML to DraftState', () => {
 		expect(entity?.getMutability()).toBe('mutable');
 		expect(entity?.getData()?.username).toBe('test');
 	});
+
+	test('modeled content', () => {
+		const html = [
+			'<h1>heading</h1>',
+			{MimeType: 'test', foo: 'bar'},
+			'<p>paragraph</p>'
+		];
+
+		const editorState = toDraftState(html);
+		const content = editorState.getCurrentContent();
+		const blocks = content.getBlocksAsArray();
+
+		expect(blocks.length).toEqual(3);
+
+		expect(blocks[0].getType()).toEqual(BLOCKS.HEADER_ONE);
+		expect(blocks[0].getText()).toEqual('heading');
+
+		const entityKey = blocks[1].getEntityAt(0);
+		const entity = content.getEntity(entityKey);
+
+		expect(blocks[1].getType()).toEqual(BLOCKS.ATOMIC);
+		expect(entity.getType()).toEqual('test');
+		expect(entity.getData().foo).toEqual('bar');
+
+
+		expect(blocks[2].getType()).toEqual(BLOCKS.UNSTYLED);
+		expect(blocks[2].getText()).toEqual('paragraph');
+	});
 });
