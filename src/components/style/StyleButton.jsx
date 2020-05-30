@@ -3,109 +3,64 @@ import React from 'react';
 import cx from 'classnames';
 
 import {STYLES} from '../../Constants';
+import ContextProvider from '../../ContextProvider';
 
 const clone = x => typeof x === 'string' ? x : React.cloneElement(x);
 const stop = e => (e.preventDefault(), e.stopPropagation());
 
-export const Styles = Object.freeze({
+const Styles = Object.freeze({
 	CODE: STYLES.CODE,
 	BOLD: STYLES.BOLD,
 	ITALIC: STYLES.ITALIC,
 	UNDERLINE: STYLES.UNDERLINE
 });
 
-export default class StyleButton extends React.Component {
-	static Styles = Styles
+function isStyleAllowed (style, context, shouldDisableForState) {
+	const {editorState, readOnly, plugins} = context;
 
-	static contextTypes = {
-		editorContext: PropTypes.shape({
-			plugins: PropTypes.shape({
-				toggleInlineStyle: PropTypes.func.isRequired,
-				currentInlineStyles: PropTypes.object,
-				allowedInlineStyles: PropTypes.object
-			})
-		})
-	}
+	return plugins?.allowedInlineStyles?.has(style) && !readOnly && !shouldDisableForState(editorState);
+}
 
-	static propTypes = {
-		className: PropTypes.string,
-		children: PropTypes.any,
-		style: PropTypes.oneOf(Object.values(Styles)).isRequired,
-		shouldDisableForState: PropTypes.func
-	}
+function isCurrentStyle (style, context) {
+	return context?.plugins?.currentInlineStyles?.has(style);
+}
 
-	static defaultProps = {
-		shouldDisableForState: () => { return false; }
-	}
+StyleButton.Styles = Styles;
+StyleButton.propTypes = {
+	className: PropTypes.string,
+	children: PropTypes.any,
+	style: PropTypes.oneOf(Object.values(Styles)).isRequired,
+	shouldDisableForState: PropTypes.func
+};
+export default function StyleButton ({className, children, style, shouldDisableForState = () => false}) {
+	const editorContext = ContextProvider.useContext();
 
-	get editorContext () {
-		return this.context.editorContext || {};
-	}
+	console.log('Style BUTTON Updating: ', editorContext);
 
-	get pluginContext () {
-		return this.editorContext.plugins || {};
-	}
+	const isAllowed = isStyleAllowed(style, editorContext, shouldDisableForState);
+	const isCurrent = isCurrentStyle(style, editorContext);
 
-	get isAllowed () {
-		const {style, shouldDisableForState} = this.props;
-		const {editorState, readOnly} = this.editorContext;
-		const {allowedInlineStyles} = this.pluginContext;
+	const onMouseDown = () => {
 
-		return allowedInlineStyles && allowedInlineStyles.has(style) && !readOnly && !shouldDisableForState(editorState);
-	}
+	};
 
+	const cls = cx('draft-core-style-button', className, {active: isCurrent, disabled: !isAllowed});
+	const label = (style || '').toLowerCase();
 
-	get isCurrent () {
-		const {style} = this.props;
-		const {currentInlineStyles} = this.pluginContext;
-
-		return currentInlineStyles && currentInlineStyles.has(style);
-	}
-
-
-	onMouseDown = (e) => {
-		const {style} = this.props;
-		const {toggleInlineStyle} = this.pluginContext;
-
-		if (e) {
-			e.preventDefault();
-		}
-
-		if (toggleInlineStyle) {
-			toggleInlineStyle(style);
-		}
-	}
-
-
-	render () {
-		const {style = '_', className} = this.props;
-		const {isAllowed, isCurrent} = this;
-		const cls = cx('draft-core-style-button', className, {active: isCurrent, disabled: !isAllowed});
-		const label = (style || '').toLowerCase();
-
-		return (
-			<button
-				className={cls}
-				onMouseDown={this.onMouseDown}//onCLisk is to late
-				onClick={stop}
-				data-style={label}
-				aria-label={label}
-			>
-				{this.renderLabel(style)}
+	return (
+		<>
+			<button className={cls} onMouseDown={onMouseDown} onClick={stop} data-style={label} aria-label={label}>
+				{
+					React.Children.count(children) > 0 ?
+						React.Children.map(children, x => clone(x)) :
+						(<i className={`icon-${label}`} />)
+				}
 			</button>
-		);
-	}
-
-
-	renderLabel (style) {
-		const {children} = this.props;
-
-		if (React.Children.count(children) > 0) {
-			return React.Children.map(children, x => clone(x));
-		}
-
-		return (
-			<i className={`icon-${style.toLowerCase()}`} />
-		);
-	}
+			<ContextProvider.Consumer>
+				{(context) => {
+					console.log('NEW STYLE CONTEXT: ', context);
+				}}
+			</ContextProvider.Consumer>
+		</>
+	);
 }

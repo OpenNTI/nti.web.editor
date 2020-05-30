@@ -3,7 +3,15 @@ import PropTypes from 'prop-types';
 
 import IdRegistry from './IdRegistry';
 
+const Context = React.createContext(null);
+
 export default class ContextProvider extends React.Component {
+	static Consumer = Context.Consumer
+
+	static useContext () {
+		return React.useContext(Context);
+	}
+
 	static register (id, editor) {
 		IdRegistry.register(id, editor);
 	}
@@ -175,6 +183,16 @@ export default class ContextProvider extends React.Component {
 
 
 	render () {
-		return React.Children.only(this.props.children);
+		const editor = this.getEditor();
+		const context = {
+			editorStateId: editor?.editorStateId,
+			...(this.getChildContext()?.editorContext ?? {})
+		};
+
+		return (
+			<Context.Provider value={context}>
+				{this.props.children}
+			</Context.Provider>
+		);
 	}
 }

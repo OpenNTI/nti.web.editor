@@ -92,6 +92,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		this.state = {
 			currentEditorState: this[TRANSFORM_INPUT](editorState),
+			currentEditorStateId: Date.now(),
 			currentPlugins,
 			active: true
 		};
@@ -105,6 +106,10 @@ export default class DraftCoreEditor extends React.Component {
 
 	get editorState () {
 		return this.state.currentEditorState;
+	}
+
+	get editorStateId () {
+		return this.state.currentEditorStateId;
 	}
 
 	get readOnly () {
@@ -261,6 +266,7 @@ export default class DraftCoreEditor extends React.Component {
 		if (newEditorState !== oldEditorState) {
 			newState = newState || {};
 			newState.currentEditorState = this.getNewState(this[TRANSFORM_INPUT](newEditorState));
+			newState.currentEditorStateId = Date.now();
 		}
 
 		if (newPlugins !== oldPlugins) {
@@ -358,7 +364,7 @@ export default class DraftCoreEditor extends React.Component {
 			|| editorState.getLastChangeType() === 'apply-entity';
 		this.hasPendingChanges = this.hasPendingChanges || contentChanged;
 
-		this.setState({currentEditorState: editorState}, () => {
+		this.setState({currentEditorState: editorState, currentEditorStateId: Date.now()}, () => {
 			if (typeof cb === 'function') {
 				cb();
 			}
@@ -370,6 +376,10 @@ export default class DraftCoreEditor extends React.Component {
 			if (this.hasPendingChanges) {
 				this.onContentChangeBuffered();
 				this.hasPendingChanges = false;
+			}
+
+			if (this.editorContext) {
+				this.editorContext.updateExternalLinks();
 			}
 		});
 	}
