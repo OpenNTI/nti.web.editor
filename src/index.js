@@ -10,6 +10,8 @@ export Editor from './components/Editor';
 export PlaintextEditor from './components/PlaintextEditor';
 export NestedEditorWrapper from './components/NestedEditorWrapper';
 
+export getAtomicBlockData from './utils/get-atomic-block-data';
+
 export ContextProvider from './ContextProvider';
 
 import IdRegistry from './IdRegistry';

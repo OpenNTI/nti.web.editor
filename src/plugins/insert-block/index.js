@@ -4,6 +4,7 @@ import Button from './components/Button';
 import BlockCount from './components/BlockCount';
 import {DRAG_DATA_TYPE} from './Constants';
 import {
+	insertAtomicBlock,
 	insertBlock,
 	getSelectedText,
 	ensureMaintainSelection,
@@ -74,6 +75,11 @@ export default {
 						};
 					},
 
+					insertAtomicBlock (data, selection) {
+						const newState = insertAtomicBlock(data, selection, getEditorState());
+
+						setEditorState(newState);
+					},
 
 					getSelectedTextForInsertion: () => {
 						return getSelectedText(getEditorState());

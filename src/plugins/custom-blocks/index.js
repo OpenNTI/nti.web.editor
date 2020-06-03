@@ -36,7 +36,7 @@ export default {
 
 
 				for (let renderer of customRenderers) {
-					if (renderer.handlesBlock(contentBlock)) {
+					if (renderer.handlesBlock(contentBlock, editorState)) {
 						return {
 							component: renderer.component,
 							editable: renderer.editable,
