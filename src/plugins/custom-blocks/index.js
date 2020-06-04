@@ -44,6 +44,7 @@ export default {
 								...(renderer.props || {}),
 								...(pluginProps || {}),
 								...(extraProps || {}),
+								editorState,
 								indexOfType: indexOfType(contentBlock, renderer.handlesBlock, editorState),
 								setBlockData: (data, doNotKeepFocus) => {
 									const newState = setBlockData(contentBlock, data, pendingState || getEditorState());
@@ -76,9 +77,11 @@ export default {
 				}
 			},
 
-			blockStyleFn: (contentBlock) => {
+			blockStyleFn: (contentBlock, {getEditorState}) => {
+				const editorState = getEditorState();
+
 				for (let style of customStyles) {
-					if (style.handlesBlock(contentBlock)) {
+					if (style.handlesBlock(contentBlock, editorState)) {
 						return style.className;
 					}
 				}

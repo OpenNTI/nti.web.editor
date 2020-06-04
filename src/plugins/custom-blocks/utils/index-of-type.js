@@ -7,7 +7,7 @@ export default function indexOfType (contentBlock, isOfType, editorState) {
 			break;
 		}
 
-		if (!isOfType || isOfType(block)) {
+		if (!isOfType || isOfType(block, editorState)) {
 			count += 1;
 		}
 	}
