@@ -36,7 +36,8 @@ StyleButton.propTypes = {
 	disabledClassName: PropTypes.string,
 	children: PropTypes.any,
 	style: PropTypes.oneOf(Object.values(Styles)).isRequired,
-	shouldDisableForState: PropTypes.func
+	shouldDisableForState: PropTypes.func,
+	plain: PropTypes.bool
 };
 export default function StyleButton ({
 	className,
@@ -44,6 +45,7 @@ export default function StyleButton ({
 	disabledClassName = 'disabled',
 	children,
 	style,
+	plain,
 	shouldDisableForState = () => false
 }) {
 	const editorContext = ContextProvider.useContext();
@@ -56,7 +58,7 @@ export default function StyleButton ({
 		toggleInlineStyle(style, editorContext);
 	};
 
-	const cls = cx('draft-core-style-button', className, {[activeClassName]: isCurrent, [disabledClassName]: !isAllowed});
+	const cls = cx('draft-core-style-button', className, {[activeClassName]: isCurrent, [disabledClassName]: !isAllowed, plain});
 	const label = (style || '').toLowerCase();
 
 	return (

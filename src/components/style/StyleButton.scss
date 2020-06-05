@@ -1,6 +1,23 @@
 @import '~@nti/style-common';
 
-.draft-core-style-button {
+.draft-core-style-button.plain {
+	color: $secondary-grey;
+	margin: 0;
+	border: 0;
+	background: {
+		color: inherit;
+		repeat: no-repeat;
+		position: center center;
+	}
+	width: 2rem;
+	height: 2rem;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.draft-core-style-button:not(.plain) {
 	color: $secondary-grey;
 	font-weight: bold;
 	margin: 0;
