@@ -16,7 +16,7 @@ export default function Counter ({className, limit, count, over, showLimit}) {
 		<div className={cls}>
 			<span className="count">{count}</span>
 			{showLimit && (<span className="separator">/</span>)}
-			{showLimit && (<span className="limit">{showLimit}</span>)}
+			{showLimit && (<span className="limit">{limit}</span>)}
 		</div>
 	);
 }
