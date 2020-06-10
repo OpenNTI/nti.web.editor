@@ -9,11 +9,8 @@ EditorButton.propTypes = {
 };
 export default function EditorButton ({onClick:onClickProp, ...otherProps}) {
 	const editor = ContextProvider.useContext();
-	debugger;
 
 	const onClick = async (...args) => {
-
-		debugger;
 		await onClickProp(...args);
 		editor?.focusEditor();
 	};

@@ -15,16 +15,31 @@ ClosedSuggestionTag.propTypes = {
 	blockKey: PropTypes.string,
 	offsetKey: PropTypes.string,
 	subscribeToSelection: PropTypes.func,
+	subscribeToFocused: PropTypes.func,
 	getEditorState: PropTypes.func,
 	setEditorState: PropTypes.func
 };
 export default function ClosedSuggestionTag (props) {
-	const {strategy, entityKey, blockKey, offsetKey, subscribeToSelection, getEditorState, setEditorState} = props;
+	const {
+		strategy,
+		entityKey,
+		blockKey,
+		offsetKey,
+		subscribeToSelection,
+		subscribeToFocused,
+		getEditorState,
+		setEditorState
+	} = props;
 
 	const [selection, setSelection] = React.useState(null);
+	const [focused, setFocused] = React.useState(null);
 
 	React.useEffect(() => {
 		return subscribeToSelection(setSelection);
+	}, []);
+
+	React.useEffect(() => {
+		return subscribeToFocused(setFocused);
 	}, []);
 
 	const editorState = getEditorState();
@@ -46,7 +61,7 @@ export default function ClosedSuggestionTag (props) {
 			trigger={(<span><Base {...props} /></span>)}
 			verticalAlign={Flyout.ALIGNMENTS.BOTTOM}
 			horizontalAlign={Flyout.ALIGNMENTS.LEFT}
-			open={search != null}
+			open={search != null && focused}
 			focusOnOpen={false}
 		>
 			<SuggestionsCmp search={search} applySuggestion={applySuggestion} />

@@ -16,6 +16,9 @@ export const BuildStrategy = (...args) => new TaggingStrategy(...args);
 const SelectionKey = 'selection';
 const SelectionKeyEvent = getEventFor(SelectionKey);
 
+const FocusedKey = 'has-focus';
+const FocusedEvent = getEventFor(FocusedKey);
+
 /**
  * Create a tagging instance.
  *
@@ -34,7 +37,7 @@ export const create = (strategies) => {
 	}
 
 	for (let i = 0; i < strategies.length; i++) {
-		const strat = strategies[0];
+		const strat = strategies[i];
 
 		if (!(strat instanceof TaggingStrategy)) { throw new Error('Tagging Strategies must be built using BuildStrategy.'); }
 
@@ -49,7 +52,7 @@ export const create = (strategies) => {
 
 	function maybeUpdateSelection (editorState) {
 		const oldSelection = store.getItem(SelectionKey);
-		const selection = editorState.getSelection();
+		const selection = editorState?.getSelection();
 
 		if (oldSelection !== selection) {
 			clearTimeout(updatedSelectionTimeout);
@@ -71,7 +74,29 @@ export const create = (strategies) => {
 		};
 	}
 
+	function subscribeToFocused (fn) {
+		const listeners = {
+			[FocusedEvent]: fn
+		};
+
+		fn(store.getItem(FocusedKey));
+
+		store.addListeners(listeners);
+
+		return () => {
+			store.removeListeners(listeners);
+		};
+	}
+
 	return {
+		onFocus () {
+			store.setItem(FocusedKey, true);
+		},
+
+		onBlur () {
+			store.setItem(FocusedKey, false);
+		},
+
 		onChange (editorState) {
 
 			const oldEditorState = lastEditorState;
@@ -115,7 +140,13 @@ export const create = (strategies) => {
 			strategy: createDecoratorStrategy(s),
 			component: function TagWrapper (props) {
 				return (
-					<Tag strategy={s} store={store} subscribeToSelection={subscribeToSelection} {...props}>
+					<Tag
+						strategy={s}
+						store={store}
+						subscribeToSelection={subscribeToSelection}
+						subscribeToFocused={subscribeToFocused}
+						{...props}
+					>
 						{props.children}
 					</Tag>
 				);
