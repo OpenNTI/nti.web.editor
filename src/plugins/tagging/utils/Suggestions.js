@@ -25,13 +25,24 @@ export function setSuggestion (suggestion, appliedSearch = '', strategy, entityK
 		entityKey
 	);
 
-	return EditorState.forceSelection(
-		EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_CHARACTERS),
+	newContent = Modifier.insertText(
+		newContent,
 		new SelectionState({
 			anchorKey: selection.getAnchorKey(),
 			focusKey: selection.getFocusKey(),
 			anchorOffset: selection.getAnchorOffset() + displayText.length,
 			focusOffset: selection.getAnchorOffset() + displayText.length
+		}), 
+		' '
+	);
+
+	return EditorState.forceSelection(
+		EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_CHARACTERS),
+		new SelectionState({
+			anchorKey: selection.getAnchorKey(),
+			focusKey: selection.getFocusKey(),
+			anchorOffset: selection.getAnchorOffset() + displayText.length + 1,
+			focusOffset: selection.getAnchorOffset() + displayText.length + 1
 		})
 	);
 }
