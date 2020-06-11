@@ -24,6 +24,7 @@ export default class TaggingStrategy {
 
 	#DisplayCmp = null;
 	#getDisplayText = null;
+	#displayClassName = null;
 
 	#SuggestionsCmp = null;
 	#suggestedOnly = true;
@@ -38,6 +39,7 @@ export default class TaggingStrategy {
 			allowedInBlockTypes = BLOCK_SET,
 			DisplayCmp,
 			getDisplayText,
+			displayClassName,
 			SuggestionsCmp,
 			suggestedOnly,
 			...config
@@ -53,6 +55,7 @@ export default class TaggingStrategy {
 
 		this.#DisplayCmp = DisplayCmp;
 		this.#getDisplayText = getDisplayText;
+		this.#displayClassName = displayClassName;
 
 		this.#SuggestionsCmp = SuggestionsCmp;
 		this.#suggestedOnly = suggestedOnly;
@@ -68,6 +71,7 @@ export default class TaggingStrategy {
 	get allowedInBlockTypes () { return this.#allowedInBlockTypes; }
 
 	get DisplayCmp () { return this.#DisplayCmp; }
+	get displayClassName () { return this.#displayClassName; }
 	getDisplayText (suggestion) {
 		return this.#getDisplayText?.(suggestion) ?? suggestion;
 	}

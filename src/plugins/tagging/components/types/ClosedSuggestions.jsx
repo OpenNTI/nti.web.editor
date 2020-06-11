@@ -48,7 +48,7 @@ export default function ClosedSuggestionTag (props) {
 	const suggestion = Suggestions.getSuggestion(...suggestionArgs);
 
 	if (suggestion) {
-		return (<Base {...props} />);
+		return (<Base {...props} suggestion={suggestion} />);
 	}
 
 	const {SuggestionsCmp} = strategy;
