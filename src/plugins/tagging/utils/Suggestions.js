@@ -4,13 +4,15 @@ import {CHANGE_TYPES} from '../../../Constants';
 
 import {getSelectionForTag} from './find-tags';
 
-export function setSuggestion (suggestion, appliedSearch = '', strategy, entityKey, blockKey, offsetKey, editorState) {
+export function setSuggestion (suggestion, suggestionDisplay, appliedSearch = '', strategy, entityKey, blockKey, offsetKey, editorState) {
 	const content = editorState.getCurrentContent();
 	const selection = getSelectionForTag(entityKey, editorState, blockKey);
 
-	const displayText = strategy.getDisplayText(suggestion);
+	const displayText = strategy.getDisplayText(suggestion, suggestionDisplay);
 	
-	let newContent = content.mergeEntityData(entityKey, {suggestion});
+	let newContent = content.mergeEntityData(entityKey, {
+		[strategy.suggestionKey]: suggestion
+	});
 
 	newContent = Modifier.replaceText(
 		newContent,
@@ -51,8 +53,9 @@ export function getSuggestion (strategy, entityKey, blockKey, offsetKey, editorS
 	const content = editorState.getCurrentContent();
 
 	const entity = content.getEntity(entityKey);
+	const data = entity?.data ?? {};
 
-	return entity?.getData()?.suggestion;
+	return data[strategy.suggestionKey];
 }
 
 export function getSuggestionSearch (strategy, entity, blockKey, offsetKey, editorState) {

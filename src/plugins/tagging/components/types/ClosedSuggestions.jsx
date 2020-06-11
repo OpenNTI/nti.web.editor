@@ -54,7 +54,7 @@ export default function ClosedSuggestionTag (props) {
 	const {SuggestionsCmp} = strategy;
 
 	const search = Suggestions.getSuggestionSearch(...suggestionArgs);
-	const applySuggestion = newSuggestion => setEditorState(Suggestions.setSuggestion(newSuggestion, search, ...suggestionArgs));
+	const applySuggestion = (newSuggestion, displayText) => setEditorState(Suggestions.setSuggestion(newSuggestion, displayText, search, ...suggestionArgs));
 
 	return (
 		<Flyout.Triggered

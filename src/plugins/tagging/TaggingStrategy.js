@@ -28,6 +28,8 @@ export default class TaggingStrategy {
 
 	#SuggestionsCmp = null;
 	#suggestedOnly = true;
+	#suggestionKey = null;
+	#getSuggestionData = null;
 
 	#isValidMember = null;
 
@@ -42,6 +44,8 @@ export default class TaggingStrategy {
 			displayClassName,
 			SuggestionsCmp,
 			suggestedOnly,
+			suggestionKey,
+			getSuggestionData,
 			...config
 		} = configArg;
 
@@ -59,6 +63,8 @@ export default class TaggingStrategy {
 
 		this.#SuggestionsCmp = SuggestionsCmp;
 		this.#suggestedOnly = suggestedOnly;
+		this.#suggestionKey = suggestionKey;
+		this.#getSuggestionData = getSuggestionData;
 
 		this.#isValidMember = buildIsValidMember(config);
 	}
@@ -72,16 +78,21 @@ export default class TaggingStrategy {
 
 	get DisplayCmp () { return this.#DisplayCmp; }
 	get displayClassName () { return this.#displayClassName; }
-	getDisplayText (suggestion) {
-		return this.#getDisplayText?.(suggestion) ?? suggestion;
+	getDisplayText (suggestion, displayText) {
+		return this.#getDisplayText?.(suggestion) ?? displayText;
 	}
 
 	get hasSuggestions () { return Boolean(this.#SuggestionsCmp); }
 	get SuggestionsCmp () { return this.#SuggestionsCmp; }
 	get suggestedOnly () { return this.#suggestedOnly; }
+	get suggestionKey () { return this.#suggestionKey || 'suggestion'; }
+
+	getSuggestionData (suggestion) {
+		return this.#getSuggestionData?.(suggestion) ?? suggestion;
+	}
 
 	getId () {
-		return `tagging-strategy-${this.trigger}-${this.type}-${this.key}`;
+		return `tagging-strategy-${this.trigger}-${this.type}-${this.#key}`;
 	}
 
 	getEntityData () {
