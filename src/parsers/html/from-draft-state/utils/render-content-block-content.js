@@ -14,13 +14,30 @@ const TAGS = {
 
 const TAG_ORDER = [STYLES.BOLD, STYLES.ITALIC, STYLES.CODE, STYLES.UNDERLINE];
 
+function getEntityAttributes (entity) {
+	const attributes = {
+		'data-entity-type': entity.type,
+		'data-entity-mutability': entity.mutability
+	};
+
+	if (entity.data.href) {
+		attributes['href'] = entity.data.href;
+	}
+
+	for (let [key, value] of Object.entries(entity?.data ?? {})) {
+		attributes[`data-entity-${key}`] = value;
+	}
+
+	return attributes;
+}
+
 function generateOpenTags (tagList, content) {
 	const {open} = tagList;
 
 	const styleTags = TAG_ORDER.reverse().map(x => open.style.has(x) ? openTag(TAGS[x]) : '');
 
 	const entity = open.entity != null ? content.getEntity(open.entity) : null;
-	const entityTags = entity && entity.type === ENTITIES.LINK ? [openTag('a', {href: entity.data.href})] : [];
+	const entityTags = entity ? [openTag('a', getEntityAttributes(entity))] : [];
 
 	const tags = [...entityTags, ...styleTags];
 
@@ -42,7 +59,7 @@ function generateCloseTags (tagList, content) {
 	const styleTags = TAG_ORDER.reverse().map(x => close.style.has(x) ? closeTag(TAGS[x]) : '');
 
 	const entity = close.entity != null ? content.getEntity(close.entity) : null;
-	const entityTags = entity && entity.type === ENTITIES.LINK ? [closeTag('a')] : [];
+	const entityTags = entity ? [closeTag('a')] : [];
 
 	const tags = [...styleTags, ...entityTags];
 
