@@ -4,7 +4,7 @@ import {ENTITIES} from '../../Constants';
 import {HANDLED, NOT_HANDLED} from '../Constants';
 import {createStore, getEventFor} from '../Store';
 
-import {createDecoratorStrategy, MaybeTag} from './utils';
+import {createDecoratorStrategy, MaybeTag, getAllTags as getAllTagsUtil} from './utils';
 import TaggingStrategy from './TaggingStrategy';
 import Tag from './components/Tag';
 
@@ -13,36 +13,53 @@ export const HashTag = ENTITIES.TAG;
 
 export const BuildStrategy = (...args) => new TaggingStrategy(...args);
 
+export const getAllTags = getAllTagsUtil;
+
 const SelectionKey = 'selection';
 const SelectionKeyEvent = getEventFor(SelectionKey);
 
 const FocusedKey = 'has-focus';
 const FocusedEvent = getEventFor(FocusedKey);
 
-/**
- * Create a tagging instance.
- *
- * Can be given a single strategy or a list of strategies.
- *
- * @param  {Array|Object}  strategies  how tagging should behave
- * @param  {string} strategies.trigger the character to trigger the start of a tag
- * @param  {string} strategies.type    the type of tag
- * @return {[type]}        [description]
- */
-export const create = (strategies) => {
+const throwIfNotTaggingStategy = x => {
+	if (!(x instanceof TaggingStrategy)) { throw new Error('Tagging Stategies must be build using BuildStrategy.'); }
+};
+function setupStrategies (strategies) {
 	if (!strategies) { throw new Error('Tagging Plugin must be given a strategy'); }
+	
+	if (typeof strategies === 'object') {
+		return Object.entries(strategies)
+			.map(([key, strat]) => {
+				throwIfNotTaggingStategy(strat);
+				strat.key = key;
+				return strat;
+			});
+	}
 
 	if (!Array.isArray(strategies)) {
 		strategies = [strategies];
 	}
 
-	for (let i = 0; i < strategies.length; i++) {
-		const strat = strategies[i];
+	return strategies
+		.map((strat, key) => {
+			throwIfNotTaggingStategy(strat);
+			strat.key = key;
+			return strat;
+		});
+}
 
-		if (!(strat instanceof TaggingStrategy)) { throw new Error('Tagging Strategies must be built using BuildStrategy.'); }
-
-		strat.index = i;
-	}
+/**
+ * Create a tagging instance.
+ *
+ * Can be given a single strategy or a list of strategies.
+ *
+ * @param  {Array|Object}  config  how tagging should behave
+ * @param  {string} strategies.trigger the character to trigger the start of a tag
+ * @param  {string} strategies.type    the type of tag
+ * @return {[type]}        [description]
+ */
+export const create = (config) => {
+	const strategies = setupStrategies(config);
 
 	const store = createStore({});
 	let handled = false;

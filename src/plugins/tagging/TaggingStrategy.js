@@ -16,7 +16,7 @@ function getDefaultMutability ({suggestedOnly}) {
 //from the @ character to wherever the cursor is
 
 export default class TaggingStrategy {
-	#index = -1;
+	#key = -1;
 	#trigger = null;
 	#type = null;
 	#mutability = null;
@@ -63,7 +63,7 @@ export default class TaggingStrategy {
 		this.#isValidMember = buildIsValidMember(config);
 	}
 
-	set index (i) { this.#index = i; }
+	set key (i) { this.#key = i; }
 
 	get trigger () { return this.#trigger; }
 	get type () { return this.#type; }
@@ -81,7 +81,7 @@ export default class TaggingStrategy {
 	get suggestedOnly () { return this.#suggestedOnly; }
 
 	getId () {
-		return `tagging-strategy-${this.trigger}-${this.type}-${this.index}`;
+		return `tagging-strategy-${this.trigger}-${this.type}-${this.key}`;
 	}
 
 	getEntityData () {
@@ -91,7 +91,7 @@ export default class TaggingStrategy {
 	}
 
 	coversEntity (entity) {
-		return entity?.getType() === this.type && entity?.getData()?.id === this.getId();
+		return entity?.type === this.type && entity?.data?.id === this.getId();
 	}
 
 
