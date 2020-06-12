@@ -1,4 +1,4 @@
-import {STYLES, ENTITIES} from '../../../../Constants';
+import {STYLES} from '../../../../Constants';
 import {normalizeCharacterList} from '../../../utils';
 
 import openTag from './open-tag';
