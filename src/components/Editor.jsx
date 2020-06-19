@@ -27,6 +27,7 @@ export default class DraftCoreEditor extends React.Component {
 		customKeyBindings: PropTypes.object,
 		placeholder: PropTypes.string,
 		readOnly: PropTypes.bool,
+		autoFocus: PropTypes.bool,
 
 		contentChangeBuffer: PropTypes.number,
 
@@ -224,7 +225,7 @@ export default class DraftCoreEditor extends React.Component {
 	}
 
 	componentDidMount () {
-		const {plugins, id} = this.props;
+		const {plugins, id, autoFocus} = this.props;
 
 		for (let plugin of plugins) {
 			if (plugin.setEditor) {
@@ -234,6 +235,10 @@ export default class DraftCoreEditor extends React.Component {
 
 		if (id) {
 			ContextProvider.register(id, this);
+		}
+
+		if (autoFocus) {
+			this.focus();
 		}
 	}
 
@@ -435,6 +440,7 @@ export default class DraftCoreEditor extends React.Component {
 
 		const cls = cx(
 			'nti-draft-core',
+			'x-selectable',
 			className,
 			pluginClasses,
 			{
