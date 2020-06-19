@@ -16,8 +16,8 @@ const TAG_ORDER = [STYLES.BOLD, STYLES.ITALIC, STYLES.CODE, STYLES.UNDERLINE];
 
 function getEntityAttributes (entity) {
 	const attributes = {
-		'data-entity-type': entity.type,
-		'data-entity-mutability': entity.mutability
+		'data-nti-entity-type': entity.type,
+		'data-nti-entity-mutability': entity.mutability
 	};
 
 	if (entity.data.href) {
@@ -25,7 +25,7 @@ function getEntityAttributes (entity) {
 	}
 
 	for (let [key, value] of Object.entries(entity?.data ?? {})) {
-		attributes[`data-entity-${key}`] = value;
+		attributes[`data-nti-entity-${key}`] = value;
 	}
 
 	return attributes;

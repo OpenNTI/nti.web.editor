@@ -15,8 +15,8 @@ function attributesToEntityData (node) {
 	}
 
 	for (let key of keys) {
-		if (key.startsWith('entity')) {
-			const entityKey = key.replace(/^entity/, '').toLowerCase();
+		if (key.startsWith('ntiEntity')) {
+			const entityKey = key.replace(/^ntiEntity/, '').toLowerCase();
 			const value = node.dataset[key];
 
 			if (entityKey === 'type') {
@@ -33,9 +33,6 @@ function attributesToEntityData (node) {
 	return entity;
 }
 
-function entityDataToAttributes (entity) {
-
-}
 
 export function getEntityForNode (node) {
 	const tagName = getTagName(node);
