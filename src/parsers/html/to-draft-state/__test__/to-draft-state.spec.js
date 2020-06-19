@@ -225,7 +225,7 @@ describe('HTML to DraftState', () => {
 	});
 
 	test('link', () => {
-		const html = '<p>Paragraph with a <a href="www.google.com" data-entity-type="link" data-entity-mutability="mutable" data-entity-username="test">link.</a>';
+		const html = '<p>Paragraph with a <a href="www.google.com" data-nti-entity-type="link" data-nti-entity-mutability="mutable" data-nti-entity-username="test">link.</a>';
 		const linkStart = 17;
 		const linkEnd = 221;
 

@@ -1,3 +1,5 @@
+import {ENTITIES, MUTABILITY} from '../../../../Constants';
+
 import getTagName from './get-tag-name';
 
 const EntityTag = 'a';
@@ -5,8 +7,8 @@ const EntityTag = 'a';
 function attributesToEntityData (node) {
 	const keys = Object.keys(node.dataset);
 	const entity = {
-		type: null,
-		mutability: null,
+		type: ENTITIES.LINK,
+		mutability: MUTABILITY.MUTABLE,
 		data: {}
 	};
 
