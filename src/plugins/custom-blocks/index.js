@@ -46,8 +46,8 @@ export default {
 								...(extraProps || {}),
 								editorState,
 								indexOfType: indexOfType(contentBlock, renderer.handlesBlock, editorState),
-								setBlockData: (data, doNotKeepFocus) => {
-									const newState = setBlockData(contentBlock, data, pendingState || getEditorState());
+								setBlockData: (data, doNotKeepFocus, useEntity) => {
+									const newState = setBlockData(contentBlock, data, useEntity, pendingState || getEditorState());
 
 									pendingState = newState;
 
