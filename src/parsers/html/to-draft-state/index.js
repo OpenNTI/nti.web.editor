@@ -22,7 +22,7 @@ function getContentForHTML (html) {
 }
 
 export default function toDraftState (html) {
-	if (!html) { return getEmptyState(); }
+	if (!html || (Array.isArray(html) && html.length === 0)) { return getEmptyState(); }
 	if (html instanceof EditorState) { return html; }
 
 	if (!Array.isArray(html)) { html = [html]; }
