@@ -238,7 +238,7 @@ export default class DraftCoreEditor extends React.Component {
 		}
 
 		if (autoFocus) {
-			this.focus();
+			setTimeout(() => this.focus(), 100);
 		}
 	}
 
