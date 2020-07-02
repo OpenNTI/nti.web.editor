@@ -2,7 +2,8 @@ import {BLOCK_SET, MUTABILITY} from '../../Constants';
 
 const IsNonWhiteSpace = /\S/;
 
-function buildIsValidMember ({allowWhiteSpace = false}) {
+function buildIsValidMember ({allowWhiteSpace = false, isValidCharacters}) {
+	if (isValidCharacters) { return (chars) => isValidCharacters(chars); }
 	if (allowWhiteSpace) { return () => true; }
 
 	return (chars) => IsNonWhiteSpace.test(chars);
