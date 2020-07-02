@@ -5,6 +5,7 @@ export CustomBlocks from './custom-blocks';
 export * as EnsureFocusableBlock from './ensure-focusable-block';
 export ExternalLinks from './external-links';
 export FormatPasted from './format-pasted';
+export * as HandleFiles from './handle-files';
 export IgnoreDrop from './ignore-drop';
 export InsertBlock from './insert-block';
 export KeepFocusInView from './keep-focus-in-view';
