@@ -238,7 +238,7 @@ export default class DraftCoreEditor extends React.Component {
 		}
 
 		if (autoFocus) {
-			setTimeout(() => this.focus(), 100);
+			setTimeout(() => this.focusEnd(), 100);
 		}
 	}
 
@@ -289,6 +289,12 @@ export default class DraftCoreEditor extends React.Component {
 		const {editorState} = this;
 
 		return EditorState.push(editorState, state.getCurrentContent(), 'insert-fragment');
+	}
+
+	focusEnd = () => {
+		const {editorState} = this;
+
+		this.onChange(EditorState.moveFocusToEnd(editorState));
 	}
 
 
