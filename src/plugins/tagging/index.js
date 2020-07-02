@@ -62,6 +62,8 @@ export const create = (config) => {
 	const strategies = setupStrategies(config);
 
 	const store = createStore({});
+	
+	let blurTimeout = null;
 	let handled = false;
 	let lastEditorState = null;
 
@@ -107,11 +109,14 @@ export const create = (config) => {
 
 	return {
 		onFocus () {
+			clearTimeout(blurTimeout);
 			store.setItem(FocusedKey, true);
 		},
 
 		onBlur () {
-			store.setItem(FocusedKey, false);
+			blurTimeout = setTimeout(() => {
+				store.setItem(FocusedKey, false);
+			}, 10);
 		},
 
 		onChange (editorState) {
