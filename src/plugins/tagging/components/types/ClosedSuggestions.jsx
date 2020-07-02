@@ -59,10 +59,10 @@ export default function ClosedSuggestionTag (props) {
 	return (
 		<Flyout.Triggered
 			trigger={(<span><Base {...props} /></span>)}
-			verticalAlign={Flyout.ALIGNMENTS.BOTTOM}
 			horizontalAlign={Flyout.ALIGNMENTS.LEFT}
 			open={search != null && focused}
 			focusOnOpen={false}
+			{...(SuggestionsCmp?.getFlyoutProps?.() || {})}
 		>
 			<SuggestionsCmp search={search} applySuggestion={applySuggestion} />
 		</Flyout.Triggered>
