@@ -294,6 +294,7 @@ export default class DraftCoreEditor extends React.Component {
 	focusEnd = () => {
 		const {editorState} = this;
 
+		this.focus();
 		this.onChange(EditorState.moveFocusToEnd(editorState));
 	}
 
