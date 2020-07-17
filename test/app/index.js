@@ -91,7 +91,9 @@ const plugins = [
 	// Plugins.EnsureFocusableBlock.create(),
 	Plugins.LimitStyles.create({allow: STYLE_SET}),
 	Plugins.LimitBlockTypes.create({allow: BLOCK_SET}),
-	Plugins.ExternalLinks.create({allowedInBlockTypes: new Set([BLOCKS.UNSTYLED, BLOCKS.BLOCKQUOTE])}),
+	Plugins.Links.AutoLink.create(),
+	Plugins.Links.CustomLinks.create(),
+	Plugins.Links.InsertPreview.create(),
 	Plugins.ContiguousEntities.create(),
 	Plugins.Tagging.create([
 		Plugins.Tagging.BuildStrategy({trigger: '#', type: Plugins.Tagging.HashTag}),

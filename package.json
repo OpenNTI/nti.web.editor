@@ -42,6 +42,7 @@
     "linkify-it": "^2.0.3",
     "prop-types": "^15.5.10",
     "punycode": "^2.1.0",
+    "tlds": "^1.207.0",
     "uuid": "^7.0.1"
   },
   "devDependencies": {
