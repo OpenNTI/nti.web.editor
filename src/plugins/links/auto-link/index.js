@@ -1,4 +1,5 @@
 import {NOT_HANDLED, HANDLED} from '../../Constants.js';
+import {create as CreateDecorate} from '../decorate';
 
 import {ApplyAutoLinks} from './utils';
 
@@ -7,6 +8,10 @@ export const create = (config = {}) => {
 	let backspaceAction = null;
 
 	return {
+		plugins: [
+			CreateDecorate()
+		],
+
 		handleKeyCommand (command, editorState, eventTime, {setEditorState}) {
 			if (command !== 'backspace' || !backspaceAction) { return NOT_HANDLED; }
 
