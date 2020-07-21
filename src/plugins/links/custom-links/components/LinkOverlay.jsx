@@ -45,7 +45,6 @@ export default function CustomLinkWrapper ({
 	const selectedEntityKey = store.getItem(store.SelectedEntityKey);
 	const editingKey = store.getItem(store.EditingKey);
 	
-	const editing = Boolean(editingKey);
 	const entityKey = selectedEntityKey ?? editingKey;
 	
 	React.useEffect(() => (
@@ -75,12 +74,18 @@ export default function CustomLinkWrapper ({
 		decoratedText
 	};
 
+	const editing = Boolean(editingKey);
+
 	const startEditing = () => store.setItem(store.EditingKey, entityKey);
-	const stopEditing = () => (
-		store.setItem(store.EditingKey, null),
-		store.setItem(store.SelectedEntityKey, null),
-		editor?.focus()
-	);
+	const stopEditing = () => {
+		if (!entityData.href) {
+			setEditorState(removeEntity(entityKey, offsetKey, getEditorState()));
+		}
+
+		store.setItem(store.EditingKey, null);
+		store.setItem(store.SelectedEntityKey, null);
+		editor?.focus();
+	};
 
 	const onRemove = () => (
 		setEditorState(removeEntity(entityKey, offsetKey, getEditorState())),
