@@ -36,6 +36,19 @@ export default class PluginStore extends EventEmitter {
 		}
 	}
 
+	subscribeTo (keys, fn) {
+		if (!Array.isArray(keys)) { keys = [keys]; }
+
+		const listeners = keys.reduce((acc, key) => {
+			acc[getEventFor(key)] = fn;
+			return acc;
+		}, {});
+
+		this.addListeners(listeners);
+
+		return () => this.removeListeners(listeners);
+	}
+
 
 	get state () {
 		return this[STATE];
