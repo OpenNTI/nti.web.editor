@@ -46,6 +46,7 @@
 		& .cancel, & .save {
 			flex: 0 0 135px;
 			text-align: center;
+			border: none;
 		}
 	}
 }

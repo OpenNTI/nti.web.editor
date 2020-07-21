@@ -4,7 +4,7 @@ import classnames from 'classnames/bind';
 import {Hooks, Flyout} from '@nti/web-commons';
 
 import {getEntityData} from '../../link-utils';
-import {getBestEntityDesc, removeEntity} from '../utils'; 
+import {getBestEntityDesc, removeEntity, updateEntityDesc} from '../utils'; 
 
 import Styles from './Styles.css';
 import LinkEditor from './LinkEditor';
@@ -22,6 +22,11 @@ CustomLinkWrapper.propTypes = {
 	getEditorState: PropTypes.func,
 	setEditorState: PropTypes.func,
 
+	editor: PropTypes.shape({
+		focus: PropTypes.func,
+		onContentChange: PropTypes.func
+	}),
+
 	store: PropTypes.shape({
 		subscribeTo: PropTypes.func,
 		SelectedEntityKey: PropTypes.string,
@@ -31,6 +36,7 @@ CustomLinkWrapper.propTypes = {
 export default function CustomLinkWrapper ({
 	getEditorState,
 	setEditorState,
+	editor,
 	store
 }) {
 	const forceUpdate = Hooks.useForceUpdate();
@@ -70,7 +76,27 @@ export default function CustomLinkWrapper ({
 	};
 
 	const startEditing = () => store.setItem(store.EditingKey, entityKey);
-	const onRemove = () => setEditorState(removeEntity(entityKey, offsetKey, getEditorState()));
+	const stopEditing = () => (
+		store.setItem(store.EditingKey, null),
+		store.setItem(store.SelectedEntityKey, null),
+		editor?.focus()
+	);
+
+	const onRemove = () => (
+		setEditorState(removeEntity(entityKey, offsetKey, getEditorState())),
+		editor?.focus()
+	);
+
+	const onSave = (data) => (
+		setEditorState(
+			updateEntityDesc(data, entityDesc, getEditorState()),
+			() => (
+				store.setItem(store.EditingKey, null),
+				store.setItem(store.SelectedEntityKey, null),
+				editor?.focus()
+			)
+		)
+	);
 
 	return (
 		<Flyout.Aligned
@@ -88,7 +114,7 @@ export default function CustomLinkWrapper ({
 			horizontalAlign={Flyout.ALIGNMENTS.LEFT_OR_RIGHT}
 		>
 			{editing ?
-				(<LinkEditor entityData={entityData} />) :
+				(<LinkEditor entityData={entityData} onCancel={stopEditing} onSave={onSave} />) :
 				(<LinkInfo entityData={entityData} onRemove={onRemove} onEdit={startEditing} />)
 			}
 		</Flyout.Aligned>
