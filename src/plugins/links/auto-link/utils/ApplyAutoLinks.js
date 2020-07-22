@@ -2,8 +2,26 @@ import {EditorState, Modifier, SelectionState} from 'draft-js';
 
 import {CHANGE_TYPES} from '../../../../Constants';
 
-import {getLinkBeforeSelection} from './GetLinks';
+import {getLinkBeforeSelection, getNotMarkedLinks} from './GetLinks';
 import {applyLink} from './ApplyLinks';
+
+export function onChange (editorState, config) {
+	const content = editorState.getCurrentContent();
+	const selection = editorState.getSelection();
+
+	const newLinks = getNotMarkedLinks(content, config);
+
+	if (!newLinks.length) { return editorState; }
+
+	const newContent = newLinks.reduce((acc, link) => {
+		return applyLink(link, acc);
+	}, content);
+
+	return EditorState.forceSelection(
+		EditorState.push(editorState, newContent, CHANGE_TYPES.APPLY_ENTITY),
+		selection
+	);
+}
 
 export function beforeInput (chars, editorState, config) {
 	const content = editorState.getCurrentContent();
@@ -23,7 +41,7 @@ export function beforeInput (chars, editorState, config) {
 
 	const link = getLinkBeforeSelection(nextEditorState.getCurrentContent(), nextEditorState.getSelection(), config);
 
-	if (!link) { return {editorState: nextEditorState, undo: null}; }
+	if (!link) { return null; }
 
 	newContent = applyLink(link, newContent);
 	newEditorState = EditorState.push(newEditorState, newContent, CHANGE_TYPES.APPLY_ENTITY);
@@ -38,12 +56,9 @@ export function beforeInput (chars, editorState, config) {
 		})
 	);
 
-	return {
-		editorState: newEditorState,
-		undo: null
-	};
+	return newEditorState;
 }
 
-export function handleReturn () {
-	debugger;
+export function handleReturn (editorState) {
+	//Since we are adding the links on change and on beforeInput I don't think this is needed
 }

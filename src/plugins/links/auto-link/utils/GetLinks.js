@@ -63,3 +63,52 @@ export function getLinkBeforeSelection (content, selection, {allowedInBlockTypes
 		url: link.url
 	};
 }
+
+function getNotMarkedInBlock (block, content) {
+	const key = block.getKey();
+	const text = block.getText();
+	const characters = block.getCharacterList();
+	const links = linkify.match(text);
+
+	if (!links || !links.length) { return []; }
+
+	//As a shortcut for now we are assuming if there is
+	//an entity on any of the matched text, we should
+	//consider it marked
+	return links.reduce((acc, link) => {
+		for (let i = link.index; i < link.lastIndex; i++) {
+			const character = characters.get(i);
+
+			if (character.entity) {
+				return acc;
+			}
+		}
+
+		return [
+			...acc,
+			{
+				selection: new SelectionState({
+					anchorKey: key,
+					anchorOffset: link.index,
+					focusKey: key,
+					focusOffset: link.lastIndex
+				}),
+				text: link.text,
+				url: link.url
+			}
+		];
+	}, []);
+}
+
+export function getNotMarkedLinks (content, {allowedInBlockTypes}) {
+	return content
+		.getBlocksAsArray()
+		.reduce((acc, block) => {
+			if (allowedInBlockTypes && !allowedInBlockTypes.has(block.getType())) { return acc; }
+		
+			return [
+				...acc,
+				...getNotMarkedInBlock(block, content)
+			];
+		}, []);
+}
