@@ -11,7 +11,7 @@ export default function getAtomicBlockData (block, editorState) {
 	return {
 		...(blockData?.toJS() ?? {}),
 		...(entity?.getData() ?? {}),
-		type: entity?.getType ?? void 0,
+		type: entity?.getType() ?? void 0,
 		mutability: entity?.getMutability() ?? void 0
 	};
 }
