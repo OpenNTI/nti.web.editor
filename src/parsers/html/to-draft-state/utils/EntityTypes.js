@@ -5,30 +5,33 @@ import getTagName from './get-tag-name';
 const EntityTag = 'a';
 
 function attributesToEntityData (node) {
-	const keys = Object.keys(node.dataset);
 	const entity = {
 		type: ENTITIES.LINK,
 		mutability: MUTABILITY.MUTABLE,
 		data: {}
 	};
 
-	if (node.hasAttribute('href')) {
-		entity.data.href = node.getAttribute('href');
-	}
+	const attributes = Array.from(node.attributes);
 
-	for (let key of keys) {
-		if (key.startsWith('ntiEntity')) {
-			const entityKey = key.replace(/^ntiEntity/, '').toLowerCase();
-			const value = node.dataset[key];
+	for (let attribute of attributes) {
+		const name = attribute.name;
+		let value = attribute.value;
 
-			if (entityKey === 'type') {
+		if (value === 'false') { value = false; }
+		if (value === 'true') { value = true; }
+
+		if (name === 'href') {
+			entity.data.href = value;
+		} else if (name.startsWith('data-nti-entity-')) {
+			const key = name.replace(/^data-nti-entity-/, '');
+
+			if (key === 'type') {
 				entity.type = value;
-			} else if (entityKey === 'mutability') {
+			} else if (key === 'mutability') {
 				entity.mutability = value;
 			} else {
-				entity.data[entityKey] = value;
+				entity.data[key] = value;
 			}
-
 		}
 	}
 
