@@ -39,13 +39,6 @@ export default function LinkInfo ({entityData, onEdit, onRemove}) {
 			>
 				{t('change')}
 			</Text.Base>
-			<Text.Base
-				className={cx('action')}
-				role="button"
-				onClick={(e) => (stop(e), onRemove())}
-			>
-				{t('remove')}
-			</Text.Base>
 		</div>
 	);
 }
