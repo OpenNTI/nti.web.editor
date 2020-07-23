@@ -43,7 +43,7 @@ export default class LinkTracker {
 	}
 
 	hasPreview (link) {
-		return this.#linkToPreview.has(link.entityKey);
+		return link?.entity?.getData()?.['has-preview'] === 'preview';
 	}
 
 	insertPreview (link, content) {
@@ -55,8 +55,12 @@ export default class LinkTracker {
 	}
 
 	updatePreview (link, content) {
+		const existingPreview = this.#linkToPreview.get(link.entityKey);
+
+		if (!existingPreview) { return; }
+
 		const {preview, content: previewContent} = Preview.update(
-			this.#linkToPreview.get(link.entityKey),
+			existingPreview,
 			link,
 			this.#getDataForLink,
 			content

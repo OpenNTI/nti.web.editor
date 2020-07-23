@@ -24,7 +24,7 @@ export function insert (link, getDataForLink, content) {
 
 	return {
 		preview,
-		content: newContent
+		content: newContent.mergeEntityData(link.entityKey, {'has-preview': 'preview'})
 	};
 }
 

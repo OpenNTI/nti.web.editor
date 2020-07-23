@@ -1,7 +1,9 @@
 import {ENTITIES} from '../../../Constants';
 
-isLinkEntity.isAutoLink = (entity) => isLinkEntity(entity) && entity.getData?.()?.autoLink;
-isLinkEntity.isCustomLink = (entity) => isLinkEntity(entity) && entity.getData?.()?.isCustom;
+const getEntityData = e => e.getData?.() ?? {};
+
+isLinkEntity.isAutoLink = (entity) => isLinkEntity(entity) && (getEntityData(entity)['link-type'] === 'auto');
+isLinkEntity.isCustomLink = (entity) => isLinkEntity(entity) && (getEntityData(entity)['link-type'] === 'custom');
 export default function isLinkEntity (entity) {
 	return entity.getType() === ENTITIES.LINK;
 }
