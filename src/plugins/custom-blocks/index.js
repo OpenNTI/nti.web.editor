@@ -31,8 +31,7 @@ export default {
 				const {getEditorState, setEditorState} = pluginProps;
 				const editorState = getEditorState();
 
-				let pendingState;
-				let pendingUpdate;
+				let pendingUpdates = null;
 
 
 				for (let renderer of customRenderers) {
@@ -47,22 +46,30 @@ export default {
 								editorState,
 								indexOfType: indexOfType(contentBlock, renderer.handlesBlock, editorState),
 								setBlockData: (data, doNotKeepFocus, useEntity) => {
-									const newState = setBlockData(contentBlock, data, useEntity, pendingState || getEditorState());
+									const first = !pendingUpdates;
 
-									pendingState = newState;
+									pendingUpdates = pendingUpdates ?? [];
 
-									if (!pendingUpdate) {
-										pendingUpdate = setTimeout(() => {
-											const current = getEditorState();
+									pendingUpdates.push({data, doNotKeepFocus, useEntity});
 
-											if (doNotKeepFocus) {
-												setEditorState(pendingState);
-											} else {
-												setEditorState(EditorState.forceSelection(pendingState, current.getSelection()));
+									if (first) {
+										setTimeout(() => {
+											const currentEditorState = getEditorState();
+											const selection = currentEditorState.getSelection();
+
+											let newEditorState = currentEditorState;
+
+											for (let update of pendingUpdates) {
+												newEditorState = setBlockData(contentBlock, update.data, update.useEntity, newEditorState);
+
+												if (!update.doNotKeepFocus) {
+													newEditorState = EditorState.forceSelection(newEditorState, selection);
+												}
 											}
 
-											pendingState = null;
-											pendingUpdate = null;
+											setEditorState(newEditorState);
+
+											pendingUpdates = null;
 										}, 100);
 									}
 								},
