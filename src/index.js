@@ -5,6 +5,7 @@ export * from './Constants';
 
 export * as Plugins from './plugins';
 export * as Parsers from './parsers';
+export * as Common from './common';
 
 export Editor from './components/Editor';
 export PlaintextEditor from './components/PlaintextEditor';

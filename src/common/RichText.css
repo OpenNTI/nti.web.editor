@@ -1,0 +1,24 @@
+.rich-text-editor{
+	background: white;
+	box-shadow: 0 0 0 1px var(--border-grey-light);
+	border-radius: 2px;
+
+	& .editor :global(.nti-draft-core-container .nti-draft-core .DraftEditor-root) {
+		min-height: 3rem;
+	}
+
+	& .controls {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+
+		& .button {
+			color: var(--secondary-grey);
+
+			&.active {
+				color: var(--primary-blue);
+			}
+		}
+	}
+}
