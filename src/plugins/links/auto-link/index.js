@@ -4,34 +4,19 @@ import {create as CreateDecorate} from '../decorate';
 import {ApplyAutoLinks} from './utils';
 
 export const create = (config = {}) => {
-
-	let changeHandled = false;
+	let prevHash = {};
 
 	return {
 		plugins: [
 			CreateDecorate()
 		],
 
-
 		onChange (editorState) {
-			if (changeHandled) {
-				changeHandled = false;
-				return editorState;
-			}
+			const {editorState: linkedState, hash} = ApplyAutoLinks.autoLink(editorState, prevHash, config);
 
-			return ApplyAutoLinks.onChange(editorState, config);
-		},
+			prevHash = hash;
 
-		handleBeforeInput (chars, editorState, eventTime, {setEditorState}) {
-			const newEditorState = ApplyAutoLinks.beforeInput(chars, editorState, config);
-
-			if (newEditorState) {
-				changeHandled = true;
-				setEditorState(newEditorState);
-				return HANDLED;
-			}
-
-			return NOT_HANDLED;
+			return linkedState;
 		}
 	};
 };

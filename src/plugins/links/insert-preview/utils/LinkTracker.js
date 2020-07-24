@@ -57,7 +57,7 @@ export default class LinkTracker {
 	updatePreview (link, content) {
 		const existingPreview = this.#linkToPreview.get(link.entityKey);
 
-		if (!existingPreview) { return; }
+		if (!existingPreview) { return content; }
 
 		const {preview, content: previewContent} = Preview.update(
 			existingPreview,

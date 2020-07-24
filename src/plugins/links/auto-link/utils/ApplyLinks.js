@@ -2,6 +2,8 @@ import {Modifier} from 'draft-js';
 
 import {isLinkEntity, createLinkEntity, updateLinkEntity} from '../../link-utils';
 
+import {getLinkForWord} from './GetLinks';
+
 function getLinksInSelection (content, selection) {
 	const blockKey = selection.getFocusKey();
 	const focusOffset = selection.getFocusOffset();
@@ -9,28 +11,34 @@ function getLinksInSelection (content, selection) {
 
 	const block = content.getBlockForKey(blockKey);
 	const characters = block.getCharacterList();
+	const text = block.getText();
 
 	const start = Math.min(focusOffset, anchorOffset);
 	const end = Math.max(focusOffset, anchorOffset);
 
-	const known = new Set();
-	let links = [];
+	const links = {};
 
 	for (let i = start; i <= end; i++) {
 		const char = characters.get(i);
 		const entityKey = char?.getEntity();
 		const entity = entityKey && content.getEntity(entityKey);
 
-		if (entity && isLinkEntity(entity) && !known.has(entityKey)) {
-			known.add(entityKey);
-			links.push({
+		if (!entity || !isLinkEntity(entity)) { continue; }
+
+		if (links[entityKey]) {
+			links[entityKey].end = i;
+			links[entityKey].text += text.charAt(i);
+		} else {
+			links[entityKey] = {
+				start: i,
+				text: text.charAt(i),
 				entity,
-				key: entityKey
-			});
+				entityKey
+			};
 		}
 	}
 
-	return links;
+	return Object.values(links);
 }
 
 
@@ -42,22 +50,37 @@ function applyNewLink (link, content) {
 }
 
 function updateExistingLink (existing, link, content) {
+	console.log('Updating Existing Link', existing, link, link.selection.toJS(), content);
 	//For now bail out of handling applying links over more than one
 	//existing link, or if the link wasn't an auto link
 	if (existing.length > 1) { return content; }
-	if (!isLinkEntity.isAutoLink(existing[0].entity)) { return content; }
 
-	const {key} = existing[0];
+	const updating = existing[0];
+	const {entityKey} = updating;
+	
+	if (link.text === 'www.google.com') {
+		debugger;
+	}
+	let newContent = updateLinkEntity(content, entityKey, link.url);
 
-	return Modifier.applyEntity(
-		updateLinkEntity(content, key, link.url),
-		link.selection,
-		key
-	);
+	//If the link got shorter
+	if (updating.text.length > link.text.length) {
+		debugger;
+	//We're adding on to the link so we can just apply it
+	} else {
+		newContent = Modifier.applyEntity(newContent, link.selection, entityKey);
+	}
+
+
+	return newContent;
 }
 
 export function applyLink (link, content) {
 	const existing = getLinksInSelection(content, link.selection);
 
 	return existing.length > 0 ? updateExistingLink(existing, link, content) : applyNewLink(link, content);
+}
+
+export function applyLinks (links, content) {
+	return links.reduce((acc, link) => applyLink(link, acc), content);
 }

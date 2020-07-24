@@ -25,7 +25,7 @@ function getWordBeforeOffset (block, offset) {
 	return word;
 }
 
-function getLinkForWord (word) {
+export function getLinkForWord (word) {
 	const links = word && linkify.match(word);
 
 	return links && links[0];
@@ -111,4 +111,31 @@ export function getNotMarkedLinks (content, {allowedInBlockTypes}) {
 				...getNotMarkedInBlock(block, content)
 			];
 		}, []);
+}
+
+
+
+
+export function getLinksInBlock (block, {allowedInBlockTypes}) {
+	const text = block.getText();
+	const key = block.getKey();
+
+	if (!text || (allowedInBlockTypes && !allowedInBlockTypes.has(block.getTypes()))) { return []; }
+
+	const links = linkify.match(text) ?? [];
+
+	console.log('FOUND LINKS IN TEXT: ', text, links);
+
+	return links.map((link) => (
+		{
+			selection: new SelectionState({
+				anchorKey: key,
+				anchorOffset: link.index,
+				focusKey: key,
+				focusOffset: link.lastIndex
+			}),
+			text: link.text,
+			url: link.url
+		}
+	));
 }
