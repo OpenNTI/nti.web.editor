@@ -50,7 +50,6 @@ function applyNewLink (link, content) {
 }
 
 function updateExistingLink (existing, link, content) {
-	console.log('Updating Existing Link', existing, link, link.selection.toJS(), content);
 	//For now bail out of handling applying links over more than one
 	//existing link, or if the link wasn't an auto link
 	if (existing.length > 1) { return content; }
@@ -58,19 +57,9 @@ function updateExistingLink (existing, link, content) {
 	const updating = existing[0];
 	const {entityKey} = updating;
 	
-	if (link.text === 'www.google.com') {
-		debugger;
-	}
 	let newContent = updateLinkEntity(content, entityKey, link.url);
 
-	//If the link got shorter
-	if (updating.text.length > link.text.length) {
-		debugger;
-	//We're adding on to the link so we can just apply it
-	} else {
-		newContent = Modifier.applyEntity(newContent, link.selection, entityKey);
-	}
-
+	newContent = Modifier.applyEntity(newContent, link.selection, entityKey);
 
 	return newContent;
 }

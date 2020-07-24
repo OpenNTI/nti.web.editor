@@ -124,8 +124,6 @@ export function getLinksInBlock (block, {allowedInBlockTypes}) {
 
 	const links = linkify.match(text) ?? [];
 
-	console.log('FOUND LINKS IN TEXT: ', text, links);
-
 	return links.map((link) => (
 		{
 			selection: new SelectionState({
