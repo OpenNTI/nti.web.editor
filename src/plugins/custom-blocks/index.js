@@ -45,12 +45,12 @@ export default {
 								...(extraProps || {}),
 								editorState,
 								indexOfType: indexOfType(contentBlock, renderer.handlesBlock, editorState),
-								setBlockData: (data, doNotKeepFocus, useEntity) => {
+								setBlockData: (data, doNotKeepFocus, useEntity, callback) => {
 									const first = !pendingUpdates;
 
 									pendingUpdates = pendingUpdates ?? [];
 
-									pendingUpdates.push({data, doNotKeepFocus, useEntity});
+									pendingUpdates.push({data, doNotKeepFocus, useEntity, callback});
 
 									if (first) {
 										setTimeout(() => {
@@ -68,6 +68,8 @@ export default {
 											}
 
 											setEditorState(newEditorState);
+
+											pendingUpdates.forEach(p => p.callback?.());
 
 											pendingUpdates = null;
 										}, 100);
