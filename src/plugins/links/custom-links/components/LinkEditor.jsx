@@ -25,7 +25,9 @@ LinkEditor.propTypes = {
 	onSave: PropTypes.func
 };
 export default function LinkEditor ({entityData, onSave, onCancel}) {
-	const focusedRef = React.useRef();
+	const formRef = React.useRef();
+	const blurTimeoutRef = React.useRef();
+
 	const {href, decoratedText} = entityData;
 
 	const onSubmit = ({json}) => {
@@ -39,24 +41,24 @@ export default function LinkEditor ({entityData, onSave, onCancel}) {
 		return onSave(json);
 	};
 
-	const onFocus = () => focusedRef.current = true;
-	const onBlur = () => {
-		focusedRef.current = false;
+	const onFormClick = () => clearTimeout(blurTimeoutRef.current);
+	const onBlur = (e) => {
+		if (formRef.current?.contains(e.relatedTarget)) {
+			return;
+		}
 
-		//wait to see if we can focus
-		setTimeout(() => {
-			if (!focusedRef.current) {
-				onCancel();
-			}
-		}, 1);
+		blurTimeoutRef.current = setTimeout(() => {
+			onCancel?.();
+		}, 100);
 	};
 
 	return (
 		<Form
+			ref={formRef}
 			onSubmit={onSubmit}
 			className={cx('link-editor')}
-			onFocus={onFocus}
 			onBlur={onBlur}
+			onClick={onFormClick}
 			autoComplete="off"
 		>
 			<Form.Input.Text
@@ -77,7 +79,7 @@ export default function LinkEditor ({entityData, onSave, onCancel}) {
 			/>
 			<div className={cx('buttons')}>
 				<Button className={cx('cancel')} rounded secondary onClick={onCancel}>{t('cancel')}</Button>
-				<Button component={Form.SubmitButton} className={cx('save')} rounded>{t('save')}</Button>
+				<Button component={Form.SubmitButton} className={cx('save')} rounded >{t('save')}</Button>
 			</div>
 		</Form>
 	);
