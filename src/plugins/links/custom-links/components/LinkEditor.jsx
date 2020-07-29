@@ -26,6 +26,7 @@ LinkEditor.propTypes = {
 };
 export default function LinkEditor ({entityData, onSave, onCancel}) {
 	const formRef = React.useRef();
+	const mousedownRef = React.useRef();
 	const blurTimeoutRef = React.useRef();
 
 	const {href, decoratedText} = entityData;
@@ -41,13 +42,19 @@ export default function LinkEditor ({entityData, onSave, onCancel}) {
 		return onSave(json);
 	};
 
-	const onFormClick = () => clearTimeout(blurTimeoutRef.current);
+	const onFormMouseDown = () => mousedownRef.current = true;
+	const onFormMouseUp = () => mousedownRef.current = false;
+
 	const onBlur = (e) => {
-		if (formRef.current?.contains(e.relatedTarget)) {
+		if (
+			formRef.current?.contains(e.relatedTarget) || //if we are focusing something else in the form
+			mousedownRef.current //we are in the middle of a click on the form
+		) {
 			return;
 		}
 
 		blurTimeoutRef.current = setTimeout(() => {
+			console.log('FORM CANCELING');
 			onCancel?.();
 		}, 100);
 	};
@@ -58,7 +65,8 @@ export default function LinkEditor ({entityData, onSave, onCancel}) {
 			onSubmit={onSubmit}
 			className={cx('link-editor')}
 			onBlur={onBlur}
-			onClick={onFormClick}
+			onMouseDown={onFormMouseDown}
+			onMouseUp={onFormMouseUp}
 			autoComplete="off"
 		>
 			<Form.Input.Text
