@@ -18,17 +18,21 @@ export default function updateEntityDesc (update, entityDesc, editorState) {
 	const content = editorState.getCurrentContent();
 	const {entityKey} = entityDesc;
 	const entity = content.getEntity(entityKey);
+	const entitySelection = getSelectionForEntity(entityKey, entityDesc.offsetKey, editorState);
 
 	let newContent = content;
 	let newSelection = null;
 
 	if (entity.getData().href !== update.href) {
-		newContent = newContent.mergeEntityData(entityKey, {href: update.href, isCustom: true, autoLink: false});
+		//We're reapplying the same entity to force a new content record
+		newContent = Modifier.applyEntity(
+			newContent.mergeEntityData(entityKey, {href: update.href, isCustom: true, autoLink: false}),
+			entitySelection,
+			entityKey
+		);
 	}
 
 	if (entityDesc.decoratedText !== update.decoratedText) {
-		const entitySelection = getSelectionForEntity(entityKey, entityDesc.offsetKey, editorState);
-		
 		newContent = Modifier.replaceText(newContent, entitySelection, update.decoratedText, void 0, entityKey);
 		newSelection = getNewSelection(update.decoratedText, entitySelection);
 	}

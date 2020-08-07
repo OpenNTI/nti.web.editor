@@ -39,7 +39,10 @@ export default function LinkEditor ({entityData, onSave, onCancel}) {
 			throw error;
 		}
 
-		return onSave(json);
+		return onSave({
+			href: Input.URL.getFullURL(json.href),
+			decoratedText: json.decoratedText
+		});
 	};
 
 	const onFormMouseDown = () => mousedownRef.current = true;
@@ -53,10 +56,7 @@ export default function LinkEditor ({entityData, onSave, onCancel}) {
 			return;
 		}
 
-		blurTimeoutRef.current = setTimeout(() => {
-			console.log('FORM CANCELING');
-			onCancel?.();
-		}, 100);
+		blurTimeoutRef.current = setTimeout(() => onCancel?.(), 100);
 	};
 
 	return (
