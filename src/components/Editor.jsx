@@ -490,9 +490,10 @@ class DraftCoreEditor extends React.Component {
 
 DraftCoreEditorWrapper.propTypes = {
 	onFocus: PropTypes.func,
-	onBlur: PropTypes.func
+	onBlur: PropTypes.func,
+	editorRef: PropTypes.any
 };
-export default function DraftCoreEditorWrapper ({onFocus, onBlur, ...otherProps}) {
+function DraftCoreEditorWrapper ({onFocus, onBlur, editorRef, ...otherProps}) {
 	const editorGroup = EditorGroup.useGroup();
 	const blurTimeout = React.useRef();
 
@@ -517,9 +518,12 @@ export default function DraftCoreEditorWrapper ({onFocus, onBlur, ...otherProps}
 
 	return (
 		<DraftCoreEditor
+			ref={editorRef}
 			onFocus={onInnerFocus}
 			onBlur={onInnerBlur}
 			{...otherProps}
 		/>
 	);
 }
+
+export default React.forwardRef((props, ref) => (<DraftCoreEditorWrapper {...props} editorRef={ref} />));//eslint-disable-line
