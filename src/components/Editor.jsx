@@ -6,6 +6,7 @@ import {EditorState, RichUtils} from 'draft-js';
 import {buffer} from '@nti/lib-commons';
 
 import ContextProvider from '../ContextProvider';
+import EditorGroup from '../editor-group';
 
 import { decomposePlugins } from './utils';
 import Editor from './BaseEditor';
@@ -17,7 +18,7 @@ const TRANSFORM_OUTPUT = Symbol('Transform Output');
 const TRANSFORM_INPUT = Symbol('Transform Input');
 
 //TODO: move the allowed(InlineStyle, BlockTypes, Links) to plugins instead of props
-export default class DraftCoreEditor extends React.Component {
+class DraftCoreEditor extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		id: PropTypes.string,
@@ -484,4 +485,41 @@ export default class DraftCoreEditor extends React.Component {
 			</div>
 		);
 	}
+}
+
+
+DraftCoreEditorWrapper.propTypes = {
+	onFocus: PropTypes.func,
+	onBlur: PropTypes.func
+};
+export default function DraftCoreEditorWrapper ({onFocus, onBlur, ...otherProps}) {
+	const editorGroup = EditorGroup.useGroup();
+	const blurTimeout = React.useRef();
+
+	const onInnerFocus = (editor) => {
+		clearTimeout(blurTimeout.current);
+		blurTimeout.current = null;
+
+		editorGroup.setFocused(editor);
+		onFocus?.(editor);
+	};
+
+	const onInnerBlur = (editor) => {
+		//Do this in a timeout, so that if another editor
+		//in the group is gaining focus there won't be two
+		//render passes
+		blurTimeout.current = setTimeout(() => {
+			editorGroup.clearFocused(editor);
+		}, 1);
+
+		onBlur?.(editor);
+	};
+
+	return (
+		<DraftCoreEditor
+			onFocus={onInnerFocus}
+			onBlur={onInnerBlur}
+			{...otherProps}
+		/>
+	);
 }
