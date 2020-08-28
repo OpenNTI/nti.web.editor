@@ -35,12 +35,17 @@ export default {
 				return NOT_HANDLED;
 			},
 
-			keyBindingFn: (e, editorState, editorCmp) => {
+			keyBindingFn: (e, {getProps, getEditorState}) => {
 				const keyCode = getKeyCode(e);
 				const defaults = getDefaultKeyBinding(e);
-				const customKeyBindings = getCustomKeyBindings(editorCmp);
+				const customKeyBindings = getProps()?.customKeyBindings || config;
 
-				if (customKeyBindings[keyCode]) {
+				if (!defaults && customKeyBindings[keyCode]) {
+					if (customKeyBindings[keyCode]?.(getEditorState())) {
+						e.stopPropagation();
+						e.preventDefault();
+					}
+				}else if (customKeyBindings[keyCode]) {
 					commandOverride = {[defaults]: keyCode};
 				}
 
