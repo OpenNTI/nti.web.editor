@@ -16,6 +16,7 @@ export Button from './components/Button';
 export getAtomicBlockData from './utils/get-atomic-block-data';
 
 export ContextProvider from './ContextProvider';
+export EditorGroup from './editor-group';
 
 import IdRegistry from './IdRegistry';
 
