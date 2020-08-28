@@ -26,7 +26,7 @@ describe('customKeyBindings', () => {
 			key: 'Enter'
 		};
 
-		keyBindingsPlugin.keyBindingFn(event, editorState, cmp);
+		keyBindingsPlugin.keyBindingFn(event, {getProps: () => customKeyBindings, getEditorState: () => editorState});
 
 		const result = keyBindingsPlugin.handleKeyCommand('nti-Enter', editorState, Date.now(), cmp);
 
@@ -38,7 +38,7 @@ describe('customKeyBindings', () => {
 			key: 'Backspace'
 		};
 
-		keyBindingsPlugin.keyBindingFn(event, editorState, cmp);
+		keyBindingsPlugin.keyBindingFn(event, {getProps: () => customKeyBindings, getEditorState: () => editorState});
 
 		const result = keyBindingsPlugin.handleKeyCommand('nti-Backspace', editorState, Date.now(), cmp);
 
@@ -58,7 +58,7 @@ describe('customKeyBindings', () => {
 			key: 'Enter'
 		};
 
-		keyBindingsPluginWithConfig.keyBindingFn(event, editorState, cmpNoBindings);
+		keyBindingsPluginWithConfig.keyBindingFn(event, {getProps: () => ({}), getEditorState: () => editorState});
 
 		const result = keyBindingsPluginWithConfig.handleKeyCommand('nti-Enter', editorState, Date.now(), cmpNoBindings);
 
