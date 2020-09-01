@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 class SelectedManager extends EventsEmitter {
 
 	#focused = null;
+	#defaultEditor = null;
 	#parent = null;
 
 	constructor (parent) {
@@ -14,7 +15,15 @@ class SelectedManager extends EventsEmitter {
 		this.#parent = parent;
 	}
 
-	get focusedEditor () { return this.#focused; }
+	get focusedEditor () { return this.#focused || this.#defaultEditor; }
+
+	setDefaultEditor (editor) {
+		this.#defaultEditor = editor;
+
+		if (!this.#focused) {
+			this.emit('changed', editor);
+		}
+	}
 
 	setFocused (editor) {
 		const changed = this.#focused !== editor;
@@ -22,7 +31,7 @@ class SelectedManager extends EventsEmitter {
 		this.#focused = editor;
 
 		if (changed) {
-			this.emit('changed', editor);
+			this.emit('changed', editor || this.#defaultEditor);
 		}
 
 		this.#parent?.setFocused(editor);
@@ -55,7 +64,17 @@ const useFocusedEditor = () => {
 
 };
 
+const useDefaultEditorRef = () => {
+	const groupContext = React.useContext(Context);
+
+	return React.useCallback(
+		(editor) => (groupContext?.setDefaultEditor(editor)),
+		[groupContext]
+	);
+};
+
 EditorGroupContext.useFocusedEditor = useFocusedEditor;
+EditorGroupContext.useDefaultEditorRef = useDefaultEditorRef;
 EditorGroupContext.useGroup = () => React.useContext(Context);
 EditorGroupContext.propTypes = {
 	onFocusedChange: PropTypes.func,
@@ -69,7 +88,9 @@ export default function EditorGroupContext ({onFocusedChange, children}) {
 		managerRef.current = new SelectedManager(parentManager);
 	}
 
-	React.useEffect(() => managerRef.current.subscribeToFocused(onFocusedChange), [onFocusedChange]);
+	React.useEffect(() => (
+		onFocusedChange && managerRef.current.subscribeToFocused(onFocusedChange)
+	),[onFocusedChange]);
 
 	return (
 		<Context.Provider value={managerRef.current}>
