@@ -20,7 +20,9 @@ export default class LinkButton extends React.Component {
 
 	static propTypes = {
 		className: PropTypes.string,
-		children: PropTypes.any
+		activeClassName: PropTypes.string,
+		children: PropTypes.any,
+		plain: PropTypes.bool
 	}
 
 
@@ -70,9 +72,9 @@ export default class LinkButton extends React.Component {
 
 
 	render () {
-		const {className} = this.props;
+		const {className, activeClassName = 'active', plain} = this.props;
 		const {isAllowed, isEditingLink} = this;
-		const cls = cx('draft-core-link-button', className, {active: isEditingLink, disabled: !isAllowed});
+		const cls = cx('draft-core-link-button', className, {[activeClassName]: isEditingLink, disabled: !isAllowed, plain});
 
 		return (
 			<button
