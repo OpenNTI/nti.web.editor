@@ -4,9 +4,19 @@ import {setBlockData, removeBlock, indexOfType} from './utils';
 
 export default {
 	create: (config = {}) => {
-		const {customRenderers = [], customStyles = [], blockProps} = config;
+		const {customBlocks = [], customRenderers = [], customStyles = [], blockProps} = config;
 
 		let extraProps = blockProps || {};
+
+		for (let block of customBlocks) {
+			if (block.component) {
+				customRenderers.push(block);
+			}
+
+			if (block.className) {
+				customStyles.push(block);
+			}
+		}
 
 		return {
 			setExtraProps: (props = {}) => {
@@ -94,6 +104,14 @@ export default {
 						return style.className;
 					}
 				}
+			},
+
+			getContext (getEditorState, setEditorState) {
+				return {
+					get customBlockTypes () {
+						return new Set(customBlocks.map(c => c.type).filter(Boolean));
+					}
+				};
 			}
 		};
 	}
