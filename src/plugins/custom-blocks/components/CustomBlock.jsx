@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames/bind';
 import {DnD} from '@nti/web-commons';
 
 import * as DragStore from '../DragStore';
+
+import Styles from './CustomBlock.css';
+
+const cx = classnames.bind(Styles);
 
 CustomBlock.propTypes = {
 	block: PropTypes.any,
@@ -12,11 +17,12 @@ CustomBlock.propTypes = {
 
 	draggable: PropTypes.bool,
 	onDragStart: PropTypes.func,
-	onDragEnd: PropTypes.func
-};
-export default function CustomBlock ({block, blockProps, draggable, onDragStart, onDragEnd, ...otherProps}) {
+	onDragEnd: PropTypes.func,
 
-	let content = (<div {...otherProps} />);
+	children: PropTypes.any
+};
+export default function CustomBlock ({block, blockProps, draggable, onDragStart, onDragEnd, children}) {
+	let content = (<div className={cx('custom-block')}>{children}</div>);
 
 	if (draggable) {
 		content = (
@@ -30,9 +36,7 @@ export default function CustomBlock ({block, blockProps, draggable, onDragStart,
 					})
 				}
 			>
-				<div>
-					{content}
-				</div>
+				{content}
 			</DnD.Draggable>
 		);
 	}

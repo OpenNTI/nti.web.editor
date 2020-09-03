@@ -1,0 +1,7 @@
+.custom-block {
+	transition: opacity 0s 0.1s;
+
+	&:global(.dragging) {
+		opacity: 0;
+	}
+}

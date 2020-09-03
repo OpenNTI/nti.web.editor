@@ -6,7 +6,12 @@ const isInContent = (editorState, block) => Boolean(editorState.getCurrentConten
 
 function moveWithin (block, selection, editorState) {
 	if (block.getType() === BLOCKS.ATOMIC) {
-		return AtomicBlockUtils.moveAtomicBlock(editorState, block, selection);
+		try {
+			return AtomicBlockUtils.moveAtomicBlock(editorState, block, selection);
+		} catch (e) {
+			//We are assuming if it throws its because the selection is next to the block
+			return editorState;
+		}
 	}
 
 	//NOTE: If/when we need to fill this in we need to look at what moveAtomicBlock is doing
