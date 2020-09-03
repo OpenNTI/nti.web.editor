@@ -1,12 +1,18 @@
 import {EditorState} from 'draft-js';
 
-import {setBlockData, removeBlock, indexOfType} from './utils';
+import {HANDLED, NOT_HANDLED} from '../Constants';
+
+import {setBlockData, removeBlock, MoveBlock, indexOfType} from './utils';
+import CustomBlock from './components/CustomBlock';
+import * as DragStore from './DragStore';
 
 export default {
+	CustomBlock,
 	create: (config = {}) => {
 		const {customBlocks = [], customRenderers = [], customStyles = [], blockProps} = config;
 
 		let extraProps = blockProps || {};
+		let unsubscribe = null;
 
 		for (let block of customBlocks) {
 			if (block.component) {
@@ -19,6 +25,34 @@ export default {
 		}
 
 		return {
+			initialize ({setEditorState, getEditorState, getEditorRef}) {
+				unsubscribe = DragStore.subscribeToRemoveFromOtherEditors(() => {
+					//TODO: remove the block if it was in this editor and is no longer
+				});
+			},
+
+			willUnmount () {
+				unsubscribe?.();
+			},
+
+			handleDrop (selection, dataTransfer, type, {getEditorState, setEditorState, getEditorRef}) {
+				const dragData = DragStore.getDataForDrop(dataTransfer);
+
+				const newEditorState = dragData && MoveBlock.toSelection(
+					dragData,
+					selection,
+					getEditorState(),
+					() => DragStore.removeFromOtherEditors(dragData, getEditorRef())
+				);
+
+				if (newEditorState) {
+					setEditorState(newEditorState);
+					return HANDLED;
+				}
+
+				return NOT_HANDLED;
+			},
+
 			setExtraProps: (props = {}) => {
 				extraProps = props;
 			},
