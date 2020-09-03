@@ -34,6 +34,7 @@ InsertBlockButton.propTypes = {
 	type: PropTypes.any,
 	createBlock: PropTypes.func,
 	createBlockProps: PropTypes.object,
+	atomic: PropTypes.bool,
 
 	children: PropTypes.node,
 
@@ -45,6 +46,7 @@ export default function InsertBlockButton ({
 	type,
 	createBlock,
 	createBlockProps,
+	atomic,
 
 	children,
 
@@ -59,9 +61,15 @@ export default function InsertBlockButton ({
 	const isAllowed = isAllowedIn(editor, type);
 
 	const handleInsertion = (selection) => {
-		const {getInsertMethod, getSelectedTextForInsertion} = editor?.plugins ?? {};
+		const {getInsertMethod, getAtomicInsertMethod, getSelectedTextForInsertion} = editor?.plugins ?? {};
 
-		if (getInsertMethod) {
+		if (atomic && getAtomicInsertMethod) {
+			createBlock?.(
+				getAtomicInsertMethod(selection),
+				createBlockProps,
+				getSelectedTextForInsertion()
+			);
+		} else if (getInsertMethod) {
 			createBlock?.(
 				getInsertMethod(selection),
 				createBlockProps,

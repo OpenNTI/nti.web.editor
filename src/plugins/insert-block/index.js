@@ -64,6 +64,17 @@ export default {
 						return getBlockCount(getEditorState(), predicate, group, getNestedState);
 					},
 
+					getInsertAtomicBlockCount: (predicate, group) => {
+						const editorState = getEditorState();
+
+						return getBlockCount(
+							editorState,
+							(block) => predicate(block, editorState),
+							group,
+							getNestedState
+						);
+					},
+
 
 					getInsertMethod: (selection) => {
 						return (block, replaceRange, maintainSelection) => {
@@ -72,6 +83,14 @@ export default {
 							setEditorState(maintainSelection
 								? ensureMaintainSelection(newState)
 								: moveSelectionToNextBlock(newState), focus);
+						};
+					},
+
+					getAtomicInsertMethod: (selection) => {
+						return (data) => {
+							const newState = insertAtomicBlock(data, selection, getEditorState());
+
+							setEditorState(newState);
 						};
 					},
 

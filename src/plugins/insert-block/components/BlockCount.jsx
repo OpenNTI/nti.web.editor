@@ -7,14 +7,16 @@ export default class BlockCount extends React.Component {
 	static propTypes = {
 		predicate: PropTypes.func,
 		group: PropTypes.bool,
-		className: PropTypes.string
+		className: PropTypes.string,
+		atomic: PropTypes.bool
 	}
 
 
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
-				getInsertBlockCount: PropTypes.func
+				getInsertBlockCount: PropTypes.func,
+				getInsertAtomicBlockCount: PropTypes.func
 			})
 		})
 	}
@@ -31,8 +33,12 @@ export default class BlockCount extends React.Component {
 
 
 	get blockCount () {
-		const {predicate, group} = this.props;
-		const {getInsertBlockCount} = this.pluginContext;
+		const {predicate, group, atomic} = this.props;
+		const {getInsertBlockCount, getInsertAtomicBlockCount} = this.pluginContext;
+
+		if (atomic) {
+			return getInsertAtomicBlockCount ? getInsertAtomicBlockCount(predicate, group) : 0;
+		}
 
 		return getInsertBlockCount ? getInsertBlockCount(predicate, group) : 0;
 	}
