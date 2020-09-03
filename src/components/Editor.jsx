@@ -5,6 +5,7 @@ import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
 import {EditorState, RichUtils} from 'draft-js';
 import {buffer} from '@nti/lib-commons';
+import {parent} from '@nti/lib-dom';
 
 import ContextProvider from '../ContextProvider';
 import EditorGroup from '../editor-group';
@@ -399,20 +400,20 @@ class DraftCoreEditor extends React.Component {
 	}
 
 
-	onFocus = () => {
+	onFocus = (e) => {
 		const {onFocus} = this.props;
 
 		if (onFocus) {
-			onFocus(this);
+			onFocus(this, e);
 		}
 	}
 
 
-	onBlur = () => {
+	onBlur = (e) => {
 		const {onBlur} = this.props;
 
 		if (onBlur) {
-			onBlur(this);
+			onBlur(this, e);
 		}
 	}
 
@@ -489,6 +490,12 @@ class DraftCoreEditor extends React.Component {
 }
 
 
+function isNestedFocusEvent (editor, e) {
+	const parentContainer = parent(e.target, '.nti-draft-core-container');
+
+	return parentContainer !== editor.editorContainer;
+}
+
 DraftCoreEditorWrapper.propTypes = {
 	onFocus: PropTypes.func,
 	onBlur: PropTypes.func,
@@ -498,7 +505,9 @@ function DraftCoreEditorWrapper ({onFocus, onBlur, editorRef, ...otherProps}) {
 	const editorGroup = EditorGroup.useGroup();
 	const blurTimeout = React.useRef();
 
-	const onInnerFocus = (editor) => {
+	const onInnerFocus = (editor, e) => {
+		if (isNestedFocusEvent(editor, e)) { return; }
+
 		clearTimeout(blurTimeout.current);
 		blurTimeout.current = null;
 
@@ -506,7 +515,9 @@ function DraftCoreEditorWrapper ({onFocus, onBlur, editorRef, ...otherProps}) {
 		onFocus?.(editor);
 	};
 
-	const onInnerBlur = (editor) => {
+	const onInnerBlur = (editor, e) => {
+		if (isNestedFocusEvent(editor, e)) { return; }
+
 		//Do this in a timeout, so that if another editor
 		//in the group is gaining focus there won't be two
 		//render passes
