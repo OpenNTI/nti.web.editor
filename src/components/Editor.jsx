@@ -12,6 +12,7 @@ import EditorGroup from '../editor-group';
 
 import { decomposePlugins } from './utils';
 import Editor from './BaseEditor';
+import NestedWrapper from './NestedEditorWrapper';
 
 const CONTENT_CHANGE_BUFFER = 1000;
 
@@ -31,6 +32,7 @@ class DraftCoreEditor extends React.Component {
 		placeholder: PropTypes.string,
 		readOnly: PropTypes.bool,
 		autoFocus: PropTypes.bool,
+		autoNest: PropTypes.bool,
 
 		contentChangeBuffer: PropTypes.number,
 
@@ -440,13 +442,21 @@ class DraftCoreEditor extends React.Component {
 
 
 	render () {
-		const {className, placeholder, readOnly, customKeyBindings} = this.props;
+		const {
+			className,
+			placeholder,
+			readOnly,
+			customKeyBindings,
+			autoNest
+		} = this.props;
 		const {currentEditorState:editorState, currentPlugins:plugins, busy, active} = this.state;
 
 		const contentState = editorState && editorState.getCurrentContent();
 		const hidePlaceholder = contentState && !contentState.hasText() && contentState.getBlockMap().first().getType() !== 'unstyled';
 		const pluginClasses = plugins.map(x => x.editorClass);
 		const pluginOverlays = plugins.map(x => x.overlayComponent).filter(x => x);
+
+		const WrapperCmp = this.parentEditor && autoNest ? NestedWrapper : 'div';
 
 		const cls = cx(
 			'nti-draft-core',
@@ -464,7 +474,7 @@ class DraftCoreEditor extends React.Component {
 		return (
 			<div ref={this.attachContainerRef} className="nti-draft-core-container">
 				<ContextProvider editor={this} ref={this.attachContextRef} internal>
-					<div className={cls} onClick={this.focus}>
+					<WrapperCmp className={cls} onClick={this.focus}>
 						<Editor
 							ref={this.attachEditorRef}
 							editorState={editorState}
@@ -478,7 +488,7 @@ class DraftCoreEditor extends React.Component {
 							readOnly={readOnly || !active}
 							onSetReadOnly={this.onSetReadOnly}
 						/>
-					</div>
+					</WrapperCmp>
 				</ContextProvider>
 				{pluginOverlays.length ?
 					pluginOverlays.map((x, index) => React.createElement(x, {key: index, getEditorState: this.getEditorState, setEditorState: this.setEditorState, editor: this})) :
