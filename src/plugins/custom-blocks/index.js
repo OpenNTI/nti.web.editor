@@ -2,7 +2,7 @@ import {EditorState} from 'draft-js';
 
 import {HANDLED, NOT_HANDLED} from '../Constants';
 
-import {setBlockData, removeBlock, MoveBlock, indexOfType} from './utils';
+import {setBlockData, removeBlock, MoveBlock, indexOfType, BlockIndex} from './utils';
 import CustomBlock from './components/CustomBlock';
 import * as DragStore from './DragStore';
 
@@ -88,7 +88,29 @@ export default {
 								...(pluginProps || {}),
 								...(extraProps || {}),
 								editorState,
-								indexOfType: indexOfType(contentBlock, renderer.handlesBlock, editorState),
+
+								index: BlockIndex.getIndex(contentBlock, editorState),
+								indexOfType: BlockIndex.getIndex(contentBlock, editorState, renderer.handlesBlock),
+								isFirst: BlockIndex.isFirst(contentBlock, editorState),
+								isLast: BlockIndex.isLast(contentBlock, editorState),
+
+								moveBlockUp: () => {
+									const currentEditorState = getEditorState();
+									const newEditorState = MoveBlock.up(contentBlock, currentEditorState);
+
+									if (newEditorState) {
+										setEditorState(newEditorState);
+									}
+								},
+								moveBlockDown: () => {
+									const currentEditorState = getEditorState();
+									const newEditorState = MoveBlock.down(contentBlock, currentEditorState);
+
+									if (newEditorState) {
+										setEditorState(newEditorState);
+									}
+								},
+
 								setBlockData: (data, doNotKeepFocus, useEntity, callback) => {
 									const first = !pendingUpdates;
 

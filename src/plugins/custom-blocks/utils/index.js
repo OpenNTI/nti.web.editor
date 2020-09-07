@@ -1,3 +1,4 @@
+export * as BlockIndex from './block-index';
 export indexOfType from './index-of-type';
 export * as MoveBlock from './move-block';
 export removeBlock from './remove-block';
