@@ -2,7 +2,7 @@ import {EditorState} from 'draft-js';
 
 import {HANDLED, NOT_HANDLED} from '../Constants';
 
-import {setBlockData, removeBlock, MoveBlock, indexOfType, BlockIndex} from './utils';
+import {setBlockData, removeBlock, MoveBlock, BlockIndex} from './utils';
 import CustomBlock from './components/CustomBlock';
 import * as DragStore from './DragStore';
 
@@ -98,7 +98,7 @@ export default {
 									const currentEditorState = getEditorState();
 									const newEditorState = MoveBlock.up(contentBlock, currentEditorState);
 
-									if (newEditorState) {
+									if (newEditorState && newEditorState !== currentEditorState) {
 										setEditorState(newEditorState);
 									}
 								},
@@ -106,7 +106,7 @@ export default {
 									const currentEditorState = getEditorState();
 									const newEditorState = MoveBlock.down(contentBlock, currentEditorState);
 
-									if (newEditorState) {
+									if (newEditorState && newEditorState !== currentEditorState) {
 										setEditorState(newEditorState);
 									}
 								},

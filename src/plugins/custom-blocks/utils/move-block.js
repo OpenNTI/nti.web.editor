@@ -1,6 +1,7 @@
-import {AtomicBlockUtils} from 'draft-js';
+import {AtomicBlockUtils, SelectionState} from 'draft-js';
 
 import {BLOCKS} from '../../../Constants';
+import {isFocusablePlaceholder} from '../../keep-focusable-target';
 
 const isInContent = (editorState, block) => Boolean(editorState.getCurrentContent().getBlockForKey(block.getKey()));
 
@@ -29,10 +30,54 @@ export function toSelection (dragData, selection, editorState, onAdded) {
 		moveOutside(dragData.block, dragData.editorState, selection, editorState);
 }
 
-export function up () {
 
+function getTarget (contentBlock, editorState, direction = 1) {
+	const next = (block) => direction > 0 ?
+		editorState.getCurrentContent().getBlockAfter(block.getKey()) :
+		editorState.getCurrentContent().getBlockBefore(block.getKey());
+
+	let pointer = next(contentBlock);
+
+	while (pointer) {
+		if (!isFocusablePlaceholder(pointer)) {
+			return pointer;
+		}
+
+		pointer = next(pointer);
+	}
+
+	return null;
 }
 
-export function down () {
+export function up (contentBlock, editorState) {
+	const target = getTarget(contentBlock, editorState, -1);
 
+	if (!target) { return editorState; }
+
+	const blockKey = target.getKey();
+	const selection = new SelectionState({
+		focusKey: blockKey,
+		focusOffset: 0,
+		anchorKey: blockKey,
+		anchorOffset: 0
+	});
+
+	return moveWithin(contentBlock, selection, editorState);
+}
+
+export function down (contentBlock, editorState) {
+	const target = getTarget(contentBlock, editorState, 1);
+
+	if (!target) { return editorState; }
+
+	const blockKey = target.getKey();
+	const blockLength = target.getLength();
+	const selection = new SelectionState({
+		focusKey: blockKey,
+		focusOffset: blockLength,
+		anchorKey: blockKey,
+		anchorOffset: blockLength
+	});
+
+	return moveWithin(contentBlock, selection, editorState);
 }

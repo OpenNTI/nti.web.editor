@@ -1,5 +1,6 @@
 import {BLOCKS} from '../../../Constants';
-import {isFocusablePlaceholderBlock} from '../../ensure-focusable-block/utils';
+import {isFocusablePlaceholder} from '../../keep-focusable-target';
+
 
 export function getIndex (contentBlock, editorState, blockFilter) {
 	const blocks = editorState.getCurrentContent().getBlocksAsArray();
@@ -10,7 +11,7 @@ export function getIndex (contentBlock, editorState, blockFilter) {
 			break;
 		}
 
-		if (!isFocusablePlaceholderBlock(block) && (!blockFilter || blockFilter(block, editorState))) {
+		if (!isFocusablePlaceholder(block) && (!blockFilter || blockFilter(block, editorState))) {
 			count += 1;
 		}
 	}
@@ -21,7 +22,7 @@ export function getIndex (contentBlock, editorState, blockFilter) {
 //When inserting an atomic block it appears that:
 //1.) an empty unstyled block gets added above it.
 //2.) an unstyled block with just a return char gets added below it
-const isPlaceholder = (block) => isFocusablePlaceholderBlock(block) || (block.getType() === BLOCKS.UNSTYLED && block.getText().trim() === '');
+const isPlaceholder = (block) => isFocusablePlaceholder(block) || (block.getType() === BLOCKS.UNSTYLED && block.getText().trim() === '');
 
 function isFirstNonPlaceholder (contentBlock, blocks) {
 	for (let block of blocks) {
