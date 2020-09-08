@@ -9,7 +9,10 @@ import Styles from './CustomBlock.css';
 
 const cx = classnames.bind(Styles);
 
+
 CustomBlock.propTypes = {
+	className: PropTypes.string,
+
 	block: PropTypes.any,
 	blockProps: PropTypes.shape({
 		editorState: PropTypes.any
@@ -21,8 +24,12 @@ CustomBlock.propTypes = {
 
 	children: PropTypes.any
 };
-export default function CustomBlock ({block, blockProps, draggable, onDragStart, onDragEnd, children}) {
-	let content = (<div className={cx('custom-block')}>{children}</div>);
+export default function CustomBlock ({className, block, blockProps, draggable, onDragStart, onDragEnd, children}) {
+	let content = (
+		<div className={cx('custom-block', className)} draggable={draggable}>
+			{children}
+		</div>
+	);
 
 	if (draggable) {
 		content = (
@@ -43,3 +50,4 @@ export default function CustomBlock ({block, blockProps, draggable, onDragStart,
 
 	return content;
 }
+
