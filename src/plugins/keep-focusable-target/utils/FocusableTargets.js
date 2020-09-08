@@ -86,7 +86,7 @@ export function add (editorState) {
 
 	return EditorState.set(editorState, {
 		currentContent: newContent,
-		selection: content.getSelectionAfter()
+		selection: newContent.getSelectionAfter()
 	});
 }
 
