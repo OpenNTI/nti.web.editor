@@ -1,10 +1,10 @@
 import {HANDLED, NOT_HANDLED} from '../Constants';
+import {insertAtomicBlocks} from '../../utils';
 
 import Button from './components/Button';
 import BlockCount from './components/BlockCount';
 import {DRAG_DATA_TYPE} from './Constants';
 import {
-	insertAtomicBlock,
 	insertBlock,
 	getSelectedText,
 	ensureMaintainSelection,
@@ -88,14 +88,14 @@ export default {
 
 					getAtomicInsertMethod: (selection) => {
 						return (data) => {
-							const newState = insertAtomicBlock(data, selection, getEditorState());
+							const newState = insertAtomicBlocks(data, selection, getEditorState());
 
 							setEditorState(newState);
 						};
 					},
 
 					insertAtomicBlock (data, selection) {
-						const newState = insertAtomicBlock(data, selection, getEditorState());
+						const newState = insertAtomicBlocks(data, selection, getEditorState());
 
 						setEditorState(newState);
 					},
