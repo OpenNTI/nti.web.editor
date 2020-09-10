@@ -111,6 +111,19 @@ export default {
 									}
 								},
 
+								setBlockDataImmediately: (data, doNotKeepFocus, useEntity, callback) => {
+									const currentEditorState = getEditorState();
+									const selection = currentEditorState.getSelection();
+
+									let newEditorState = setBlockData(contentBlock, data, useEntity, currentEditorState);
+
+									if (doNotKeepFocus) {
+										newEditorState = EditorState.forceSelection(newEditorState, selection);
+									}
+
+									setEditorState(newEditorState);
+								},
+
 								setBlockData: (data, doNotKeepFocus, useEntity, callback) => {
 									const first = !pendingUpdates;
 
