@@ -9,6 +9,8 @@ import Styles from './CustomBlock.css';
 
 const cx = classnames.bind(Styles);
 
+const stop = e => e.stopPropagation();
+
 
 CustomBlock.propTypes = {
 	className: PropTypes.string,
@@ -26,7 +28,11 @@ CustomBlock.propTypes = {
 };
 export default function CustomBlock ({className, block, blockProps, draggable, onDragStart, onDragEnd, children}) {
 	let content = (
-		<div className={cx('custom-block', className)} draggable={draggable}>
+		<div
+			className={cx('custom-block', className)}
+			draggable={draggable}
+			onClick={stop}
+		>
 			{children}
 		</div>
 	);
