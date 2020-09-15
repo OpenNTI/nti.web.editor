@@ -7,7 +7,7 @@ export default function renderBlock (editorState, block, key) {
 	const content = editorState.getCurrentContent();
 
 	if (block.type === 'atomic') {
-		return getAtomicBlockData(block, editorState);
+		return getAtomicBlockData(block, editorState, true);
 	}
 
 	const prev = content.getBlockBefore(key);
