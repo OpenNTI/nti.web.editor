@@ -1,3 +1,5 @@
+import {getAtomicBlockData} from '../../../../utils';
+
 import getBlockTags from './get-block-tags';
 import renderContentBlockContent from './render-content-block-content';
 
@@ -5,10 +7,7 @@ export default function renderBlock (editorState, block, key) {
 	const content = editorState.getCurrentContent();
 
 	if (block.type === 'atomic') {
-		const entityKey = block.getEntityAt(0);
-		const entity = entityKey && content.getEntity(entityKey);
-
-		return entity ? entity.data : null;
+		return getAtomicBlockData(block, editorState);
 	}
 
 	const prev = content.getBlockBefore(key);
