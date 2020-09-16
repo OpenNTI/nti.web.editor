@@ -10,7 +10,7 @@ import {DRAG_DATA_TYPE} from '../Constants';
 function isAllowedIn (editor = {}, type) {
 	const {plugins} = editor;
 
-	if (!plugins || !plugins.allowInsertBlock) { return false; }
+	if (editor.readOnly || !plugins || !plugins.allowInsertBlock) { return false; }
 	if (!type) { return true; }
 
 	const {allowedBlockTypes, customBlockTypes} = plugins;

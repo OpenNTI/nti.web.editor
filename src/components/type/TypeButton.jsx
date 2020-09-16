@@ -71,7 +71,7 @@ export default class TypeButton extends React.Component {
 		const {type} = this.props;
 		const {allowedBlockTypes} = this.pluginContext;
 
-		return allowedBlockTypes && allowedBlockTypes.has(type);
+		return !this.editorContext.readOnly && allowedBlockTypes && allowedBlockTypes.has(type);
 	}
 
 	get isCurrent () {
