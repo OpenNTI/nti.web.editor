@@ -7,6 +7,8 @@ class BaseEditor extends PluginEditor {
 		onSetReadOnly: PropTypes.func
 	};
 
+	get readOnly () { return this.props.readOnly || this.state.readOnly; }
+
 	/**
 	 * This is an override is for us handling the readOnly prop so context provider knows to update.
 	 * We are handling what setReadOnly does in the PluginEditor. That will need to be monitored if there
