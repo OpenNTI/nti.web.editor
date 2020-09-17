@@ -1,4 +1,6 @@
-import {Modifier, SelectionState, EditorState} from 'draft-js';
+import {Modifier, SelectionState, EditorState, ContentBlock, genKey, BlockMapBuilder} from 'draft-js';
+//We don't really need immutable its just something draft needs so let draft depend on it
+import {List, Map} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
 
 import {BLOCKS} from '../../../Constants';
 
@@ -8,54 +10,15 @@ const isFocusable = block => block && !UnfocusableBlocks.has(block.getType());
 
 const focusablePlaceholderKey = 'focusableTargetPlaceholder';
 
-const getSelectionBeforeBlock = (block, content) => (
-	new SelectionState({
-		focusKey: block.getKey(),
-		focusOffset: 0,
-		anchorKey: block.getKey(),
-		anchorOffset: 0
-	})
-);
-const getSelectionAfterBlock = (block, content) => (
-	new SelectionState({
-		focusKey: block.getKey(),
-		focusOffset: block.getLength(),
-		anchorKey: block.getKey(),
-		anchorOffset: block.getLength()
-	})
-);
-
-function insertPlaceholder (before, after, content) {
-	if (!before && !after) { return content; }
-
-	const selection = after ? getSelectionAfterBlock(after, content) : getSelectionBeforeBlock(before, content);
-
-	const afterSplit = Modifier.splitBlock(content, selection);
-	const insertSelection = afterSplit.getSelectionAfter();
-
-	const asUnstyled = Modifier.setBlockType(afterSplit, insertSelection, BLOCKS.UNSTYLED);
-	const withMarker = Modifier.setBlockData(asUnstyled, insertSelection, {[focusablePlaceholderKey]: true});
-
-	return withMarker;
-}
-
-function cleanupPlaceholder (block, content) {
-	const prev = content.getBlockBefore(block.getKey());
-	const next = content.getBlockAfter(block.getKey());
-
-	const anchor = prev ? ({key: prev.getKey(), offset: prev.getLength()}) : ({key: block.getKey(), offset: 0});
-	const focus = !prev && next ? ({key: next.getKey(), offset: next.getLength()}) : ({key: block.getKey(), offset: block.getLength()});
-
-	const selection = new SelectionState({
-		anchorKey: anchor.key,
-		anchorOffset: anchor.offset,
-		focusKey: focus.key,
-		focusOffset: focus.offset
+function makePlaceholder () {
+	return new ContentBlock({
+		key: genKey(),
+		type: BLOCKS.UNSTYLED,
+		text: '',
+		characterList: List(),
+		data: Map({[focusablePlaceholderKey]: true})
 	});
-
-	return Modifier.removeRange(content, selection, 'backward');
 }
-
 
 export function add (editorState) {
 	const content = editorState.getCurrentContent();
@@ -63,30 +26,48 @@ export function add (editorState) {
 
 	if (blocks.length === 0) { return editorState; }
 
-	let newContent = content;
+	let changed = false;
+	let newBlocks = [];
 
-	//This is not a typo, we are iterating past the last block
-	//to account for there being an unfocusable block at the end
-	for (let i = 0; i <= blocks.length; i++) {
-		const prev = blocks[i - 1];
+	for (let i = 0; i < blocks.length; i++) {
+		const prev = newBlocks[newBlocks.length - 1];
 		const block = blocks[i];
 
+		//cleanup any placeholders that are no longer needed
 		if (isPlaceholderFocusableTarget(prev) && isFocusable(block)) {
-			newContent = cleanupPlaceholder(prev, content);
+			//the prev block is a placeholder, but current block focusable so we can remove the prev
+			newBlocks = newBlocks.slice(0, -1);
+			changed = true;
 		} else if (isFocusable(prev) && isPlaceholderFocusableTarget(block)) {
-			newContent = cleanupPlaceholder(block, content);
+			//the current block is a placeholder, but the prev block is focusable so we don't need to keep the current block
+			changed = true;
+			continue;
 		}
 
-		if (isFocusable(prev) || isFocusable(block)) { continue; }
+		if (!isFocusable(prev) && !isFocusable(block)) {
+			newBlocks.push(makePlaceholder());
+			changed = true;
+		}
 
-		newContent = insertPlaceholder(block, prev, newContent);
+		newBlocks.push(block);
 	}
 
-	if (content === newContent) { return editorState; }
+	if (!isFocusable(newBlocks[newBlocks.length - 1])) {
+		newBlocks.push(makePlaceholder());
+		changed = true;
+	}
+
+	if (!changed) {
+		return editorState;
+	}
+
+	const newBlockMap = BlockMapBuilder.createFromArray(newBlocks);
+	const newContent = content.merge({
+		blockMap: newBlockMap
+	});
 
 	return EditorState.set(editorState, {
-		currentContent: newContent,
-		selection: newContent.getSelectionAfter()
+		currentContent: newContent
 	});
 }
 
@@ -95,5 +76,5 @@ export function remove (editorState) {
 }
 
 export function isPlaceholderFocusableTarget (block) {
-	return block?.getData().toJS()[focusablePlaceholderKey];
+	return block?.getData().toJS()[focusablePlaceholderKey] && block.getText() === '';
 }
