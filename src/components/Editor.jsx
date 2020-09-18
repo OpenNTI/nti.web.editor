@@ -375,6 +375,10 @@ class DraftCoreEditor extends React.Component {
 
 
 	onChange = (editorState, cb) => {
+		editorState = EditorState.set(editorState, {
+			nativelyRenderedContent: null
+		});
+
 		const {onChange} = this.props;
 		const {currentEditorState} = this.state;
 		const contentChanged = currentEditorState.getCurrentContent() !== editorState.getCurrentContent()
