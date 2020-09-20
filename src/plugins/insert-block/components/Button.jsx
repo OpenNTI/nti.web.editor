@@ -35,6 +35,7 @@ InsertBlockButton.propTypes = {
 	createBlock: PropTypes.func,
 	createBlockProps: PropTypes.object,
 	atomic: PropTypes.bool,
+	disabled: PropTypes.bool,
 
 	children: PropTypes.node,
 
@@ -47,6 +48,7 @@ export default function InsertBlockButton ({
 	createBlock,
 	createBlockProps,
 	atomic,
+	disabled,
 
 	children,
 
@@ -99,7 +101,7 @@ export default function InsertBlockButton ({
 				{dataTransferKey: 'text', dataForTransfer: 'Insert'}
 			]}
 		>
-			<div {...otherProps} className={cx(className, {disabled: !isAllowed})} onClick={innerClick}>
+			<div {...otherProps} className={cx(className, {disabled: !isAllowed || disabled})} onClick={innerClick}>
 				{children}
 			</div>
 		</DnD.Draggable>
