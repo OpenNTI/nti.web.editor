@@ -69,13 +69,15 @@ export default function InsertBlockButton ({
 			createBlock?.(
 				getAtomicInsertMethod(selection),
 				createBlockProps,
-				getSelectedTextForInsertion()
+				getSelectedTextForInsertion(),
+				editor
 			);
 		} else if (getInsertMethod) {
 			createBlock?.(
 				getInsertMethod(selection),
 				createBlockProps,
-				getSelectedTextForInsertion()
+				getSelectedTextForInsertion(),
+				editor
 			);
 		}
 	};
