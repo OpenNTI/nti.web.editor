@@ -5,10 +5,10 @@ import {isFocusablePlaceholder} from '../../keep-focusable-target';
 
 const isInContent = (editorState, block) => Boolean(editorState.getCurrentContent().getBlockForKey(block.getKey()));
 
-function moveWithin (block, selection, editorState) {
+function moveWithin (block, selection, editorState, insertionMode) {
 	if (block.getType() === BLOCKS.ATOMIC) {
 		try {
-			return AtomicBlockUtils.moveAtomicBlock(editorState, block, selection);
+			return AtomicBlockUtils.moveAtomicBlock(editorState, block, selection, insertionMode);
 		} catch (e) {
 			//We are assuming if it throws its because the selection is next to the block
 			return editorState;
@@ -39,7 +39,9 @@ function getTarget (contentBlock, editorState, direction = 1) {
 	let pointer = next(contentBlock);
 
 	while (pointer) {
-		if (!isFocusablePlaceholder(pointer)) {
+		const isTarget = !isFocusablePlaceholder(pointer);
+
+		if (isTarget || !next(pointer)) {
 			return pointer;
 		}
 
@@ -62,13 +64,29 @@ export function up (contentBlock, editorState) {
 		anchorOffset: 0
 	});
 
-	return moveWithin(contentBlock, selection, editorState);
+	return moveWithin(contentBlock, selection, editorState, 'before');
 }
 
 export function down (contentBlock, editorState) {
 	const target = getTarget(contentBlock, editorState, 1);
 
 	if (!target) { return editorState; }
+	if (target.getType() === BLOCKS.ATOMIC) {
+		const next = editorState.getCurrentContent().getBlockAfter(target.getKey());
+
+		if (next) {
+			const blockKey = next.getKey();
+			const selection = new SelectionState({
+				focusKey: blockKey,
+				focusOffet: 0,
+				anchorKey: blockKey,
+				anchorOffset: 0
+			});
+
+			return moveWithin(contentBlock, selection, editorState, 'before');
+		}
+
+	}
 
 	const blockKey = target.getKey();
 	const blockLength = target.getLength();
@@ -79,5 +97,5 @@ export function down (contentBlock, editorState) {
 		anchorOffset: blockLength
 	});
 
-	return moveWithin(contentBlock, selection, editorState);
+	return moveWithin(contentBlock, selection, editorState, 'after');
 }
