@@ -134,21 +134,26 @@ class DraftCoreEditor extends React.Component {
 	getChildContext () {
 		const {parentEditor} = this;
 
+		let activateTimeout = null;
+
 		return {
 			draftCoreEditor: {
 				parentEditor: {
 					activate: () => {
-						const {active:wasActive} = this.state;
+						activateTimeout = setTimeout(() => {
+							const {active:wasActive} = this.state;
 
-						if (!wasActive) {
-							this.setState({active: true});
-						}
+							if (!wasActive) {
+								this.setState({active: true});
+							}
 
-						if (parentEditor) {
-							parentEditor.activate();
-						}
+							if (parentEditor) {
+								parentEditor.activate();
+							}
+						}, 1);
 					},
 					deactivate: () => {
+						clearTimeout(activateTimeout);
 						const {active:wasActive} = this.state;
 
 						if (wasActive) {
