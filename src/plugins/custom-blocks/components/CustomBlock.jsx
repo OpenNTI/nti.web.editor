@@ -30,7 +30,6 @@ export default function CustomBlock ({className, block, blockProps, draggable, o
 	let content = (
 		<div
 			className={cx('custom-block', className)}
-			draggable={draggable}
 			onClick={stop}
 		>
 			{children}
