@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
-import {EditorState, RichUtils} from 'draft-js';
+import {EditorState} from 'draft-js';
 import {buffer} from '@nti/lib-commons';
 import {parent} from '@nti/lib-dom';
 
@@ -135,29 +135,27 @@ class DraftCoreEditor extends React.Component {
 	getChildContext () {
 		const {parentEditor} = this;
 
-		let activateTimeout = null;
+		//Its less than ideal to track this in two places, but there
+		//is a race condition between setting the state being applied and
+		//and activate/deactivate event being triggered
+		let wasActive = true;
 
 		return {
 			draftCoreEditor: {
 				parentEditor: {
 					activate: () => {
-						activateTimeout = setTimeout(() => {
-							const {active:wasActive} = this.state;
+						if (!wasActive) {
+							wasActive = true;
+							this.setState({active: true});
+						}
 
-							if (!wasActive) {
-								this.setState({active: true});
-							}
-
-							if (parentEditor) {
-								parentEditor.activate();
-							}
-						}, 1);
+						if (parentEditor) {
+							parentEditor.activate();
+						}
 					},
 					deactivate: () => {
-						clearTimeout(activateTimeout);
-						const {active:wasActive} = this.state;
-
 						if (wasActive) {
+							wasActive = false;
 							this.setState({active: false});
 						}
 
