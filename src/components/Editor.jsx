@@ -138,14 +138,13 @@ class DraftCoreEditor extends React.Component {
 		//Its less than ideal to track this in two places, but there
 		//is a race condition between setting the state being applied and
 		//and activate/deactivate event being triggered
-		let wasActive = true;
 
 		return {
 			draftCoreEditor: {
 				parentEditor: {
 					activate: () => {
-						if (!wasActive) {
-							wasActive = true;
+						if (!this.wasActive) {
+							this.wasActive = true;
 							this.setState({active: true});
 						}
 
@@ -154,8 +153,8 @@ class DraftCoreEditor extends React.Component {
 						}
 					},
 					deactivate: () => {
-						if (wasActive) {
-							wasActive = false;
+						if (this.wasActive) {
+							this.wasActive = false;
 							this.setState({active: false});
 						}
 
