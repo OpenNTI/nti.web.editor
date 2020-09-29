@@ -1,10 +1,19 @@
 import {trimEmptiesOffEnd, renderBlock, joinTextBlocks, collapseBlocks, buildHTML} from './utils';
 
-export default function fromDraftState (editorState) {
+/**
+ * Convert DraftJS editor state into HTML.
+ * @param  {Object} editorState               editor state to convert
+ * @param  {Object} strategy                  override the default parser behaviour
+ * @param  {Object} strategy.TypeToTag        override the HTML tag used for a block type
+ * @param  {String} strategy.OrderedListTag   tag to use to start an ordered list
+ * @param  {String} strategy.UnorderedListTag tag to use to start an unordered list
+ * @return {[String]}                         HTML and Atomic block data
+ */
+export default function fromDraftState (editorState, strategy) {
 	const content = editorState.getCurrentContent();
 
 	const blocks = content.getBlockMap()
-		.map((...args) => renderBlock(editorState, ...args))
+		.map((...args) => renderBlock(editorState, strategy, ...args))
 		.toArray();
 
 	const htmlBlocks = collapseBlocks(blocks).map(block => buildHTML(block));

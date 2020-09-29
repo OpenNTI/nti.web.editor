@@ -17,26 +17,31 @@ const typeMap = {
 	[BLOCKS.UNORDERED_LIST_ITEM]: 'li'
 };
 
-export default function getBlockTags (block, prevBlock, nextBlock) {
+const getTagForType = (type, strategy) => strategy?.TypeToTag?.[type] ?? typeMap[type] ?? type;
+
+const getOrderedListTag = (strategy) => strategy.OrderedListTag ?? 'ol';
+const getUnorderedListTag = (strategy) => strategy.UnorderedListTag ?? 'ul';
+
+export default function getBlockTags (block, prevBlock, nextBlock, strategy) {
 	const {type} = block;
 	const {type:prevType} = prevBlock || {};
 	const {type:nextType} = nextBlock || {};
 
 	const specialSnowFlakes = {
 		[BLOCKS.ORDERED_LIST_ITEM]: {
-			open: input => prevType !== BLOCKS.ORDERED_LIST_ITEM ? ['ol', ...input] : input,
-			close: input => nextType !== BLOCKS.ORDERED_LIST_ITEM ? [...input, 'ol'] : input
+			open: input => prevType !== BLOCKS.ORDERED_LIST_ITEM ? [getOrderedListTag(strategy), ...input] : input,
+			close: input => nextType !== BLOCKS.ORDERED_LIST_ITEM ? [...input, getOrderedListTag(strategy)] : input
 		},
 		[BLOCKS.UNORDERED_LIST_ITEM]: {
-			open: input => prevType !== BLOCKS.UNORDERED_LIST_ITEM ? ['ul', ...input] : input,
-			close: input => nextType !== BLOCKS.UNORDERED_LIST_ITEM ? [...input, 'ul'] : input
+			open: input => prevType !== BLOCKS.UNORDERED_LIST_ITEM ? [getUnorderedListTag(strategy), ...input] : input,
+			close: input => nextType !== BLOCKS.UNORDERED_LIST_ITEM ? [...input, getUnorderedListTag(strategy)] : input
 		}
 	};
 
-	let prefix = [typeMap[type] || type];
-	let postfix = [typeMap[type] || type];
+	let prefix = [getTagForType(type, strategy)];
+	let postfix = [getTagForType(type, strategy)];
 
-	const specialSnowFlake = specialSnowFlakes[type];
+	const specialSnowFlake = strategy.WrapperTags[type] ?? specialSnowFlakes[type];
 
 	if (specialSnowFlake) {
 		prefix = specialSnowFlake.open(prefix);
