@@ -14,19 +14,33 @@ const stop = e => e.stopPropagation();
 
 CustomBlock.propTypes = {
 	className: PropTypes.string,
+	children: PropTypes.any,
 
 	block: PropTypes.any,
 	blockProps: PropTypes.shape({
-		editorState: PropTypes.any
+		editorState: PropTypes.any,
+		subscribeToRemoval: PropTypes.func
 	}),
 
 	draggable: PropTypes.bool,
 	onDragStart: PropTypes.func,
 	onDragEnd: PropTypes.func,
 
-	children: PropTypes.any
+	onRemoval: PropTypes.func
 };
-export default function CustomBlock ({className, block, blockProps, draggable, onDragStart, onDragEnd, children}) {
+export default function CustomBlock ({
+	className,
+	children,
+
+	block,
+	blockProps,
+
+	draggable,
+	onDragStart,
+	onDragEnd,
+
+	onRemoval
+}) {
 	let content = (
 		<div
 			className={cx('custom-block', className)}
@@ -35,6 +49,8 @@ export default function CustomBlock ({className, block, blockProps, draggable, o
 			{children}
 		</div>
 	);
+
+	React.useEffect(() => onRemoval && blockProps.subscribeToRemoval(onRemoval), [block, onRemoval]);
 
 	if (draggable) {
 		content = (

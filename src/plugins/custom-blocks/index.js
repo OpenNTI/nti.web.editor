@@ -2,9 +2,21 @@ import {EditorState} from 'draft-js';
 
 import {HANDLED, NOT_HANDLED} from '../Constants';
 
-import {setBlockData, removeBlock, MoveBlock, BlockIndex} from './utils';
+import {setBlockData, removeBlock, MoveBlock, BlockIndex, BlocksToBeRemoved} from './utils';
 import CustomBlock from './components/CustomBlock';
 import * as DragStore from './DragStore';
+
+const RemovalListeners = new Map();
+
+function allowRemoval (key) {
+	const listener = RemovalListeners.get(key) ?? (() => true);
+
+	try {
+		return listener();
+	} catch (e) {
+		return false;
+	}
+}
 
 export default {
 	CustomBlock,
@@ -33,6 +45,22 @@ export default {
 
 			willUnmount () {
 				unsubscribe?.();
+			},
+
+			handleKeyCommand (command, editorState) {
+				const toRemove = BlocksToBeRemoved.command(command, editorState);
+
+				//If any of the blocks getting removed are blocked from removal,
+				//stop the command
+				return toRemove.every(key => allowRemoval(key)) ? NOT_HANDLED : HANDLED;
+			},
+
+			handleBeforeInput (chars, editorState) {
+				const toRemove = BlocksToBeRemoved.beforeInput(chars, editorState);
+
+				//If any of the blocks getting removed are blocked from removal,
+				//stop the command
+				return toRemove.every(key => allowRemoval(key)) ? NOT_HANDLED : HANDLED;
 			},
 
 			handleDrop (selection, dataTransfer, type, {getEditorState, setEditorState, getEditorRef}) {
@@ -93,6 +121,15 @@ export default {
 								indexOfType: BlockIndex.getIndex(contentBlock, editorState, renderer.handlesBlock),
 								isFirst: BlockIndex.isFirst(contentBlock, editorState),
 								isLast: BlockIndex.isLast(contentBlock, editorState),
+
+								//If the fn returns false it can stop the block removal
+								subscribeToRemoval: (fn) => {
+									const key = contentBlock.getKey();
+
+									RemovalListeners.set(key, fn);
+
+									return () => RemovalListeners.delete(key);
+								},
 
 								moveBlockUp: () => {
 									const currentEditorState = getEditorState();

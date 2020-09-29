@@ -8,6 +8,7 @@ import {buffer} from '@nti/lib-commons';
 import {parent} from '@nti/lib-dom';
 
 import ContextProvider from '../ContextProvider';
+import {HANDLED, NOT_HANDLED} from '../plugins/Constants';
 import EditorGroup from '../editor-group';
 
 import { decomposePlugins } from './utils';
@@ -434,19 +435,10 @@ class DraftCoreEditor extends React.Component {
 
 		//If the prop handles the key command let it
 		if (handleKeyCommand && handleKeyCommand(command)) {
-			return true;
+			return HANDLED;
 		}
 
-		//Otherwise do the default
-		const {editorState} = this;
-		const newState = RichUtils.handleKeyCommand(editorState, command);
-
-		if (newState) {
-			this[INTERNAL_CHANGE](newState);
-			return true;
-		}
-
-		return false;
+		return NOT_HANDLED;
 	}
 
 
