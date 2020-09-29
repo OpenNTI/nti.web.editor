@@ -97,6 +97,8 @@ class DraftCoreEditor extends React.Component {
 
 		const currentPlugins = decomposePlugins(plugins);
 
+		this.wasActive = true;
+
 		this.state = {
 			currentEditorState: this[TRANSFORM_INPUT](editorState),
 			currentEditorStateId: Date.now(),
