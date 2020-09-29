@@ -19,7 +19,7 @@ describe('renderBlock', () => {
 		const blocks = content.getBlocksAsArray();
 
 		const verifyBlock = (index, type, prefix, postfix, blockContent) => {
-			const result = renderBlock(editorState, blocks[index], blocks[index].key);
+			const result = renderBlock(editorState, null, blocks[index], blocks[index].key);
 
 			expect(result.type).toEqual(type);
 			expect(result.prefix).toEqual(prefix);

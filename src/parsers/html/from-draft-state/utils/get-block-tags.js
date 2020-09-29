@@ -22,7 +22,7 @@ const getTagForType = (type, strategy) => strategy?.TypeToTag?.[type] ?? typeMap
 const getOrderedListTag = (strategy) => strategy.OrderedListTag ?? 'ol';
 const getUnorderedListTag = (strategy) => strategy.UnorderedListTag ?? 'ul';
 
-export default function getBlockTags (block, prevBlock, nextBlock, strategy) {
+export default function getBlockTags (block, prevBlock, nextBlock, strategy = {}) {
 	const {type} = block;
 	const {type:prevType} = prevBlock || {};
 	const {type:nextType} = nextBlock || {};
@@ -41,7 +41,7 @@ export default function getBlockTags (block, prevBlock, nextBlock, strategy) {
 	let prefix = [getTagForType(type, strategy)];
 	let postfix = [getTagForType(type, strategy)];
 
-	const specialSnowFlake = strategy.WrapperTags[type] ?? specialSnowFlakes[type];
+	const specialSnowFlake = strategy?.WrapperTags?.[type] ?? specialSnowFlakes[type];
 
 	if (specialSnowFlake) {
 		prefix = specialSnowFlake.open(prefix);
