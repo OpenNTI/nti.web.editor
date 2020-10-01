@@ -1,3 +1,5 @@
+import {Array as arr} from '@nti/lib-commons';
+
 import {BLOCKS} from '../../../../Constants';
 
 import openTag from './open-tag';
@@ -38,8 +40,8 @@ export default function getBlockTags (block, prevBlock, nextBlock, strategy = {}
 		}
 	};
 
-	let prefix = [getTagForType(type, strategy)];
-	let postfix = [getTagForType(type, strategy)];
+	let prefix = arr.ensure(getTagForType(type, strategy));
+	let postfix = arr.ensure(getTagForType(type, strategy));
 
 	const specialSnowFlake = strategy?.WrapperTags?.[type] ?? specialSnowFlakes[type];
 
