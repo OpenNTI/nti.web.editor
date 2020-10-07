@@ -9,6 +9,7 @@ import {parent} from '@nti/lib-dom';
 
 import ContextProvider from '../ContextProvider';
 import {HANDLED, NOT_HANDLED} from '../plugins/Constants';
+import * as CorePlugin from '../plugins/core';
 import EditorGroup from '../editor-group';
 
 import { decomposePlugins } from './utils';
@@ -95,7 +96,7 @@ class DraftCoreEditor extends React.Component {
 
 		this.onContentChangeBuffered = buffer(contentChangeBuffer, this.onContentChange);
 
-		const currentPlugins = decomposePlugins(plugins);
+		const currentPlugins = [...decomposePlugins(plugins), CorePlugin.create()];
 
 		this.wasActive = true;
 
@@ -286,7 +287,7 @@ class DraftCoreEditor extends React.Component {
 
 		if (newPlugins !== oldPlugins) {
 			newState = newState || {};
-			newState.currentPlugins = decomposePlugins(newPlugins);
+			newState.currentPlugins = [...decomposePlugins(newPlugins), CorePlugin.create()];
 		}
 
 		if (newState) {
@@ -487,6 +488,8 @@ class DraftCoreEditor extends React.Component {
 							placeholder={placeholder}
 							readOnly={readOnly || !active}
 							onSetReadOnly={this.onSetReadOnly}
+
+							spellCheck
 						/>
 					</WrapperCmp>
 				</ContextProvider>
