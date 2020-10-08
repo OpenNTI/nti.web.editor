@@ -15,7 +15,7 @@
 		}
 
 		.link {
-			color: $secondary-grey;
+			color: var(--secondary-grey);
 			max-width: 280px;
 			overflow-x: hidden;
 			text-overflow: ellipsis;

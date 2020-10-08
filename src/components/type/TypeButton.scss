@@ -3,7 +3,7 @@
 .draft-core-type-button {
 
 	&.plain {
-		color: $secondary-grey;
+		color: var(--secondary-grey);
 		margin: 0;
 		padding: 0;
 		border: 0;
@@ -46,7 +46,7 @@
 	}
 
 	&.inline {
-		color: $secondary-grey;
+		color: var(--secondary-grey);
 		font-weight: bold;
 		margin: 0;
 		padding: 0;

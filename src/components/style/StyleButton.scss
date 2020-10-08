@@ -1,7 +1,7 @@
 @import '~@nti/style-common';
 
 .draft-core-style-button.plain {
-	color: $secondary-grey;
+	color: var(--secondary-grey);
 	margin: 0;
 	border: 0;
 	background: {
@@ -18,7 +18,7 @@
 }
 
 .draft-core-style-button:not(.plain) {
-	color: $secondary-grey;
+	color: var(--secondary-grey);
 	font-weight: bold;
 	margin: 0;
 	padding: 0;
