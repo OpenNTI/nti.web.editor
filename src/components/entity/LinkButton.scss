@@ -54,7 +54,7 @@
 	&:active,
 	&.active,
 	.no-touch &:hover {
-		color: $primary-blue;
+		color: var(--primary-blue);
 	}
 
 

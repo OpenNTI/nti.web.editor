@@ -26,7 +26,7 @@
 		}
 
 		.edit, .remove {
-			color: $primary-blue;
+			color: var(--primary-blue);
 			cursor: pointer;
 			font-size: 0.625rem;
 			font-weight: bold;
