@@ -7,7 +7,7 @@
 
 	.external-link-info {
 		padding: rem-calc(14px 20px);
-		font: normal 400 0.875rem/1.3 $body-font-family;
+		font: normal 400 0.875rem/1.3 var(--body-font-family);
 
 		.link, .edit, .remove {
 			display: inline-block;
@@ -15,7 +15,7 @@
 		}
 
 		.link {
-			color: $secondary-grey;
+			color: var(--secondary-grey);
 			max-width: 280px;
 			overflow-x: hidden;
 			text-overflow: ellipsis;
@@ -26,7 +26,7 @@
 		}
 
 		.edit, .remove {
-			color: $primary-blue;
+			color: var(--primary-blue);
 			cursor: pointer;
 			font-size: 0.625rem;
 			font-weight: bold;
@@ -38,8 +38,8 @@
 		padding: rem-calc(10px);
 
 		.error {
-			color: $primary-red;
-			font: normal 400 0.875rem/1.3 $body-font-family;
+			color: var(--primary-red);
+			font: normal 400 0.875rem/1.3 var(--body-font-family);
 		}
 
 		.url-input, .display-input {
