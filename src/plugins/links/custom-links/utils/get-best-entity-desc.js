@@ -21,21 +21,23 @@ export default function getBestEntityDesc (cmps, editorState) {
 	if (!cmps || !cmps.length) { return null; }
 
 	const blockMap = getBlockKeyToIndex(editorState);
-	const sorted = cmps.sort((a, b) => {
-		a = getInfoForCmp(a);
-		b = getInfoForCmp(b);
+	const sorted = cmps
+		.filter(a => Boolean(a.linkRef.current))
+		.sort((a, b) => {
+			a = getInfoForCmp(a);
+			b = getInfoForCmp(b);
 
-		const aBlockIndex = blockMap[a.blockKey];
-		const bBlockIndex = blockMap[b.blockKey];
+			const aBlockIndex = blockMap[a.blockKey];
+			const bBlockIndex = blockMap[b.blockKey];
 
-		const aDecorator = a.decoratorKey;
-		const bDecorator = b.decoratorKey;
+			const aDecorator = a.decoratorKey;
+			const bDecorator = b.decoratorKey;
 
-		const blockSort = aBlockIndex < bBlockIndex ? -1 : aBlockIndex === bBlockIndex ? 0 : 1;
-		const decoratorSort = aDecorator < bDecorator ? -1 : aDecorator === bDecorator ? 0 : 1;
+			const blockSort = aBlockIndex < bBlockIndex ? -1 : aBlockIndex === bBlockIndex ? 0 : 1;
+			const decoratorSort = aDecorator < bDecorator ? -1 : aDecorator === bDecorator ? 0 : 1;
 
-		return blockSort === 0 ? decoratorSort : blockSort;
-	});
+			return blockSort === 0 ? decoratorSort : blockSort;
+		});
 
 	return sorted[sorted.length - 1];
 }
