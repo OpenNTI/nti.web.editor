@@ -473,7 +473,7 @@ class DraftCoreEditor extends React.Component {
 		);
 
 		return (
-			<div ref={this.attachContainerRef} className="nti-draft-core-container">
+			<div ref={this.attachContainerRef} className="nti-draft-core-container" onFocus={this.onContainerFocus} onBlur={this.onContainerBlur} >
 				<ContextProvider editor={this} ref={this.attachContextRef} internal>
 					<WrapperCmp className={cls} onClick={this.focus}>
 						<Editor
