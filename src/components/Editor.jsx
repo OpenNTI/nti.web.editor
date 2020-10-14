@@ -343,20 +343,20 @@ class DraftCoreEditor extends React.Component {
 
 
 	onContainerFocus = (e) => {
-		e.stopPropagation();
 		const {parentEditor} = this;
 
 		if (parentEditor) {
+			e.stopPropagation();
 			parentEditor.deactivate();
 		}
 	}
 
 
 	onContainerBlur = (e) => {
-		e.stopPropagation();
 		const {parentEditor} = this;
 
 		if (parentEditor) {
+			e.stopPropagation();
 			parentEditor.activate();
 		}
 	}
