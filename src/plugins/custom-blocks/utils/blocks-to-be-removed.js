@@ -67,8 +67,8 @@ const Commands = {
 	}
 };
 
-export function command (command, editorState) {
-	const handler = Commands[command];
+export function command (commandName, editorState) {
+	const handler = Commands[commandName];
 
 	return handler ? handler(editorState) : [];
 }

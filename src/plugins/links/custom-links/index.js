@@ -12,7 +12,6 @@ import LinkOverlay from './components/LinkOverlay';
 import {getSelectedEntityKey, getHrefForSelection} from './utils';
 
 const SelectedEntity = 'selection';
-const FocusedKey = 'has-focus';
 const EditingKey = 'editing';
 
 export const create = () => {
@@ -23,8 +22,6 @@ export const create = () => {
 
 	const LinkWrapperInstance = (props) => (<LinkWrapper {...props} store={store} />);
 	const LinkOverlayInstance = (props) => (<LinkOverlay {...props} store={store} />);
-
-	let blurTimeout = null;
 
 	return {
 		plugins: [
@@ -70,7 +67,7 @@ export const create = () => {
 						const href = link || getHrefForSelection(editorState);
 
 						const content = editorState.getCurrentContent();
-						
+
 						let newContent = createLinkEntity.createCustomLink(content, href || '');
 						const entityKey = newContent.getLastCreatedEntityKey();
 

@@ -2,8 +2,6 @@ import {Modifier} from 'draft-js';
 
 import {isLinkEntity, createLinkEntity, updateLinkEntity} from '../../link-utils';
 
-import {getLinkForWord} from './GetLinks';
-
 function getLinksInSelection (content, selection) {
 	const blockKey = selection.getFocusKey();
 	const focusOffset = selection.getFocusOffset();
@@ -56,7 +54,7 @@ function updateExistingLink (existing, link, content) {
 
 	const updating = existing[0];
 	const {entityKey} = updating;
-	
+
 	let newContent = updateLinkEntity(content, entityKey, link.url);
 
 	newContent = Modifier.applyEntity(newContent, link.selection, entityKey);

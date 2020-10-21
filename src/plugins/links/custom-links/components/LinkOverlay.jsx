@@ -4,7 +4,7 @@ import classnames from 'classnames/bind';
 import {Hooks, Flyout} from '@nti/web-commons';
 
 import {getEntityData} from '../../link-utils';
-import {getBestEntityDesc, removeEntity, updateEntityDesc} from '../utils'; 
+import {getBestEntityDesc, removeEntity, updateEntityDesc} from '../utils';
 
 import Styles from './Styles.css';
 import LinkEditor from './LinkEditor';
@@ -30,7 +30,9 @@ CustomLinkWrapper.propTypes = {
 	store: PropTypes.shape({
 		subscribeTo: PropTypes.func,
 		SelectedEntityKey: PropTypes.string,
-		EditingKey: PropTypes.string
+		EditingKey: PropTypes.string,
+		getItem: PropTypes.func,
+		setItem: PropTypes.func,
 	})
 };
 export default function CustomLinkWrapper ({
@@ -44,9 +46,9 @@ export default function CustomLinkWrapper ({
 
 	const selectedEntityKey = store.getItem(store.SelectedEntityKey);
 	const editingKey = store.getItem(store.EditingKey);
-	
+
 	const entityKey = selectedEntityKey ?? editingKey;
-	
+
 	React.useEffect(() => (
 		store.subscribeTo(
 			[
@@ -58,12 +60,12 @@ export default function CustomLinkWrapper ({
 	), [store]);
 
 	React.useEffect(() => {
-		const entityDesc = getBestEntityDesc(
+		const bestEntityDesc = getBestEntityDesc(
 			store.getItem(entityKey),
 			getEditorState()
 		);
-		
-		setEntityDesc(entityDesc);
+
+		setEntityDesc(bestEntityDesc);
 	}, [entityKey]);
 
 	if (!entityDesc || !entityKey) { return null; }

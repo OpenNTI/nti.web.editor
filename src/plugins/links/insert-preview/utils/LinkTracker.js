@@ -1,7 +1,6 @@
 import {EditorState} from 'draft-js';
 
 import {CHANGE_TYPES} from '../../../../Constants';
-import {isLinkEntity} from '../../link-utils';
 
 import findLinks from './find-links';
 import * as Preview from './Preview';
@@ -17,9 +16,8 @@ export default class LinkTracker {
 	}
 
 	fixEditorState (editorState) {
-		const firstPass = !this.previousContent; 
 		const content = editorState.getCurrentContent();
-		
+
 		if (this.#previousContent === content) { return editorState; }
 
 		this.#previousContent = content;
@@ -35,7 +33,7 @@ export default class LinkTracker {
 		}, content);
 
 		const prevSelection = editorState.getSelection();
-		
+
 		return EditorState.forceSelection(
 			EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_FRAGMENT),
 			prevSelection

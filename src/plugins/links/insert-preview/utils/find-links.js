@@ -1,17 +1,19 @@
 import {isLinkEntity} from '../../link-utils';
 
+const appendToSet = (acc, char) => {
+	if (char.entity) {
+		acc.add(char.entity);
+	}
+
+	return acc;
+};
+
 export default function findLinks (content) {
 	const entitiesByBlock = content
 		.getBlocksAsArray()
 		.reduce((acc, block) => {
 			const key = block.getKey();
-			const entities = block.getCharacterList().toJS().reduce((acc, char) => {
-				if (char.entity) {
-					acc.add(char.entity);
-				}
-
-				return acc;
-			}, new Set());
+			const entities = block.getCharacterList().toJS().reduce(appendToSet, new Set());
 
 
 			return {

@@ -1,4 +1,3 @@
-import {NOT_HANDLED, HANDLED} from '../../Constants.js';
 import {create as CreateDecorate} from '../decorate';
 
 import {ApplyAutoLinks} from './utils';

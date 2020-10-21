@@ -1,4 +1,4 @@
-import {EditorState, SelectionState, AtomicBlockUtils} from 'draft-js';
+import {EditorState, SelectionState} from 'draft-js';
 
 import {insertAtomicBlocks} from '../../../../utils';
 
@@ -17,7 +17,7 @@ function getSelectionAtEndOfBlock (blockKey, content) {
 export function insert (link, getDataForLink, content) {
 	const data = getDataForLink(link.entity.data);
 	const selection = getSelectionAtEndOfBlock(link.blockKey, content);
-	
+
 	const tempEditorState = insertAtomicBlocks(data, selection, EditorState.create({currentContent: content, selection}));
 	const newContent = tempEditorState.getCurrentContent();
 	const preview = newContent.getLastCreatedEntityKey();

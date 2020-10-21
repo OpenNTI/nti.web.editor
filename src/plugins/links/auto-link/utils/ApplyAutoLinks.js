@@ -1,6 +1,5 @@
-import {EditorState, Modifier, SelectionState} from 'draft-js';
+import {EditorState} from 'draft-js';
 
-import {CHANGE_TYPES} from '../../../../Constants';
 
 import {getLinksInBlock} from './GetLinks';
 import {applyLinks} from './ApplyLinks';
