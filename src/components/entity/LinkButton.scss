@@ -9,6 +9,7 @@
 		repeat: no-repeat;
 		position: center center;
 	}
+
 	width: 2rem;
 	height: 2rem;
 	cursor: pointer;
@@ -37,6 +38,7 @@
 		repeat: no-repeat;
 		position: center center;
 	}
+
 	border-radius: 2px;
 	margin-right: 0.3rem;
 
@@ -56,7 +58,6 @@
 	.no-touch &:hover {
 		color: var(--primary-blue);
 	}
-
 
 	&.disabled {
 		opacity: 0.6;

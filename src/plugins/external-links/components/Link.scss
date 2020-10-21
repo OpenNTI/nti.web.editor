@@ -4,13 +4,11 @@
 	color: var(--primary-blue);
 	text-decoration: none;
 
-
 	& > span {
 		text-decoration: none !important;
 		font-weight: 400 !important;
 		font-style: normal !important;
 	}
-
 
 	&.editing {
 		background-color: var(--border-grey);
