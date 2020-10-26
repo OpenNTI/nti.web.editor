@@ -5,7 +5,7 @@ const TransferType = 'application/vnd.nextthought.app.dndmoveblock';
 const Bus = new EventEmitter();
 const Inflight = new Map();
 
-export function getDragPropsFor ({block, editorState, onDragStart, onDragStop}) {
+export function getDragProps ({block, editorState, onDragStart, onDragEnd}) {
 	const key = block.getKey();
 	const data = [
 		{dataTransferKey: TransferType, dataForTransfer: key},
@@ -18,9 +18,9 @@ export function getDragPropsFor ({block, editorState, onDragStart, onDragStop}) 
 			Inflight.set(key, {block, editorState}),
 			onDragStart?.(e)
 		),
-		onDragStop: (e) => (
+		onDragEnd: (e) => (
 			Inflight.delete(key),
-			onDragStop?.(e)
+			onDragEnd?.(e)
 		)
 	};
 }

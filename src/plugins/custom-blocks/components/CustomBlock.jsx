@@ -56,7 +56,7 @@ export default function CustomBlock ({
 		content = (
 			<DnD.Draggable
 				{
-					...DragStore.getDragPropsFor({
+					...DragStore.getDragProps({
 						block,
 						editorState: blockProps?.editorState,
 						onDragStart,
