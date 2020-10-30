@@ -38,6 +38,11 @@ export default class ActiveType extends React.Component {
 		return currentBlockType;
 	}
 
+	ref = React.createRef()
+
+	getDOMNode () {
+		return this.ref.current;
+	}
 
 	onMouseDown = (e) => {
 		const {onClick} = this.props;
@@ -70,7 +75,7 @@ export default class ActiveType extends React.Component {
 		delete otherProps.onMouseDown;
 
 		return (
-			<div className={cls} onClick={this.onClick} onMouseDown={this.onMouseDown} {...otherProps}>
+			<div ref={this.ref} className={cls} onClick={this.onClick} onMouseDown={this.onMouseDown} {...otherProps}>
 				<span>{label}</span>
 			</div>
 		);
