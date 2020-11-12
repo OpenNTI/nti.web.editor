@@ -13,6 +13,8 @@ import Styles from './RichText.css';
 
 const cx = classnames.bind(Styles);
 
+const Initial = Symbol('Initial');
+
 const toDraftState = x => HTMLParser.toDraftState(x);
 const fromDraftState = x => HTMLParser.fromDraftState(x);
 
@@ -35,13 +37,13 @@ RichTextEditor.propTypes = {
 export default function RichTextEditor ({className, value, onContentChange:onContentChangeProp, ...otherProps}) {
 	const [editorRef, setEditorRef] = React.useState();
 
-	const contentRef = React.useRef(null);
+	const contentRef = React.useRef(Initial);
 	const [editorState, setEditorState] = React.useState(null);
 	const [plugins, setPlugins] = React.useState(null);
 	const settingUp = !editorState || !plugins;
 
 	React.useEffect(() => {
-		if (!contentRef.current || value !== contentRef.current) {
+		if (contentRef.current === Initial || value !== contentRef.current) {
 			setEditorState(toDraftState(value));
 		}
 	}, [value]);
