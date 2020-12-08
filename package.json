@@ -52,6 +52,6 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "raf": "^3.4.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^17.0.1"
   }
 }
