@@ -63,7 +63,7 @@ const Commands = {
 
 		//No matter what on delete the next block will get removed. For text blocks their text will be added
 		//to the selected block, but that block will still get removed.
-		return [blockAfter.getKey()];
+		return [blockAfter?.getKey()].filter(Boolean);
 	}
 };
 

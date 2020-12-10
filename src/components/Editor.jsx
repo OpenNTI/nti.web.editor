@@ -15,6 +15,7 @@ import EditorGroup from '../editor-group';
 import { decomposePlugins } from './utils';
 import Editor from './BaseEditor';
 import NestedWrapper from './NestedEditorWrapper';
+import ErrorBoundary from './ErrorBoundary';
 
 const CONTENT_CHANGE_BUFFER = 1000;
 
@@ -476,21 +477,23 @@ class DraftCoreEditor extends React.Component {
 			<div ref={this.attachContainerRef} className="nti-draft-core-container" onFocus={this.onContainerFocus} onBlur={this.onContainerBlur} >
 				<ContextProvider editor={this} ref={this.attachContextRef} internal>
 					<WrapperCmp className={cls} onClick={this.focus}>
-						<Editor
-							ref={this.attachEditorRef}
-							editorState={editorState}
-							plugins={plugins}
-							onChange={this.onChange}
-							onFocus={this.onFocus}
-							onBlur={this.onBlur}
-							customKeyBindings={customKeyBindings}
-							handleKeyCommand={this.handleKeyCommand}
-							placeholder={placeholder}
-							readOnly={readOnly || !active}
-							onSetReadOnly={this.onSetReadOnly}
+						<ErrorBoundary>
+							<Editor
+								ref={this.attachEditorRef}
+								editorState={editorState}
+								plugins={plugins}
+								onChange={this.onChange}
+								onFocus={this.onFocus}
+								onBlur={this.onBlur}
+								customKeyBindings={customKeyBindings}
+								handleKeyCommand={this.handleKeyCommand}
+								placeholder={placeholder}
+								readOnly={readOnly || !active}
+								onSetReadOnly={this.onSetReadOnly}
 
-							spellCheck
-						/>
+								spellCheck
+							/>
+						</ErrorBoundary>
 					</WrapperCmp>
 				</ContextProvider>
 				{pluginOverlays.length ?
