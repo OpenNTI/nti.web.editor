@@ -282,18 +282,12 @@ class DraftCoreEditor extends React.Component {
 
 		if (newEditorState !== oldEditorState) {
 			this.setState({
-				currentEditorState: this.getNewState(this[TRANSFORM_INPUT](newEditorState)),
+				currentEditorState: this[TRANSFORM_INPUT](newEditorState),
 				currentEditorStateId: Date.now(),
 			});
 		}
 	}
 
-
-	getNewState (state) {
-		const {editorState} = this;
-
-		return EditorState.push(editorState, state.getCurrentContent(), 'insert-fragment');
-	}
 
 	focusToEnd = () => {
 		const {editorState} = this;
