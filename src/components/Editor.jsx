@@ -201,7 +201,7 @@ class DraftCoreEditor extends React.Component {
 
 	[INTERNAL_CHANGE] (editorState, cb) {
 		const {plugins} = this.props;
-		const pluginMethods = this.draftEditor && this.draftEditor.getPluginMethods();
+		const pluginMethods = this.draftEditor?.getPluginMethods();
 
 		for (let plugin of plugins) {
 			if (plugin.onChange) {
@@ -214,7 +214,7 @@ class DraftCoreEditor extends React.Component {
 
 	[TRANSFORM_OUTPUT] (editorState) {
 		const {plugins} = this.props;
-		const pluginMethods = this.draftEditor && this.draftEditor.getPluginMethods();
+		const pluginMethods = this.draftEditor?.getPluginMethods();
 
 		for (let plugin of plugins) {
 			if (plugin.transformOutput) {
@@ -227,7 +227,7 @@ class DraftCoreEditor extends React.Component {
 
 	[TRANSFORM_INPUT] (editorState) {
 		const {plugins} = this.props;
-		const pluginMethods = this.draftEditor && this.draftEditor.getPluginMethods();
+		const pluginMethods = this.draftEditor?.getPluginMethods();
 
 		for (let plugin of plugins) {
 			if (plugin.transformInput) {
@@ -445,8 +445,8 @@ class DraftCoreEditor extends React.Component {
 		} = this.props;
 		const {currentEditorState:editorState, currentPlugins:plugins, busy, active} = this.state;
 
-		const contentState = editorState && editorState.getCurrentContent();
-		const hidePlaceholder = contentState && !contentState.hasText() && contentState.getBlockMap().first().getType() !== 'unstyled';
+		const contentState = editorState?.getCurrentContent();
+		const hidePlaceholder = !contentState?.hasText() && contentState?.getBlockMap().first().getType() !== 'unstyled';
 		const pluginClasses = plugins.map(x => x.editorClass);
 		const pluginOverlays = plugins.map(x => x.overlayComponent).filter(x => x);
 
