@@ -279,20 +279,15 @@ class DraftCoreEditor extends React.Component {
 		const { editorState:newEditorState, contentChangeBuffer:newContentChangeBuffer } = this.props;
 		const { editorState:oldEditorState, contentChangeBuffer:oldContentChangeBuffer } = prevProps;
 
-		let newState = null;
-
 		if (newContentChangeBuffer !== oldContentChangeBuffer) {
 			this.onContentChangeBuffered = buffer(newContentChangeBuffer, this.onContentChange);
 		}
 
 		if (newEditorState !== oldEditorState) {
-			newState = newState || {};
-			newState.currentEditorState = this.getNewState(this[TRANSFORM_INPUT](newEditorState));
-			newState.currentEditorStateId = Date.now();
-		}
-
-		if (newState) {
-			this.setState(newState);
+			this.setState({
+				currentEditorState: this.getNewState(this[TRANSFORM_INPUT](newEditorState)),
+				currentEditorStateId: Date.now(),
+			});
 		}
 	}
 
