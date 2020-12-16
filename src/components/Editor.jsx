@@ -252,7 +252,7 @@ class DraftCoreEditor extends React.Component {
 		}
 
 		if (autoFocus) {
-			setTimeout(() => this.focusToEnd(), 100);
+			requestAnimationFrame(() => this.focusToEnd());
 		}
 	}
 
@@ -298,11 +298,7 @@ class DraftCoreEditor extends React.Component {
 
 
 	focus = () => {
-		// const {editorState} = this;
-
-		if (this.draftEditor) {
-			this.draftEditor.focus();
-		}
+		this.draftEditor?.focus();
 	}
 
 
@@ -367,7 +363,7 @@ class DraftCoreEditor extends React.Component {
 	}
 
 
-	onChange = (editorState, cb) => {
+	onChange = async (editorState, cb) => {
 		editorState = EditorState.set(editorState, {
 			nativelyRenderedContent: null
 		});
@@ -378,24 +374,20 @@ class DraftCoreEditor extends React.Component {
 			|| editorState.getLastChangeType() === 'apply-entity';
 		this.hasPendingChanges = this.hasPendingChanges || contentChanged;
 
-		this.setState({currentEditorState: editorState, currentEditorStateId: Date.now()}, () => {
-			if (typeof cb === 'function') {
-				cb();
-			}
+		await new Promise(f => this.setState({currentEditorState: editorState, currentEditorStateId: Date.now()}, f));
 
-			if (onChange) {
-				onChange(this[TRANSFORM_OUTPUT](editorState));
-			}
+		cb?.call?.();
+		onChange?.(this[TRANSFORM_OUTPUT](editorState));
 
-			if (this.hasPendingChanges) {
-				this.onContentChangeBuffered();
-				this.hasPendingChanges = false;
-			}
 
-			if (this.editorContext) {
-				this.editorContext.updateExternalLinks();
-			}
-		});
+		if (this.hasPendingChanges) {
+			this.onContentChangeBuffered();
+			this.hasPendingChanges = false;
+		}
+
+		if (this.editorContext) {
+			this.editorContext.updateExternalLinks();
+		}
 	}
 
 
