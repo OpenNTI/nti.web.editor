@@ -77,6 +77,11 @@ class DraftCoreEditor extends React.Component {
 		})
 	}
 
+	static getDerivedStateFromProps (props, state) {
+		return {
+			currentPlugins: [...decomposePlugins(props.plugins), CorePlugin.create()]
+		};
+	}
 
 	attachContextRef = (r) => this.editorContext = r
 	attachEditorRef = (r) => this.draftEditor = r
@@ -271,8 +276,8 @@ class DraftCoreEditor extends React.Component {
 
 
 	componentDidUpdate (prevProps) {
-		const {plugins:newPlugins, editorState:newEditorState, contentChangeBuffer:newContentChangeBuffer} = this.props;
-		const {plugins:oldPlugins, editorState:oldEditorState, contentChangeBuffer:oldContentChangeBuffer} = prevProps;
+		const { editorState:newEditorState, contentChangeBuffer:newContentChangeBuffer } = this.props;
+		const { editorState:oldEditorState, contentChangeBuffer:oldContentChangeBuffer } = prevProps;
 
 		let newState = null;
 
@@ -284,11 +289,6 @@ class DraftCoreEditor extends React.Component {
 			newState = newState || {};
 			newState.currentEditorState = this.getNewState(this[TRANSFORM_INPUT](newEditorState));
 			newState.currentEditorStateId = Date.now();
-		}
-
-		if (newPlugins !== oldPlugins) {
-			newState = newState || {};
-			newState.currentPlugins = [...decomposePlugins(newPlugins), CorePlugin.create()];
 		}
 
 		if (newState) {
