@@ -512,12 +512,8 @@ function isNestedFocusEvent (editor, e) {
 	return parentContainer !== editor.editorContainer;
 }
 
-DraftCoreEditorWrapper.propTypes = {
-	onFocus: PropTypes.func,
-	onBlur: PropTypes.func,
-	editorRef: PropTypes.any
-};
-function DraftCoreEditorWrapper ({onFocus, onBlur, editorRef, ...otherProps}) {
+
+const DraftCoreEditorWrapper = React.forwardRef(({onFocus, onBlur, ...otherProps}, ref) => {
 	const editorGroup = EditorGroup.useGroup();
 	const blurTimeout = React.useRef();
 
@@ -546,12 +542,18 @@ function DraftCoreEditorWrapper ({onFocus, onBlur, editorRef, ...otherProps}) {
 
 	return (
 		<DraftCoreEditor
-			ref={editorRef}
+			ref={ref}
 			onFocus={onInnerFocus}
 			onBlur={onInnerBlur}
 			{...otherProps}
 		/>
 	);
-}
+});
 
-export default React.forwardRef((props, ref) => (<DraftCoreEditorWrapper {...props} editorRef={ref} />));//eslint-disable-line
+DraftCoreEditorWrapper.displayName = 'DraftCoreEditorWrapper';
+DraftCoreEditorWrapper.propTypes = {
+	onFocus: PropTypes.func,
+	onBlur: PropTypes.func,
+};
+
+export default DraftCoreEditorWrapper;
