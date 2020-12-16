@@ -98,18 +98,15 @@ class DraftCoreEditor extends React.Component {
 	constructor (props) {
 		super(props);
 
-		const {contentChangeBuffer, editorState, plugins} = props;
+		const {contentChangeBuffer, editorState} = props;
 
 		this.onContentChangeBuffered = buffer(contentChangeBuffer, this.onContentChange);
-
-		const currentPlugins = [...decomposePlugins(plugins), CorePlugin.create()];
 
 		this.wasActive = true;
 
 		this.state = {
 			currentEditorState: this[TRANSFORM_INPUT](editorState),
 			currentEditorStateId: Date.now(),
-			currentPlugins,
 			active: true
 		};
 	}
