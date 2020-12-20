@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {Editor, EditorState, Entity, convertFromRaw, convertToRaw, CompositeDecorator} from 'draft-js';
-import {mount} from 'enzyme';
+import { render } from '@testing-library/react';
 
 const LINK_CLS = 'link-component';
 
@@ -51,9 +51,9 @@ export function getRawFromState (editorState) {
 
 export function getStateAndOffsetKeys (raw) {
 	const state = getEditorState(raw);
-	const wrapper = mount((<Editor editorState={state} />));
-	const link = wrapper.find(`.${LINK_CLS}`);
-	const offsetKeys = link.map(x => x.prop('data-offset-key'));
+	const result = render((<Editor editorState={state} />));
+	const links = result.container.querySelectorAll(`.${LINK_CLS}`);
+	const offsetKeys = Array.from(links).map(x => x.getAttribute('data-offset-key'));
 	const blockKeys = state.getCurrentContent().getBlocksAsArray().map(x => x.key);
 	const entityKeys = Object.keys(convertToRaw(state.getCurrentContent()).entityMap);
 
@@ -61,8 +61,8 @@ export function getStateAndOffsetKeys (raw) {
 }
 
 export function getOffsetKeys (state) {
-	const wrapper = mount(<Editor editorState={state} />);
-	const links = wrapper.find(`.${LINK_CLS}`);
+	const result = render(<Editor editorState={state} />);
+	const links = result.container.querySelectorAll(`.${LINK_CLS}`);
 
-	return links.map(x => x.prop('data-offset-key'));
+	return Array.from(links).map(x => x.getAttribute('data-offset-key'));
 }
