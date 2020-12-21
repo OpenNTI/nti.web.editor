@@ -21,16 +21,16 @@ const SelectionKeyEvent = getEventFor(SelectionKey);
 const FocusedKey = 'has-focus';
 const FocusedEvent = getEventFor(FocusedKey);
 
-const throwIfNotTaggingStategy = x => {
-	if (!(x instanceof TaggingStrategy)) { throw new Error('Tagging Stategies must be build using BuildStrategy.'); }
+const throwIfNotTaggingStrategy = x => {
+	if (!(x instanceof TaggingStrategy)) { throw new Error('Tagging Strategies must be build using BuildStrategy.'); }
 };
 function setupStrategies (strategies) {
 	if (!strategies) { throw new Error('Tagging Plugin must be given a strategy'); }
-	
+
 	if (typeof strategies === 'object') {
 		return Object.entries(strategies)
 			.map(([key, strat]) => {
-				throwIfNotTaggingStategy(strat);
+				throwIfNotTaggingStrategy(strat);
 				strat.key = key;
 				return strat;
 			});
@@ -42,7 +42,7 @@ function setupStrategies (strategies) {
 
 	return strategies
 		.map((strat, key) => {
-			throwIfNotTaggingStategy(strat);
+			throwIfNotTaggingStrategy(strat);
 			strat.key = key;
 			return strat;
 		});
@@ -62,7 +62,7 @@ export const create = (config) => {
 	const strategies = setupStrategies(config);
 
 	const store = createStore({});
-	
+
 	let blurTimeout = null;
 	let handled = false;
 	let lastEditorState = null;
