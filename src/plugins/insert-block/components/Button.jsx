@@ -28,21 +28,7 @@ function useInsertionId () {
 	return id.current;
 }
 
-
-InsertBlockButton.propTypes = {
-	className: PropTypes.string,
-	type: PropTypes.any,
-	createBlock: PropTypes.func,
-	createBlockProps: PropTypes.object,
-	atomic: PropTypes.bool,
-	disabled: PropTypes.bool,
-
-	children: PropTypes.node,
-
-	onDragStart: PropTypes.func,
-	onDragEnd: PropTypes.func
-};
-export default function InsertBlockButton ({
+const InsertBlockButton = React.forwardRef(({
 	className,
 	type,
 	createBlock,
@@ -56,7 +42,7 @@ export default function InsertBlockButton ({
 	onDragEnd,
 
 	...otherProps
-}) {
+}, ref) => {
 	const editor = ContextProvider.useContext();
 	const insertId = useInsertionId();
 
@@ -103,9 +89,26 @@ export default function InsertBlockButton ({
 				{dataTransferKey: 'text', dataForTransfer: 'Insert'}
 			]}
 		>
-			<div {...otherProps} className={cx(className, {disabled: !isAllowed || disabled})} onClick={innerClick}>
+			<div ref={ref} {...otherProps} className={cx(className, {disabled: !isAllowed || disabled})} onClick={innerClick}>
 				{children}
 			</div>
 		</DnD.Draggable>
 	);
-}
+});
+
+InsertBlockButton.displayName = 'InsertBlockButton';
+InsertBlockButton.propTypes = {
+	className: PropTypes.string,
+	type: PropTypes.any,
+	createBlock: PropTypes.func,
+	createBlockProps: PropTypes.object,
+	atomic: PropTypes.bool,
+	disabled: PropTypes.bool,
+
+	children: PropTypes.node,
+
+	onDragStart: PropTypes.func,
+	onDragEnd: PropTypes.func
+};
+
+export default InsertBlockButton;
