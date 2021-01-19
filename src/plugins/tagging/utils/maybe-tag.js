@@ -41,7 +41,7 @@ export function beforeInput (strategies, chars, editorState) {
 	);
 
 	const newTag = findNewTagBeforeSelection(strategies, nextEditorState);
-	
+
 	if (!newTag) { return null; }
 
 	let newContent = modify(content, selection, chars, null, null);
@@ -61,5 +61,4 @@ export function beforeInput (strategies, chars, editorState) {
 }
 
 export function afterInput () {
-	// debugger;
 }
