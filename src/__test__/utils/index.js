@@ -1,6 +1,6 @@
 import {EditorState, convertFromRaw, convertToRaw, SelectionState} from 'draft-js';
 
-export getDefaultEditorState from './default-editor-state';
+export { default as getDefaultEditorState } from './default-editor-state';
 
 export function getEditorState (raw) {
 	return raw ? EditorState.createWithContent(convertFromRaw(raw)) : EditorState.createEmpty();

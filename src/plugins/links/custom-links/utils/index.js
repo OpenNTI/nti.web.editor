@@ -1,5 +1,5 @@
-export getBestEntityDesc from './get-best-entity-desc';
-export getHrefForSelection from './get-href-for-selection';
-export getSelectedEntityKey from './get-selected-entity-key';
-export removeEntity from './remove-entity';
-export updateEntityDesc from './update-entity-desc';
+export { default as getBestEntityDesc } from './get-best-entity-desc';
+export { default as getHrefForSelection } from './get-href-for-selection';
+export { default as getSelectedEntityKey } from './get-selected-entity-key';
+export { default as removeEntity } from './remove-entity';
+export { default as updateEntityDesc } from './update-entity-desc';

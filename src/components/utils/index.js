@@ -1,1 +1,1 @@
-export decomposePlugins from './decompose-plugins';
+export { default as decomposePlugins } from './decompose-plugins';

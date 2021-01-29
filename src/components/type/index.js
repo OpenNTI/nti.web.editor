@@ -1,3 +1,3 @@
-export ActiveType from './ActiveType';
+export { default as ActiveType } from './ActiveType';
 
-export TypeButton from './TypeButton';
+export { default as TypeButton } from './TypeButton';

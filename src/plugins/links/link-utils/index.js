@@ -1,5 +1,5 @@
-export createLinkEntity from './create-link-entity';
-export getEntityData from './get-entity-data';
-export getSelectionForEntity from './get-selection-for-entity';
-export isLinkEntity from './is-link-entity';
-export updateLinkEntity from './update-link-entity';
+export { default as createLinkEntity } from './create-link-entity';
+export { default as getEntityData } from './get-entity-data';
+export { default as getSelectionForEntity } from './get-selection-for-entity';
+export { default as isLinkEntity } from './is-link-entity';
+export { default as updateLinkEntity } from './update-link-entity';

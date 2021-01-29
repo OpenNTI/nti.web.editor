@@ -1,2 +1,2 @@
-export getNodesFromHTML from './get-nodes-from-html';
-export nodeToBlock from './node-to-block';
+export { default as getNodesFromHTML } from './get-nodes-from-html';
+export { default as nodeToBlock } from './node-to-block';

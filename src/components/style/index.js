@@ -1,4 +1,4 @@
-export StyleButton from './StyleButton';
-export BoldButton from './BoldButton';
-export ItalicButton from './ItalicButton';
-export UnderlineButton from './UnderlineButton';
+export { default as StyleButton } from './StyleButton';
+export { default as BoldButton } from './BoldButton';
+export { default as ItalicButton } from './ItalicButton';
+export { default as UnderlineButton } from './UnderlineButton';

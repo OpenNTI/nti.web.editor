@@ -1,1 +1,1 @@
-export LinkTracker from './LinkTracker';
+export { default as LinkTracker } from './LinkTracker';

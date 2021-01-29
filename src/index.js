@@ -7,16 +7,16 @@ export * as Plugins from './plugins';
 export * as Parsers from './parsers';
 export * as Common from './common';
 
-export Editor from './components/Editor';
-export PlaintextEditor from './components/PlaintextEditor';
-export NestedEditorWrapper from './components/NestedEditorWrapper';
+export { default as Editor } from './components/Editor';
+export { default as PlaintextEditor } from './components/PlaintextEditor';
+export { default as NestedEditorWrapper } from './components/NestedEditorWrapper';
 
-export Button from './components/Button';
+export { default as Button } from './components/Button';
 
-export getAtomicBlockData from './utils/get-atomic-block-data';
+export { default as getAtomicBlockData } from './utils/get-atomic-block-data';
 
-export ContextProvider from './ContextProvider';
-export EditorGroup from './editor-group';
+export { default as ContextProvider } from './ContextProvider';
+export { default as EditorGroup } from './editor-group';
 
 import IdRegistry from './IdRegistry';
 

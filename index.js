@@ -1,4 +1,4 @@
 export * as DraftCore from './draft-core';
-export Editor from './editor';
+export { default as Editor } from './editor';
 
-export ControlBar from './components/ControlBar';
+export { default as ControlBar } from './components/ControlBar';
