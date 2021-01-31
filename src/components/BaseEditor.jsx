@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import PluginEditor from 'draft-js-plugins-editor';
+import PluginEditor from '@draft-js-plugins/editor';
 
 class BaseEditor extends PluginEditor {
 	static propTypes = {
@@ -16,7 +16,7 @@ class BaseEditor extends PluginEditor {
 	 * https://github.com/draft-js-plugins/draft-js-plugins/blob/master/draft-js-plugins-editor/src/Editor/index.js#L110
 	 * @param {boolean} readOnly editor readOnly state
 	 * @memberof BaseEditor
-	 * @returns {void} void
+	 * @returns {void}
 	 */
 	setReadOnly = readOnly => {
 		const { onSetReadOnly } = this.props;
