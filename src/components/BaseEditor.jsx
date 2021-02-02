@@ -16,7 +16,7 @@ class BaseEditor extends PluginEditor {
 	 * https://github.com/draft-js-plugins/draft-js-plugins/blob/master/draft-js-plugins-editor/src/Editor/index.js#L110
 	 * @param {boolean} readOnly editor readOnly state
 	 * @memberof BaseEditor
-	 * @return {void} void
+	 * @returns {void} void
 	 */
 	setReadOnly = readOnly => {
 		const { onSetReadOnly } = this.props;
