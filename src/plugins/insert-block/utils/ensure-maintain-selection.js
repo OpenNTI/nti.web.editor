@@ -6,7 +6,7 @@ import {EditorState} from 'draft-js';
  * function will ensure that the selection is maintained and actually selected
  *
  * @param  {EditorState} editorState State of the editor after block insertion
- * @return {EditorState}             State of the editor after selection updated
+ * @returns {EditorState}             State of the editor after selection updated
  */
 export default function ensureMaintainSelection (editorState) {
 	const selectionState = editorState.getSelection && editorState.getSelection();

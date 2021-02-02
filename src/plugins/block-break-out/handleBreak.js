@@ -59,10 +59,10 @@ function getAugmentedState (currentBlock, newBlock, endOfBlock) {
  * Taken from https://github.com/icelab/draft-js-block-breakout-plugin
  * inserts a new type either before or after the current selected block
  *
- * @param  {String} breakToType    the type to break to
+ * @param  {string} breakToType    the type to break to
  * @param  {Object} editorState    the current state of the editor
  * @param  {Function} setEditorState call back to set the new editor state
- * @return {String}                [HANDLED | NOT_HANDLED] to indicate if we handled it
+ * @returns {string}                [HANDLED | NOT_HANDLED] to indicate if we handled it
  */
 export default function (breakToType, editorState, setEditorState) {
 	const selection = editorState.getSelection();

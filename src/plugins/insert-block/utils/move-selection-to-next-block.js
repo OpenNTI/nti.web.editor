@@ -5,7 +5,7 @@ import {EditorState, SelectionState, Modifier} from 'draft-js';
  * or images, where we want the selection on the next line after insert
  *
  * @param  {EditorState} editorState State of the editor after block insertion
- * @return {EditorState}             State of the editor after selection updated
+ * @returns {EditorState}             State of the editor after selection updated
  */
 export default function moveSelectionToNextBlock (editorState) {
 	const selectionState = editorState.getSelection && editorState.getSelection();

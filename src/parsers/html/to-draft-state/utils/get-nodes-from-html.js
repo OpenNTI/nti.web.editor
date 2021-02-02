@@ -120,8 +120,8 @@ class InputNormalizer {
 	 * mark it as closed.
 	 *
 	 * @param  {Object} node        block node to push
-	 * @param  {Boolean} doNotAppend do not auto add the node to the clean body
-	 * @return {Object}             the node in the clean document that as added
+	 * @param  {boolean} doNotAppend do not auto add the node to the clean body
+	 * @returns {Object}             the node in the clean document that as added
 	 */
 	pushBlock (node, doNotAppend) {
 		const current = this.latestBlock;
@@ -141,7 +141,7 @@ class InputNormalizer {
 	 * Return the current block on the stack. If the current block has been closed
 	 * add a clone of it to the stack.
 	 * 
-	 * @return {Object} current block node
+	 * @returns {Object} current block node
 	 */
 	get currentBlock () {
 		const current = this.latestBlock;
@@ -167,7 +167,7 @@ class InputNormalizer {
 	 * add the new one to the current block.
 	 *
 	 * @param  {Object} node inline block to add
-	 * @return {[type]}      [description]
+	 * @returns {[type]}      [description]
 	 */
 	pushInline (node) {
 		const currentInline = this.currentInline;
@@ -196,7 +196,7 @@ class InputNormalizer {
 	 * body.
 	 *
 	 * @param {node} list the list being normalized.
-	 * @return {void}
+	 * @returns {void}
 	 */
 	setCurrentList (list) {
 		this._currentList = list;
@@ -212,7 +212,7 @@ class InputNormalizer {
 	 *
 	 * <pre>Test\nline</pre> => <pre>Test</pre><pre>line</pre>
 	 *
-	 * @return {void}
+	 * @returns {void}
 	 */
 	splitCurrentBlock () {
 		const currentInline = this._inlineStack;
@@ -282,7 +282,7 @@ class InputNormalizer {
 	 * 2.) Collapse consecutive whitespace (it tries to match how the html would be displayed), or keep the whitespace as is.
 	 *
 	 * @param  {Object} node textNode to add
-	 * @return {void}
+	 * @returns {void}
 	 */
 	normalizeTextNode (node) {
 		const text = node.textContent;
@@ -334,7 +334,7 @@ class InputNormalizer {
 	 * nodes, regardless of if they are in the Block set or not.
 	 *
 	 * @param  {Object} node inline node to add
-	 * @return {void}
+	 * @returns {void}
 	 */
 	normalizeInline (node) {
 		let current = this.currentBlock;
@@ -376,7 +376,7 @@ class InputNormalizer {
 	 * the nodes contents will be normalized into the current block.
 	 * 
 	 * @param  {Object} node block node to normalize
-	 * @return {void}
+	 * @returns {void}
 	 */
 	normalizeBlock (node) {
 		if (!node) { return; }
@@ -428,7 +428,7 @@ class InputNormalizer {
 	 * Normalize a list item node. The node will be pushed to the block stack, but added to the current list.
 	 *
 	 * @param  {Object} node list item to add
-	 * @return {void}
+	 * @returns {void}
 	 */
 	normalizeListItem (node) {
 		const {currentList} = this;
@@ -463,7 +463,7 @@ class InputNormalizer {
 	 * current list.
 	 *
 	 * @param  {Object} node the list to normalize
-	 * @return {void}
+	 * @returns {void}
 	 */
 	normalizeList (node) {
 		const {currentList} = this;
@@ -494,8 +494,8 @@ class InputNormalizer {
 /**
  * Get a flat list of dom nodes that directly relate 1-1 to draft-js state.
  * 
- * @param  {String} html content to flatten and get nodes from
- * @return {[Object]}    the flat list of nodes
+ * @param  {string} html content to flatten and get nodes from
+ * @returns {[Object]}    the flat list of nodes
  */
 export default function getNodesFromHTML (html) {
 	const cleaner = new InputNormalizer();

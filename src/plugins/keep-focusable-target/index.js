@@ -4,7 +4,7 @@ export const isFocusablePlaceholder = FocusableTargets.isPlaceholderFocusableTar
 
 /**
  * Through editing it is possible to remove any
- * @return {Object} draft-js editor plugin
+ * @returns {Object} draft-js editor plugin
  */
 export const create = () => {
 	return {

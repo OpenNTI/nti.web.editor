@@ -13,9 +13,9 @@ export const components = {CharacterCounter};
  *
  * @param  {Object} config config for the plugin
  * @param {Object} config.character config for character counter
- * @param {Number} config.character.limit the number of characters to allow before showing an over limit state
- * @param {Boolean} config.character.countDown count characters down instead of up
- * @return {[type]}        [description]
+ * @param {number} config.character.limit the number of characters to allow before showing an over limit state
+ * @param {boolean} config.character.countDown count characters down instead of up
+ * @returns {[type]}        [description]
  */
 export const create = (config = {}) => {
 	const {character} = config;

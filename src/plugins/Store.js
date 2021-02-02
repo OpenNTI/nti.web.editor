@@ -15,7 +15,7 @@ export default class PluginStore extends EventEmitter {
 	/**
 	 * Attach multiple listeners
 	 * @param {Object} events a map of key to handler
-	 * @return {void}
+	 * @returns {void}
 	 */
 	addListeners (events) {
 		for (let event of Object.keys(events)) {
@@ -28,7 +28,7 @@ export default class PluginStore extends EventEmitter {
 	/**
 	 * Remove multiple listenrs
 	 * @param  {Object} events a map of key to handler
-	 * @return {void}
+	 * @returns {void}
 	 */
 	removeListeners (events) {
 		for (let event of Object.keys(events)) {

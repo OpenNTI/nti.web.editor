@@ -56,7 +56,7 @@ function setupStrategies (strategies) {
  * @param  {Array|Object}  config  how tagging should behave
  * @param  {string} strategies.trigger the character to trigger the start of a tag
  * @param  {string} strategies.type    the type of tag
- * @return {[type]}        [description]
+ * @returns {[type]}        [description]
  */
 export const create = (config) => {
 	const strategies = setupStrategies(config);

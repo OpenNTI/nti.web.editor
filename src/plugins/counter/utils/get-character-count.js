@@ -8,7 +8,7 @@ const NEW_LINE_REGEX = /(?:\r\n|\r|\n)/g; //new line, carriage return, line feed
  * Taken from: https://github.com/draft-js-plugins/draft-js-plugins/tree/master/draft-js-counter-plugin
  *
  * @param  {Object} editorStateOrBlock the editorState or block to get the character count from
- * @return {Number}             the number of characters in the editorState
+ * @returns {number}             the number of characters in the editorState
  */
 export default function getCharacterCount (editorStateOrBlock) {
 	const text = getPlainText(editorStateOrBlock, '');
