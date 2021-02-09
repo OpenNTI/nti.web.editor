@@ -61,6 +61,10 @@ export default {
 		const pastedState = Modifier.replaceWithFragment(editorState.getCurrentContent(), editorState.getSelection(), fragment.blockMap);
 		const newState = config.transformHTMLState ? config.transformHTMLState(pastedState) : pastedState;
 
-		return EditorState.push(editorState, newState, 'insert-fragment');
+		const newEditorState = EditorState.push(editorState, newState, 'insert-fragment');
+
+		return newState === pastedState ?
+			newEditorState :
+			EditorState.forceSelection(newEditorState, newState.getSelectionAfter());
 	}
 };
