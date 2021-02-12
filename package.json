@@ -36,7 +36,7 @@
     "@nti/web-commons": "NextThought/nti.web.commons",
     "draft-convert": "^2.1.10",
     "draft-js": "^0.11.0",
-    "@draft-js-plugins/editor": "^4.0.0",
+    "draft-js-plugins-editor": "^3.0.0",
     "fbjs": "^3.0.0",
     "linkify-it": "^3.0.2",
     "punycode": "^2.1.0",
