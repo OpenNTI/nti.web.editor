@@ -1,23 +1,22 @@
-import {getVisibleSelectionRect} from 'draft-js';
-import {getViewportHeight, getViewportWidth} from '@nti/lib-dom';
+import { getVisibleSelectionRect } from 'draft-js';
+import { getViewportHeight, getViewportWidth } from '@nti/lib-dom';
 
 //TODO: move this out into utility files
-function getScrollPosition (parent) {
+function getScrollPosition(parent) {
 	if (parent === global) {
 		return {
 			top: parent.pageYOffset,
-			left: parent.pageXOffset
+			left: parent.pageXOffset,
 		};
 	}
 
 	return {
 		top: parent.scrollTop,
-		let: parent.scrollLeft
+		let: parent.scrollLeft,
 	};
 }
 
-
-function scrollParentTo (parent, left, top) {
+function scrollParentTo(parent, left, top) {
 	if (parent === global) {
 		parent.scrollTo(left, top);
 	} else {
@@ -26,8 +25,7 @@ function scrollParentTo (parent, left, top) {
 	}
 }
 
-
-function getParentRect (parent) {
+function getParentRect(parent) {
 	if (parent === global) {
 		const viewWidth = getViewportWidth();
 		const viewHeight = getViewportHeight();
@@ -38,25 +36,28 @@ function getParentRect (parent) {
 			right: viewWidth,
 			bottom: viewHeight,
 			width: viewWidth,
-			height: viewHeight
+			height: viewHeight,
 		};
 	}
 
 	return parent.getBoundingClientRect();
 }
 
-
-function ensureRectIsVisible (rect, parent, {padding}) {
+function ensureRectIsVisible(rect, parent, { padding }) {
 	const parentRect = getParentRect(parent);
-	const {top:currentScrollTop, left:currentScrollLeft} = getScrollPosition(parent);
+	const {
+		top: currentScrollTop,
+		left: currentScrollLeft,
+	} = getScrollPosition(parent);
 	let scrollTop;
 
 	if (rect.height > parentRect.height) {
 		scrollTop = rect.top - padding;
 	} else if (rect.top - parentRect.top < padding) {
-		scrollTop = currentScrollTop - ((parentRect.top + padding) - rect.top);
+		scrollTop = currentScrollTop - (parentRect.top + padding - rect.top);
 	} else if (rect.bottom > parentRect.bottom - padding) {
-		scrollTop = currentScrollTop + (rect.bottom - (parentRect.bottom - padding));
+		scrollTop =
+			currentScrollTop + (rect.bottom - (parentRect.bottom - padding));
 	} else {
 		scrollTop = currentScrollTop;
 	}
@@ -68,15 +69,13 @@ function ensureRectIsVisible (rect, parent, {padding}) {
 	}
 }
 
-
 export default {
-	create: (config = {padding: 80}) => {
+	create: (config = { padding: 80 }) => {
 		const getScrollParent = config.getScrollParent || (() => global);
 
 		let lastSelection;
 
-
-		function isPotentialScroll (editorState) {
+		function isPotentialScroll(editorState) {
 			const selection = editorState.getSelection();
 
 			if (lastSelection && selection.equals(lastSelection)) {
@@ -88,7 +87,7 @@ export default {
 		}
 
 		return {
-			onChange (editorState) {
+			onChange(editorState) {
 				if (!isPotentialScroll(editorState)) {
 					return editorState;
 				}
@@ -96,11 +95,15 @@ export default {
 				const selectionRect = getVisibleSelectionRect(global);
 
 				if (selectionRect) {
-					ensureRectIsVisible(selectionRect, getScrollParent(), config);
+					ensureRectIsVisible(
+						selectionRect,
+						getScrollParent(),
+						config
+					);
 				}
 
 				return editorState;
-			}
+			},
 		};
-	}
+	},
 };

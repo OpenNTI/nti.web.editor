@@ -1,11 +1,11 @@
 import './Overlay.scss';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Flyout} from '@nti/web-commons';
+import { Flyout } from '@nti/web-commons';
 
-import {getEventFor} from '../../Store';
-import {getCmpForState} from '../utils';
-import {SelectedEntityKey, EditingEntityKey} from '../Constants';
+import { getEventFor } from '../../Store';
+import { getCmpForState } from '../utils';
+import { SelectedEntityKey, EditingEntityKey } from '../Constants';
 
 import Editor from './Editor';
 
@@ -17,92 +17,91 @@ export default class ExternalLinkOverlay extends React.Component {
 		store: PropTypes.shape({
 			addListeners: PropTypes.func,
 			removeListeners: PropTypes.func,
-			getItem: PropTypes.func
+			getItem: PropTypes.func,
 		}),
 		getEditorState: PropTypes.func,
 		setEditorState: PropTypes.func,
-		editor: PropTypes.any
-	}
+		editor: PropTypes.any,
+	};
 
-
-	state = {selectedEntity: null, position: null}
+	state = { selectedEntity: null, position: null };
 
 	events = {
-		[selectedEntityKeyEvent]: (x) => this.onSelectedEntityKeyChanged(x),
-		[editingEntityKeyEvent]: (x) => this.onEditingEntityKeyChanged(x)
-	}
+		[selectedEntityKeyEvent]: x => this.onSelectedEntityKeyChanged(x),
+		[editingEntityKeyEvent]: x => this.onEditingEntityKeyChanged(x),
+	};
 
-
-	get editorState () {
-		const {getEditorState} = this.props;
+	get editorState() {
+		const { getEditorState } = this.props;
 
 		return getEditorState && getEditorState();
 	}
 
-
-	componentDidMount () {
-		const {store} = this.props;
+	componentDidMount() {
+		const { store } = this.props;
 
 		if (store) {
 			store.addListeners(this.events);
 		}
 	}
 
-
-	componentWillUnmount () {
-		const {store} = this.props;
+	componentWillUnmount() {
+		const { store } = this.props;
 
 		if (store) {
 			store.removeListeners(this.events);
 		}
 	}
 
-
-	onSelectedEntityKeyChanged = (entityKey) => {
-		const {store} = this.props;
+	onSelectedEntityKeyChanged = entityKey => {
+		const { store } = this.props;
 		const key = store.getItem(EditingEntityKey) || entityKey;
-		const entityCmp = key && getCmpForState(store.getItem(key) || [], this.editorState);
+		const entityCmp =
+			key && getCmpForState(store.getItem(key) || [], this.editorState);
 
 		this.setState({
 			entityCmp,
-			entityKey: key
+			entityKey: key,
 		});
-	}
+	};
 
-
-	onEditingEntityKeyChanged = (entityKey) => {
-		const {store} = this.props;
+	onEditingEntityKeyChanged = entityKey => {
+		const { store } = this.props;
 		const key = entityKey || store.getItem(SelectedEntityKey);
-		const entityCmp = key && getCmpForState(store.getItem(key) || [], this.editorState);
+		const entityCmp =
+			key && getCmpForState(store.getItem(key) || [], this.editorState);
 
 		this.setState({
 			entityCmp,
-			entityKey: key
+			entityKey: key,
 		});
-	}
-
+	};
 
 	onEditorClose = () => {
-		const {editor} = this.props;
+		const { editor } = this.props;
 
 		if (editor) {
 			editor.focus();
 		}
-	}
-
+	};
 
 	onEntitySave = () => {
-		const {editor} = this.props;
+		const { editor } = this.props;
 
 		if (editor) {
 			editor.onContentChange();
 		}
-	}
+	};
 
-
-	render () {
-		const {store, getEditorState, setEditorState, editor, ...otherProps} = this.props;
-		const {entityCmp, entityKey, selection} = this.state;
+	render() {
+		const {
+			store,
+			getEditorState,
+			setEditorState,
+			editor,
+			...otherProps
+		} = this.props;
+		const { entityCmp, entityKey, selection } = this.state;
 
 		if (!entityCmp || !editor) {
 			return null;
@@ -112,22 +111,20 @@ export default class ExternalLinkOverlay extends React.Component {
 			<Flyout.Aligned
 				className="external-link-overlay"
 				alignTo={entityCmp && entityCmp.node}
-
 				visible={entityCmp && entityCmp.node && editor ? true : false}
 				arrow
 				alignToArrow
 				constrain
 				focusOnOpen={false}
-
-				reservedMargin={{bottom: 75}}
-
+				reservedMargin={{ bottom: 75 }}
 				horizontalAlign={Flyout.ALIGNMENTS.LEFT_OR_RIGHT}
 			>
 				<Editor
 					entityKey={entityKey}
 					offsetKey={entityCmp.offsetKey}
 					decoratedText={entityCmp.decoratedText}
-					store={store} selection={selection}
+					store={store}
+					selection={selection}
 					getEditorState={getEditorState}
 					setEditorState={setEditorState}
 					onClose={this.onEditorClose}

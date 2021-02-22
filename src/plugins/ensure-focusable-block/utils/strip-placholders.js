@@ -1,9 +1,9 @@
-import {ContentState, EditorState} from 'draft-js';
+import { ContentState, EditorState } from 'draft-js';
 
 import isFocusablePlaceholder from './is-focusable-placeholder-block';
 // import generateChecksFor from './generate-checks-for';
 
-export default function stripPlaceholders (around, between, editorState) {
+export default function stripPlaceholders(around, between, editorState) {
 	// const {isFocusable} = generateChecksFor(around, between);
 
 	const currentSelection = editorState.getSelection();
@@ -11,7 +11,7 @@ export default function stripPlaceholders (around, between, editorState) {
 	const currentBlocks = currentContent.getBlocksAsArray();
 	let newBlocks = [];
 
-	for (let i = 0;  i < currentBlocks.length; i++) {
+	for (let i = 0; i < currentBlocks.length; i++) {
 		const block = currentBlocks[i];
 		// const prevBlock = currentBlocks[i - 1];
 		// const nextBlock = currentBlocks[i + 1];
@@ -26,15 +26,16 @@ export default function stripPlaceholders (around, between, editorState) {
 		// }
 	}
 
-	if (newBlocks.length === currentBlocks.length) { return editorState; }
+	if (newBlocks.length === currentBlocks.length) {
+		return editorState;
+	}
 
-	let newContent = ContentState.createFromBlockArray(newBlocks)
-		.merge({
-			selectionBefore: currentSelection,
-			selectionAfter: currentSelection
-		});
+	let newContent = ContentState.createFromBlockArray(newBlocks).merge({
+		selectionBefore: currentSelection,
+		selectionAfter: currentSelection,
+	});
 
 	return EditorState.set(editorState, {
-		currentContent: newContent
+		currentContent: newContent,
 	});
 }

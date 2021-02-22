@@ -11,7 +11,7 @@ export const BLOCKS = {
 	ORDERED_LIST_ITEM: 'ordered-list-item',
 	PULLQUOTE: 'pullquote',
 	UNORDERED_LIST_ITEM: 'unordered-list-item',
-	UNSTYLED: 'unstyled'
+	UNSTYLED: 'unstyled',
 };
 
 export const STYLES = {
@@ -19,29 +19,28 @@ export const STYLES = {
 	CODE: 'CODE',
 	ITALIC: 'ITALIC',
 	STRIKETHROUGH: 'STRIKETHROUGH',
-	UNDERLINE: 'UNDERLINE'
+	UNDERLINE: 'UNDERLINE',
 };
 
 export const ENTITIES = {
 	LINK: 'LINK',
 	IMAGE: 'IMAGE',
 	TAG: 'TAG',
-	MENTION: 'MENTION'
+	MENTION: 'MENTION',
 };
 
 export const MUTABILITY = {
 	MUTABLE: 'MUTABLE',
 	IMMUTABLE: 'IMMUTABLE',
-	SEGMENTED: 'SEGMENTED'
+	SEGMENTED: 'SEGMENTED',
 };
-
 
 export const STYLE_SET = new Set([
 	STYLES.BOLD,
 	STYLES.CODE,
 	STYLES.ITALIC,
 	STYLES.STRIKETHROUGH,
-	STYLES.UNDERLINE
+	STYLES.UNDERLINE,
 ]);
 
 export const BLOCK_SET = new Set([
@@ -57,9 +56,8 @@ export const BLOCK_SET = new Set([
 	BLOCKS.ORDERED_LIST_ITEM,
 	BLOCKS.PULLQUOTE,
 	BLOCKS.UNORDERED_LIST_ITEM,
-	BLOCKS.UNSTYLED
+	BLOCKS.UNSTYLED,
 ]);
-
 
 export const CHANGE_TYPES = {
 	ADJUST_DEPTH: 'adjust-depth',
@@ -76,9 +74,8 @@ export const CHANGE_TYPES = {
 	REMOVE_RANGE: 'remove-range',
 	SPELLCHECK_CHANGE: 'spellcheck-change',
 	SPLIT_BLOCK: 'split-block',
-	UNDO: 'undo'
+	UNDO: 'undo',
 };
-
 
 //TODO: point all the references to draft-js-utils to constants in here,
 //then remove the dependency on draft-js-utils

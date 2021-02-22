@@ -1,37 +1,43 @@
-import {RichUtils} from 'draft-js';
+import { RichUtils } from 'draft-js';
 
-import {getAllowedSet, getCurrentBlockType, fixStateForAllowed} from './utils';
+import {
+	getAllowedSet,
+	getCurrentBlockType,
+	fixStateForAllowed,
+} from './utils';
 
 export default {
 	create: (config = {}) => {
-		const {allow, disallow, defaultType} = config;
+		const { allow, disallow, defaultType } = config;
 
 		const allowed = getAllowedSet(allow, disallow);
 
 		return {
-			onChange (editorState) {
+			onChange(editorState) {
 				return fixStateForAllowed(editorState, allowed, defaultType);
 			},
 
-
-			getContext (getEditorState, setEditorState) {
+			getContext(getEditorState, setEditorState) {
 				return {
-					get allowedBlockTypes () {
+					get allowedBlockTypes() {
 						return allowed;
 					},
 
-					get currentBlockType () {
+					get currentBlockType() {
 						return getCurrentBlockType(getEditorState());
 					},
 
-					toggleBlockType (type) {
+					toggleBlockType(type) {
 						const editorState = getEditorState();
-						const newState = RichUtils.toggleBlockType(editorState, type);
+						const newState = RichUtils.toggleBlockType(
+							editorState,
+							type
+						);
 
 						setEditorState(newState, true);
-					}
+					},
 				};
 			},
 		};
-	}
+	},
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
-import {Hooks} from '@nti/web-commons';
+import { Hooks } from '@nti/web-commons';
 
 import Styles from './Styles.css';
 
@@ -18,10 +18,16 @@ LinkWrapper.propTypes = {
 		EditingKey: PropTypes.string,
 		SelectedKey: PropTypes.string,
 		subscribeTo: PropTypes.func,
-		setItem: PropTypes.func
-	})
+		setItem: PropTypes.func,
+	}),
 };
-export default function LinkWrapper ({children, entityKey, offsetKey, decoratedText, store}) {
+export default function LinkWrapper({
+	children,
+	entityKey,
+	offsetKey,
+	decoratedText,
+	store,
+}) {
 	const linkRef = React.useRef();
 	const forceUpdate = Hooks.useForceUpdate();
 
@@ -31,7 +37,7 @@ export default function LinkWrapper ({children, entityKey, offsetKey, decoratedT
 			linkRef,
 			entityKey,
 			offsetKey,
-			decoratedText
+			decoratedText,
 		};
 
 		store.setItem(entityKey, [...existing, entityDesc]);
@@ -48,15 +54,14 @@ export default function LinkWrapper ({children, entityKey, offsetKey, decoratedT
 		};
 	}, [entityKey, offsetKey, decoratedText]);
 
-	React.useEffect(() => (
-		store.subscribeTo(
-			[
-				store.EditingKey,
-				store.SelectedKey
-			],
-			forceUpdate
-		)
-	), [store]);
+	React.useEffect(
+		() =>
+			store.subscribeTo(
+				[store.EditingKey, store.SelectedKey],
+				forceUpdate
+			),
+		[store]
+	);
 
 	const editingEntity = store.getItem(store.EditingKey);
 	const selectedEntity = store.getItem(store.SelectedKey);
@@ -64,12 +69,8 @@ export default function LinkWrapper ({children, entityKey, offsetKey, decoratedT
 	const isEditing = editingEntity === entityKey;
 	const isSelected = selectedEntity === entityKey;
 
-
-	return React.cloneElement(
-		React.Children.only(children),
-		{
-			className: cx({focused: isSelected, editing: isEditing}),
-			ref: linkRef
-		}
-	);
+	return React.cloneElement(React.Children.only(children), {
+		className: cx({ focused: isSelected, editing: isEditing }),
+		ref: linkRef,
+	});
 }

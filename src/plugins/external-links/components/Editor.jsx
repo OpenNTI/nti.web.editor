@@ -2,19 +2,18 @@ import './Editor.scss';
 import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
-import {Entity} from 'draft-js';
-import {scoped} from '@nti/lib-locale';
-import {Button, Input} from '@nti/web-commons';
+import { Entity } from 'draft-js';
+import { scoped } from '@nti/lib-locale';
+import { Button, Input } from '@nti/web-commons';
 
-import {EditingEntityKey, SelectedEntityKey} from '../Constants';
-import {getEventFor} from '../../Store';
+import { EditingEntityKey, SelectedEntityKey } from '../Constants';
+import { getEventFor } from '../../Store';
 import {
 	removeEntityKeyAtOffset,
 	replaceEntityTextAtOffset,
 	createNewLinkAtOffset,
-	isEntityAtOffsetInSingleBlock
+	isEntityAtOffsetInSingleBlock,
 } from '../utils';
-
 
 const DEFAULT_TEXT = {
 	urlLabel: 'URL',
@@ -23,10 +22,13 @@ const DEFAULT_TEXT = {
 	cancel: 'Cancel',
 	edit: 'Change',
 	remove: 'Remove',
-	invalid: 'Please enter a valid url.'
+	invalid: 'Please enter a valid url.',
 };
 
-const t = scoped('web-editor.plugins.external-links.components.Editor', DEFAULT_TEXT);
+const t = scoped(
+	'web-editor.plugins.external-links.components.Editor',
+	DEFAULT_TEXT
+);
 
 const stop = e => e.preventDefault();
 
@@ -40,30 +42,31 @@ export default class ExternalLinkEditor extends React.Component {
 		store: PropTypes.shape({
 			setItem: PropTypes.func,
 			addListener: PropTypes.func,
-			removeListener: PropTypes.func
+			removeListener: PropTypes.func,
 		}),
 		getEditorState: PropTypes.func,
 		setEditorState: PropTypes.func,
 		onClose: PropTypes.func,
 		onEntitySave: PropTypes.func,
 		onStartEdit: PropTypes.func,
-		onStopEdit: PropTypes.func
-	}
+		onStopEdit: PropTypes.func,
+	};
 
+	attachURLInputRef = x => (this.urlInput = x);
+	state = {};
 
-	attachURLInputRef = x => this.urlInput = x
-	state = {}
-
-	constructor (props) {
+	constructor(props) {
 		super(props);
 
 		this.state = this.getStateFor(props);
 	}
 
-	getStateFor (props = this.props) {
-		const {entityKey, decoratedText, offsetKey, getEditorState} = props;
-		const entity = getEditorState().getCurrentContent().getEntity(entityKey);
-		const {data} = entity;
+	getStateFor(props = this.props) {
+		const { entityKey, decoratedText, offsetKey, getEditorState } = props;
+		const entity = getEditorState()
+			.getCurrentContent()
+			.getEntity(entityKey);
+		const { data } = entity;
 
 		return {
 			entity,
@@ -71,26 +74,36 @@ export default class ExternalLinkEditor extends React.Component {
 			newLink: !data.href,
 			editing: !data.href,
 			href: data.href || '',
-			isSingleBlock: isEntityAtOffsetInSingleBlock(entityKey, offsetKey, getEditorState())
+			isSingleBlock: isEntityAtOffsetInSingleBlock(
+				entityKey,
+				offsetKey,
+				getEditorState()
+			),
 		};
 	}
 
-	componentDidUpdate (prevProps) {
-		const {entityKey, decoratedText} = this.props;
-		const {entityKey:oldKey, decoratedText:oldText} = prevProps;
+	componentDidUpdate(prevProps) {
+		const { entityKey, decoratedText } = this.props;
+		const { entityKey: oldKey, decoratedText: oldText } = prevProps;
 
 		if (oldKey !== entityKey || oldText !== decoratedText) {
 			this.setState(this.getStateFor(this.props));
 		}
 	}
 
-	componentDidMount () {
-		const {store} = this.props;
-		const {editing} = this.state;
+	componentDidMount() {
+		const { store } = this.props;
+		const { editing } = this.state;
 
 		if (store) {
-			store.removeListener(editingEntityKeyEvent, this.onEditingEntityKeyChange);
-			store.addListener(editingEntityKeyEvent, this.onEditingEntityKeyChange);
+			store.removeListener(
+				editingEntityKeyEvent,
+				this.onEditingEntityKeyChange
+			);
+			store.addListener(
+				editingEntityKeyEvent,
+				this.onEditingEntityKeyChange
+			);
 		}
 
 		if (editing) {
@@ -98,9 +111,8 @@ export default class ExternalLinkEditor extends React.Component {
 		}
 	}
 
-
-	componentWillUnmount () {
-		const {store} = this.props;
+	componentWillUnmount() {
+		const { store } = this.props;
 
 		//There's apparently a race condition where the event fires before we remove
 		//the listener, but the component is unmounted so the set state in the handler
@@ -108,47 +120,54 @@ export default class ExternalLinkEditor extends React.Component {
 		this.didUnmount = true;
 
 		if (store) {
-			store.removeListener(editingEntityKeyEvent, this.onEditingEntityKeyChange);
+			store.removeListener(
+				editingEntityKeyEvent,
+				this.onEditingEntityKeyChange
+			);
 		}
 	}
 
-
-	onEditingEntityKeyChange = (key) => {
+	onEditingEntityKeyChange = key => {
 		if (this.didUnmount) {
 			return;
 		}
 
-		const {entityKey, onStartEdit, onStopEdit} = this.props;
-		const {wasEditing} = this.state;
+		const { entityKey, onStartEdit, onStopEdit } = this.props;
+		const { wasEditing } = this.state;
 		const editing = entityKey === key;
 
 		if (!wasEditing && editing) {
-			if (onStartEdit) { onStartEdit(); }
+			if (onStartEdit) {
+				onStartEdit();
+			}
 		} else if (wasEditing && !editing) {
-			if (onStopEdit) { onStopEdit(); }
+			if (onStopEdit) {
+				onStopEdit();
+			}
 		}
 
-		this.setState({
-			editing,
-			wasEditing: editing
-		}, () => {
-			if (this.urlInput) {
-				this.urlInput.focus();
+		this.setState(
+			{
+				editing,
+				wasEditing: editing,
+			},
+			() => {
+				if (this.urlInput) {
+					this.urlInput.focus();
+				}
 			}
-		});
-	}
+		);
+	};
 
-
-	setEditing () {
-		const {store, entityKey} = this.props;
+	setEditing() {
+		const { store, entityKey } = this.props;
 
 		store.setItem(EditingEntityKey, entityKey);
 	}
 
-
-	setNotEditing () {
-		const {store, onClose} = this.props;
-		const {newLink} = this.state;
+	setNotEditing() {
+		const { store, onClose } = this.props;
+		const { newLink } = this.state;
 
 		store.setItem(EditingEntityKey, null);
 		store.setItem(SelectedEntityKey, null);
@@ -157,19 +176,16 @@ export default class ExternalLinkEditor extends React.Component {
 			this.doRemove();
 		}
 
-
 		if (onClose) {
 			onClose();
 		}
 	}
 
-
 	onInputFocus = () => {
 		this.setEditing();
 
 		this.isFocused = true;
-	}
-
+	};
 
 	onInputBlur = () => {
 		this.isFocused = false;
@@ -180,26 +196,36 @@ export default class ExternalLinkEditor extends React.Component {
 				this.setNotEditing();
 			}
 		});
-	}
+	};
 
-
-	doRemove () {
-		const {getEditorState, setEditorState, entityKey, offsetKey} = this.props;
-		const newState = removeEntityKeyAtOffset(entityKey, offsetKey, getEditorState());
+	doRemove() {
+		const {
+			getEditorState,
+			setEditorState,
+			entityKey,
+			offsetKey,
+		} = this.props;
+		const newState = removeEntityKeyAtOffset(
+			entityKey,
+			offsetKey,
+			getEditorState()
+		);
 
 		setEditorState(newState);
 	}
 
-
-	doSave () {
-		const {entityKey, decoratedText:oldText, onEntitySave} = this.props;
-		const {fullHref, href, decoratedText:newText, newLink,} = this.state;
+	doSave() {
+		const { entityKey, decoratedText: oldText, onEntitySave } = this.props;
+		const { fullHref, href, decoratedText: newText, newLink } = this.state;
 		const newHref = fullHref || href;
 
 		if (newLink) {
-			this.createNewLink(newHref, oldText === newText ? null : newText || newHref);
+			this.createNewLink(
+				newHref,
+				oldText === newText ? null : newText || newHref
+			);
 		} else {
-			Entity.mergeData(entityKey, {href: newHref});
+			Entity.mergeData(entityKey, { href: newHref });
 
 			if (newText !== oldText) {
 				this.replaceText(newText || newHref);
@@ -217,37 +243,54 @@ export default class ExternalLinkEditor extends React.Component {
 		this.hasSaved = true;
 	}
 
-	createNewLink (link, newText) {
-		const {getEditorState, setEditorState, entityKey, offsetKey} = this.props;
-		const newState = createNewLinkAtOffset(link, newText, entityKey, offsetKey, getEditorState());
+	createNewLink(link, newText) {
+		const {
+			getEditorState,
+			setEditorState,
+			entityKey,
+			offsetKey,
+		} = this.props;
+		const newState = createNewLinkAtOffset(
+			link,
+			newText,
+			entityKey,
+			offsetKey,
+			getEditorState()
+		);
 
 		setEditorState(newState, () => this.setNotEditing());
 	}
 
-
-	replaceText (text) {
-		const {getEditorState, setEditorState, entityKey, offsetKey} = this.props;
-		const newState = replaceEntityTextAtOffset(text, entityKey, offsetKey, getEditorState());
+	replaceText(text) {
+		const {
+			getEditorState,
+			setEditorState,
+			entityKey,
+			offsetKey,
+		} = this.props;
+		const newState = replaceEntityTextAtOffset(
+			text,
+			entityKey,
+			offsetKey,
+			getEditorState()
+		);
 
 		setEditorState(newState, () => this.setNotEditing());
 	}
-
 
 	onURLChange = (href, fullHref) => {
 		this.setState({
 			href,
 			fullHref,
-			error: null
+			error: null,
 		});
-	}
+	};
 
-
-	onDecoratedTextChange = (decoratedText) => {
+	onDecoratedTextChange = decoratedText => {
 		this.setState({
-			decoratedText
+			decoratedText,
 		});
-	}
-
+	};
 
 	onSave = () => {
 		//Set this to true so we keep focus until we are done saving
@@ -255,23 +298,20 @@ export default class ExternalLinkEditor extends React.Component {
 
 		if (this.urlInput && !this.urlInput.validity.valid) {
 			this.setState({
-				error: t('invalid')
+				error: t('invalid'),
 			});
 		} else {
 			this.doSave();
 		}
-	}
-
+	};
 
 	onCancel = () => {
 		this.setNotEditing();
-	}
-
+	};
 
 	onEdit = () => {
 		this.setEditing();
-	}
-
+	};
 
 	onRemove = () => {
 		//Set this to true so we can keep focus until we are done saving
@@ -280,61 +320,86 @@ export default class ExternalLinkEditor extends React.Component {
 		this.doRemove();
 
 		this.setNotEditing();
-	}
+	};
 
-
-	render () {
-		const {editing} = this.state;
+	render() {
+		const { editing } = this.state;
 
 		return (
 			<div className="external-link-editor-container">
-				{
-					editing ?
-						this.renderEditor() :
-						this.renderInfo()
-				}
+				{editing ? this.renderEditor() : this.renderInfo()}
 			</div>
 		);
 	}
 
-
 	renderEditor = () => {
-		const {href, decoratedText, error, isSingleBlock} = this.state;
-		const cls = cx('external-link-editor', {error});
+		const { href, decoratedText, error, isSingleBlock } = this.state;
+		const cls = cx('external-link-editor', { error });
 
 		return (
 			<div className={cls}>
-				{error && (<div className="error">{error}</div>)}
+				{error && <div className="error">{error}</div>}
 				<Input.Label className="url-input" label={t('urlLabel')}>
 					<Input.Clearable>
-						<Input.URL  value={href} onChange={this.onURLChange} onFocus={this.onInputFocus} onBlur={this.onInputBlur} ref={this.attachURLInputRef} />
+						<Input.URL
+							value={href}
+							onChange={this.onURLChange}
+							onFocus={this.onInputFocus}
+							onBlur={this.onInputBlur}
+							ref={this.attachURLInputRef}
+						/>
 					</Input.Clearable>
 				</Input.Label>
 				{isSingleBlock && (
-					<Input.Label className="display-input" label={t('displayLabel')}>
+					<Input.Label
+						className="display-input"
+						label={t('displayLabel')}
+					>
 						<Input.Clearable>
-							<Input.Text value={decoratedText} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onDecoratedTextChange} />
+							<Input.Text
+								value={decoratedText}
+								onFocus={this.onInputFocus}
+								onBlur={this.onInputBlur}
+								onChange={this.onDecoratedTextChange}
+							/>
 						</Input.Clearable>
 					</Input.Label>
 				)}
 				<div className="buttons" onMouseDown={stop}>
-					<Button className="cancel" onClick={this.onCancel} rounded secondary>{t('cancel')}</Button>
-					<Button className="save" onClick={this.onSave} rounded disabled={!href}>{t('save')}</Button>
+					<Button
+						className="cancel"
+						onClick={this.onCancel}
+						rounded
+						secondary
+					>
+						{t('cancel')}
+					</Button>
+					<Button
+						className="save"
+						onClick={this.onSave}
+						rounded
+						disabled={!href}
+					>
+						{t('save')}
+					</Button>
 				</div>
 			</div>
 		);
-	}
-
+	};
 
 	renderInfo = () => {
-		const {href} = this.state;
+		const { href } = this.state;
 
 		return (
 			<div className="external-link-info" onMouseDown={stop}>
 				<span className="link">{href}</span>
-				<span className="edit" onClick={this.onEdit}>{t('edit')}</span>
-				<span className="remove" onClick={this.onRemove}>{t('remove')}</span>
+				<span className="edit" onClick={this.onEdit}>
+					{t('edit')}
+				</span>
+				<span className="remove" onClick={this.onRemove}>
+					{t('remove')}
+				</span>
 			</div>
 		);
-	}
+	};
 }

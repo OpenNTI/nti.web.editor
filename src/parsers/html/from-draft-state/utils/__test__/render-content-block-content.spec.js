@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {convertFromRaw, EditorState} from 'draft-js';
+import { convertFromRaw, EditorState } from 'draft-js';
 
 import renderContentBlockContent from '../render-content-block-content';
 
@@ -7,11 +7,29 @@ describe('renderBlock', () => {
 	test('Test various types', () => {
 		const rawContent = {
 			blocks: [
-				{ text: 'some code', type: 'code-block', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'quote', type: 'blockquote', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+				{
+					text: 'some code',
+					type: 'code-block',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'paragraph',
+					type: 'unstyled',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'quote',
+					type: 'blockquote',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
 			],
-			entityMap: {}
+			entityMap: {},
 		};
 
 		const content = convertFromRaw(rawContent);

@@ -10,27 +10,31 @@ describe('fix state for allowed styles', () => {
 			entityMap: {},
 			blocks: [
 				{
-					'text': 'test',
-					'type': 'unstyled',
-					'depth': 0,
-					'inlineStyleRanges': [
+					text: 'test',
+					type: 'unstyled',
+					depth: 0,
+					inlineStyleRanges: [
 						{
-							'offset': 0,
-							'length': 4,
-							'style': 'BOLD'
-						}
+							offset: 0,
+							length: 4,
+							style: 'BOLD',
+						},
 					],
-					'entityRanges': [],
-					'data': {}
-				}
-			]
+					entityRanges: [],
+					data: {},
+				},
+			],
 		});
 		const allowed = STYLE_SET;
 		const byBlockType = {
-			[BLOCKS.UNSTYLED]: new Set([STYLES.BOLD])
+			[BLOCKS.UNSTYLED]: new Set([STYLES.BOLD]),
 		};
 
-		const fixedState = fixStateForAllowed(editorState, allowed, byBlockType);
+		const fixedState = fixStateForAllowed(
+			editorState,
+			allowed,
+			byBlockType
+		);
 		const currentContent = fixedState.getCurrentContent();
 		const block = currentContent.getFirstBlock();
 		const inlineStyle = block.getInlineStyleAt(0);
@@ -43,32 +47,36 @@ describe('fix state for allowed styles', () => {
 			entityMap: {},
 			blocks: [
 				{
-					'text': 'test',
-					'type': 'unstyled',
-					'depth': 0,
-					'inlineStyleRanges': [
+					text: 'test',
+					type: 'unstyled',
+					depth: 0,
+					inlineStyleRanges: [
 						{
-							'offset': 0,
-							'length': 4,
-							'style': 'BOLD'
-						}
+							offset: 0,
+							length: 4,
+							style: 'BOLD',
+						},
 					],
-					'entityRanges': [],
-					'data': {}
-				}
-			]
+					entityRanges: [],
+					data: {},
+				},
+			],
 		});
 		const allowed = new Set([
 			STYLES.CODE,
 			STYLES.ITALIC,
 			STYLES.STRIKETHROUGH,
-			STYLES.UNDERLINE
+			STYLES.UNDERLINE,
 		]);
 		const byBlockType = {
-			[BLOCKS.UNSTYLED]: new Set()
+			[BLOCKS.UNSTYLED]: new Set(),
 		};
 
-		const fixedState = fixStateForAllowed(editorState, allowed, byBlockType);
+		const fixedState = fixStateForAllowed(
+			editorState,
+			allowed,
+			byBlockType
+		);
 		const currentContent = fixedState.getCurrentContent();
 		const block = currentContent.getFirstBlock();
 		const inlineStyle = block.getInlineStyleAt(0);

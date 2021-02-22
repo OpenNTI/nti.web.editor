@@ -1,7 +1,7 @@
 @import '~@nti/style-common';
 
 .external-link-editor-container {
-	input[type=url] {
+	input[type='url'] {
 		display: none;
 	}
 
@@ -9,7 +9,9 @@
 		padding: rem-calc(14px 20px);
 		font: normal 400 0.875rem/1.3 var(--body-font-family);
 
-		.link, .edit, .remove {
+		.link,
+		.edit,
+		.remove {
 			display: inline-block;
 			vertical-align: middle;
 		}
@@ -21,11 +23,13 @@
 			text-overflow: ellipsis;
 		}
 
-		.link, .edit {
+		.link,
+		.edit {
 			margin-right: 1rem;
 		}
 
-		.edit, .remove {
+		.edit,
+		.remove {
 			color: var(--primary-blue);
 			cursor: pointer;
 			font-size: 0.625rem;
@@ -42,7 +46,8 @@
 			font: normal 400 0.875rem/1.3 var(--body-font-family);
 		}
 
-		.url-input, .display-input {
+		.url-input,
+		.display-input {
 			display: block;
 			margin-bottom: rem-calc(10px);
 
@@ -55,7 +60,8 @@
 			display: flex;
 			justify-content: space-between;
 
-			.cancel, .save {
+			.cancel,
+			.save {
 				flex: 0 0 135px;
 				text-align: center;
 			}

@@ -1,6 +1,6 @@
-import {Modifier, EditorState, SelectionState} from 'draft-js';
+import { Modifier, EditorState, SelectionState } from 'draft-js';
 
-export function getNewSelection (text, selection) {
+export function getNewSelection(text, selection) {
 	const anchorOffset = selection.getAnchorOffset();
 
 	return new SelectionState({
@@ -9,19 +9,30 @@ export function getNewSelection (text, selection) {
 		focusKey: selection.getFocusKey(),
 		focusOffset: anchorOffset + text.length,
 		isBackward: false,
-		hasFocus: selection.getHasFocus()
+		hasFocus: selection.getHasFocus(),
 	});
 }
 
-export default function replaceEntityTextAtOffset (text, entityKey, selection, editorState) {
+export default function replaceEntityTextAtOffset(
+	text,
+	entityKey,
+	selection,
+	editorState
+) {
 	const content = editorState.getCurrentContent();
-	const newContent = Modifier.replaceText(content, selection, text, void 0, entityKey);
+	const newContent = Modifier.replaceText(
+		content,
+		selection,
+		text,
+		void 0,
+		entityKey
+	);
 	const newSelection = getNewSelection(text, selection);
 
 	return EditorState.create({
 		currentContent: newContent,
 		allowUndo: editorState.getAllowUndo(),
 		decorator: editorState.getDecorator(),
-		selection: newSelection
+		selection: newSelection,
 	});
 }

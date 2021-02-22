@@ -1,24 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import {v4 as uuid} from 'uuid';
-import {DnD} from '@nti/web-commons';
+import { v4 as uuid } from 'uuid';
+import { DnD } from '@nti/web-commons';
 
 import ContextProvider from '../../../ContextProvider';
-import {DRAG_DATA_TYPE} from '../Constants';
+import { DRAG_DATA_TYPE } from '../Constants';
 
-function isAllowedIn (editor = {}, type) {
-	const {plugins} = editor;
+function isAllowedIn(editor = {}, type) {
+	const { plugins } = editor;
 
-	if (editor.readOnly || !plugins || !plugins.allowInsertBlock) { return false; }
-	if (!type) { return true; }
+	if (editor.readOnly || !plugins || !plugins.allowInsertBlock) {
+		return false;
+	}
+	if (!type) {
+		return true;
+	}
 
-	const {allowedBlockTypes, customBlockTypes} = plugins;
+	const { allowedBlockTypes, customBlockTypes } = plugins;
 
 	return allowedBlockTypes.has(type) || customBlockTypes.has(type);
 }
 
-function useInsertionId () {
+function useInsertionId() {
 	const id = React.useRef();
 
 	if (!id.current) {
@@ -28,73 +32,92 @@ function useInsertionId () {
 	return id.current;
 }
 
-const InsertBlockButton = React.forwardRef(({
-	className,
-	type,
-	createBlock,
-	createBlockProps,
-	atomic,
-	disabled,
+const InsertBlockButton = React.forwardRef(
+	(
+		{
+			className,
+			type,
+			createBlock,
+			createBlockProps,
+			atomic,
+			disabled,
 
-	children,
+			children,
 
-	onDragStart,
-	onDragEnd,
+			onDragStart,
+			onDragEnd,
 
-	...otherProps
-}, ref) => {
-	const editor = ContextProvider.useContext();
-	const insertId = useInsertionId();
+			...otherProps
+		},
+		ref
+	) => {
+		const editor = ContextProvider.useContext();
+		const insertId = useInsertionId();
 
-	const isAllowed = isAllowedIn(editor, type);
+		const isAllowed = isAllowedIn(editor, type);
 
-	const handleInsertion = (selection) => {
-		const {getInsertMethod, getAtomicInsertMethod, getSelectedTextForInsertion} = editor?.plugins ?? {};
+		const handleInsertion = selection => {
+			const {
+				getInsertMethod,
+				getAtomicInsertMethod,
+				getSelectedTextForInsertion,
+			} = editor?.plugins ?? {};
 
-		if (atomic && getAtomicInsertMethod) {
-			createBlock?.(
-				getAtomicInsertMethod(selection),
-				createBlockProps,
-				getSelectedTextForInsertion(),
-				editor
-			);
-		} else if (getInsertMethod) {
-			createBlock?.(
-				getInsertMethod(selection),
-				createBlockProps,
-				getSelectedTextForInsertion(),
-				editor
-			);
-		}
-	};
+			if (atomic && getAtomicInsertMethod) {
+				createBlock?.(
+					getAtomicInsertMethod(selection),
+					createBlockProps,
+					getSelectedTextForInsertion(),
+					editor
+				);
+			} else if (getInsertMethod) {
+				createBlock?.(
+					getInsertMethod(selection),
+					createBlockProps,
+					getSelectedTextForInsertion(),
+					editor
+				);
+			}
+		};
 
-	const innerClick = () => handleInsertion();
+		const innerClick = () => handleInsertion();
 
-	const innerDragStart = (e) => {
-		editor?.plugins?.registerInsertHandler(insertId, handleInsertion);
-		onDragStart?.(e);
-	};
+		const innerDragStart = e => {
+			editor?.plugins?.registerInsertHandler(insertId, handleInsertion);
+			onDragStart?.(e);
+		};
 
-	const innerDragEnd = (e) => {
-		editor?.plugins?.unregisterInsertHandler(insertId);
-		onDragEnd?.(e);
-	};
+		const innerDragEnd = e => {
+			editor?.plugins?.unregisterInsertHandler(insertId);
+			onDragEnd?.(e);
+		};
 
-	return (
-		<DnD.Draggable
-			onDragStart={innerDragStart}
-			onDragEnd={innerDragEnd}
-			data={[
-				{dataTransferKey: DRAG_DATA_TYPE, dataForTransfer: insertId},
-				{dataTransferKey: 'text', dataForTransfer: 'Insert'}
-			]}
-		>
-			<div ref={ref} {...otherProps} className={cx(className, {disabled: !isAllowed || disabled})} onClick={innerClick}>
-				{children}
-			</div>
-		</DnD.Draggable>
-	);
-});
+		return (
+			<DnD.Draggable
+				onDragStart={innerDragStart}
+				onDragEnd={innerDragEnd}
+				data={[
+					{
+						dataTransferKey: DRAG_DATA_TYPE,
+						dataForTransfer: insertId,
+					},
+					{ dataTransferKey: 'text', dataForTransfer: 'Insert' },
+				]}
+			>
+				<div
+					ref={ref}
+					{...otherProps}
+					className={cx(className, {
+						disabled: !isAllowed || disabled,
+					})}
+					onClick={innerClick}
+				>
+					{children}
+				</div>
+			</DnD.Draggable>
+		);
+	}
+);
 
 InsertBlockButton.displayName = 'InsertBlockButton';
 InsertBlockButton.propTypes = {
@@ -108,7 +131,7 @@ InsertBlockButton.propTypes = {
 	children: PropTypes.node,
 
 	onDragStart: PropTypes.func,
-	onDragEnd: PropTypes.func
+	onDragEnd: PropTypes.func,
 };
 
 export default InsertBlockButton;

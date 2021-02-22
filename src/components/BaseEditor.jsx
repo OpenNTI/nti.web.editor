@@ -4,10 +4,12 @@ import PluginEditor from '@draft-js-plugins/editor';
 class BaseEditor extends PluginEditor {
 	static propTypes = {
 		...PluginEditor.propTypes,
-		onSetReadOnly: PropTypes.func
+		onSetReadOnly: PropTypes.func,
 	};
 
-	get readOnly () { return this.props.readOnly || this.state.readOnly; }
+	get readOnly() {
+		return this.props.readOnly || this.state.readOnly;
+	}
 
 	/**
 	 * This is an override is for us handling the readOnly prop so context provider knows to update.

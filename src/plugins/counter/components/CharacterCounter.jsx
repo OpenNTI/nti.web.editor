@@ -10,33 +10,31 @@ export default class CharacterCounter extends React.Component {
 				counter: PropTypes.shape({
 					character: PropTypes.shape({
 						limit: PropTypes.number,
-						count: PropTypes.number
-					})
-				})
-			})
-		})
-	}
+						count: PropTypes.number,
+					}),
+				}),
+			}),
+		}),
+	};
 
-
-	get editorContext () {
+	get editorContext() {
 		return this.context.editorContext || {};
 	}
 
-	get pluginContext () {
+	get pluginContext() {
 		return this.editorContext.plugins || {};
 	}
 
-	get counterContext () {
+	get counterContext() {
 		return this.pluginContext.counter || {};
 	}
 
-	get characterContext () {
+	get characterContext() {
 		return this.counterContext.character || {};
 	}
 
-
-	render () {
-		const {limit, count, over} = this.characterContext;
+	render() {
+		const { limit, count, over } = this.characterContext;
 
 		return (
 			<Counter {...this.props} limit={limit} count={count} over={over} />

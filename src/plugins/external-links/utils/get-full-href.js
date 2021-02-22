@@ -2,8 +2,10 @@ import Url from 'url';
 
 const defaultProtocol = 'http:';
 
-export default function getFullHref (href) {
-	if (!href) { return ''; }
+export default function getFullHref(href) {
+	if (!href) {
+		return '';
+	}
 
 	let parts = Url.parse(href);
 

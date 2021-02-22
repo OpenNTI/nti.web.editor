@@ -6,26 +6,23 @@ import IdRegistry from './IdRegistry';
 const Context = React.createContext(null);
 
 export default class ContextProvider extends React.Component {
-	static Consumer = Context.Consumer
+	static Consumer = Context.Consumer;
 
-	static useContext () {
+	static useContext() {
 		return React.useContext(Context);
 	}
 
-	static register (id, editor) {
+	static register(id, editor) {
 		IdRegistry.register(id, editor);
 	}
 
-
-	static unregister (id, editor) {
+	static unregister(id, editor) {
 		IdRegistry.unregister(id, editor);
 	}
-
 
 	static propTypes = {
 		editor: PropTypes.shape({
 			getPluginContext: PropTypes.func,
-
 		}),
 		editorID: PropTypes.string,
 		children: PropTypes.element,
@@ -34,19 +31,18 @@ export default class ContextProvider extends React.Component {
 		 * Flag this instance as internal to Core. External ContextProviders add references to this one.
 		 * @type {boolean}
 		 */
-		internal: PropTypes.bool
-	}
+		internal: PropTypes.bool,
+	};
 
 	static childContextTypes = {
 		editorContext: PropTypes.shape({
 			editor: PropTypes.any,
 			getSelection: PropTypes.func,
-			plugins: PropTypes.object
-		})
-	}
+			plugins: PropTypes.object,
+		}),
+	};
 
-
-	constructor (props) {
+	constructor(props) {
 		super(props);
 
 		this.externalLinks = [];
@@ -54,8 +50,7 @@ export default class ContextProvider extends React.Component {
 		this.addRegistryListener(props);
 	}
 
-
-	getChildContext () {
+	getChildContext() {
 		const editor = this.getEditor();
 		const pluginContext = editor && editor.getPluginContext();
 
@@ -63,17 +58,28 @@ export default class ContextProvider extends React.Component {
 			editorContext: {
 				editor,
 				plugins: pluginContext,
-				get editorState () { return editor && editor.editorState; },
-				get readOnly () { return editor && editor.readOnly; },
-				getSelection: () => { return editor && editor.editorState && editor.editorState.getSelection(); },
-				focusEditor: () => { return editor && editor.focus(); }
-			}
+				get editorState() {
+					return editor && editor.editorState;
+				},
+				get readOnly() {
+					return editor && editor.readOnly;
+				},
+				getSelection: () => {
+					return (
+						editor &&
+						editor.editorState &&
+						editor.editorState.getSelection()
+					);
+				},
+				focusEditor: () => {
+					return editor && editor.focus();
+				},
+			},
 		};
 	}
 
-
-	getEditor (props = this.props) {
-		let {editor, editorID} = props;
+	getEditor(props = this.props) {
+		let { editor, editorID } = props;
 
 		while (editor && editor.editor) {
 			editor = editor.editor;
@@ -86,23 +92,20 @@ export default class ContextProvider extends React.Component {
 		return editor;
 	}
 
-
-	componentDidUpdate (prevProps) {
+	componentDidUpdate(prevProps) {
 		if (prevProps.editor !== this.props.editor) {
 			this.unregister();
 			this.register(this.props);
 		}
 	}
 
-	
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this.externalLinks = [];
 		this.unregister();
 		this.removeRegistryListener();
 	}
-	
-	
-	updateExternalLinks () {
+
+	updateExternalLinks() {
 		for (let cmp of this.externalLinks) {
 			if (cmp) {
 				cmp.forceUpdate();
@@ -110,83 +113,86 @@ export default class ContextProvider extends React.Component {
 		}
 	}
 
-
-	addRegistryListener (props = this.props) {
-		const {editorID, internal} = props;
+	addRegistryListener(props = this.props) {
+		const { editorID, internal } = props;
 
 		this.removeRegistryListener(props);
 
 		if (editorID && !internal) {
-			IdRegistry.addListener(IdRegistry.getRegisterEvent(editorID), this.onEditorRegistered);
-			IdRegistry.addListener(IdRegistry.getUnregisterEvent(editorID), this.onEditorUnregistered);
+			IdRegistry.addListener(
+				IdRegistry.getRegisterEvent(editorID),
+				this.onEditorRegistered
+			);
+			IdRegistry.addListener(
+				IdRegistry.getUnregisterEvent(editorID),
+				this.onEditorUnregistered
+			);
 		}
 	}
 
-
-	removeRegistryListener (props = this.props) {
-		const {editorID} = props;
+	removeRegistryListener(props = this.props) {
+		const { editorID } = props;
 
 		if (editorID) {
-			IdRegistry.removeListener(IdRegistry.getRegisterEvent(editorID), this.onEditorRegistered);
-			IdRegistry.removeListener(IdRegistry.getUnregisterEvent(editorID), this.onEditorUnregistered);
+			IdRegistry.removeListener(
+				IdRegistry.getRegisterEvent(editorID),
+				this.onEditorRegistered
+			);
+			IdRegistry.removeListener(
+				IdRegistry.getUnregisterEvent(editorID),
+				this.onEditorUnregistered
+			);
 		}
 	}
 
-
-	onEditorRegistered = (editor) => {
+	onEditorRegistered = editor => {
 		this.registerEditor(editor);
-	}
-
+	};
 
 	//link other instances of CoreContextProvider together.
-	register (props = this.props) {
+	register(props = this.props) {
 		if (!props.internal) {
 			this.registerEditor(this.getEditor(props));
 		}
 	}
 
-
-	registerEditor (editor) {
+	registerEditor(editor) {
 		if (editor && editor.editorContext) {
 			editor.editorContext.addLink(this);
 		}
 	}
 
-
-	addLink (otherContextProvider) {
+	addLink(otherContextProvider) {
 		this.externalLinks = [...this.externalLinks, otherContextProvider];
 	}
 
-
-	onEditorUnregistered = (editor) => {
+	onEditorUnregistered = editor => {
 		this.unregisterEditor(editor);
-	}
+	};
 
-
-	unregister (props = this.props) {
+	unregister(props = this.props) {
 		if (!props.internal) {
 			this.unregisterEditor(this.getEditor(props));
 		}
 	}
 
-
-	unregisterEditor (editor) {
+	unregisterEditor(editor) {
 		if (editor && editor.editorContext) {
 			editor.editorContext.removeLink(this);
 		}
 	}
 
-
-	removeLink (otherContextProvider) {
-		this.externalLinks = this.externalLinks.filter(x => x !== otherContextProvider);
+	removeLink(otherContextProvider) {
+		this.externalLinks = this.externalLinks.filter(
+			x => x !== otherContextProvider
+		);
 	}
 
-
-	render () {
+	render() {
 		const editor = this.getEditor();
 		const context = {
 			editorStateId: editor?.editorStateId,
-			...(this.getChildContext()?.editorContext ?? {})
+			...(this.getChildContext()?.editorContext ?? {}),
 		};
 
 		return (

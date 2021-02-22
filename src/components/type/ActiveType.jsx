@@ -8,44 +8,43 @@ export default class ActiveType extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		onClick: PropTypes.func,
-		getString: PropTypes.func
-	}
+		getString: PropTypes.func,
+	};
 
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
-				currentBlockType: PropTypes.string
-			})
-		})
-	}
+				currentBlockType: PropTypes.string,
+			}),
+		}),
+	};
 
-
-	get getString () {
+	get getString() {
 		return this.props.getString;
 	}
 
-	get editorContext () {
+	get editorContext() {
 		return this.context.editorContext || {};
 	}
 
-	get pluginContext () {
+	get pluginContext() {
 		return this.editorContext.plugins || {};
 	}
 
-	get activeType () {
-		const {currentBlockType} = this.pluginContext;
+	get activeType() {
+		const { currentBlockType } = this.pluginContext;
 
 		return currentBlockType;
 	}
 
-	ref = React.createRef()
+	ref = React.createRef();
 
-	getDOMNode () {
+	getDOMNode() {
 		return this.ref.current;
 	}
 
-	onMouseDown = (e) => {
-		const {onClick} = this.props;
+	onMouseDown = e => {
+		const { onClick } = this.props;
 
 		if (onClick) {
 			onClick();
@@ -54,28 +53,41 @@ export default class ActiveType extends React.Component {
 				e.preventDefault();
 			}
 		}
-	}
+	};
 
-	onClick = (e) => {
-		const {onClick} = this.props;
+	onClick = e => {
+		const { onClick } = this.props;
 
 		if (onClick) {
 			stop(e);
 		}
-	}
+	};
 
-	render () {
-		const {className, ...otherProps} = this.props;
-		const {activeType} = this;
-		const cls = cx('draft-core-active-type', className, activeType, {empty: !activeType});
-		const label = activeType && this.getString && !this.getString.isMissing(activeType) ? this.getString(activeType) : '';
+	render() {
+		const { className, ...otherProps } = this.props;
+		const { activeType } = this;
+		const cls = cx('draft-core-active-type', className, activeType, {
+			empty: !activeType,
+		});
+		const label =
+			activeType &&
+			this.getString &&
+			!this.getString.isMissing(activeType)
+				? this.getString(activeType)
+				: '';
 
 		delete otherProps.getString;
 		delete otherProps.onClick;
 		delete otherProps.onMouseDown;
 
 		return (
-			<div ref={this.ref} className={cls} onClick={this.onClick} onMouseDown={this.onMouseDown} {...otherProps}>
+			<div
+				ref={this.ref}
+				className={cls}
+				onClick={this.onClick}
+				onMouseDown={this.onMouseDown}
+				{...otherProps}
+			>
 				<span>{label}</span>
 			</div>
 		);

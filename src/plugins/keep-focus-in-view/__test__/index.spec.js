@@ -1,10 +1,10 @@
 /* eslint-env jest */
-import {EditorState, SelectionState, convertFromRaw} from 'draft-js';
+import { EditorState, SelectionState, convertFromRaw } from 'draft-js';
 
-import {BLOCKS} from '../../../Constants';
+import { BLOCKS } from '../../../Constants';
 import keepFocusInView from '../index';
 
-function createEditorState (raw) {
+function createEditorState(raw) {
 	return EditorState.createWithContent(convertFromRaw(raw));
 }
 
@@ -21,17 +21,19 @@ const onBefore = () => {
 			getRangeAt: function () {
 				return {
 					getClientRects: function () {
-						return [{
-							top: 10,
-							right: 50,
-							bottom: 30,
-							left: 20,
-							width: 30,
-							height: 20
-						}];
-					}
+						return [
+							{
+								top: 10,
+								right: 50,
+								bottom: 30,
+								left: 20,
+								width: 30,
+								height: 20,
+							},
+						];
+					},
 				};
-			}
+			},
 		};
 	};
 
@@ -54,9 +56,7 @@ const onAfter = () => {
 	delete global.scrollTo;
 };
 
-
 describe('keepFocusInView plugin', () => {
-
 	beforeEach(onBefore);
 	afterEach(onAfter);
 
@@ -66,20 +66,51 @@ describe('keepFocusInView plugin', () => {
 		anchorKey: 'def',
 		anchorOffset: 1,
 		focusKey: 'def',
-		focusOffset: 6
+		focusOffset: 6,
 	});
 
 	const editorState = createEditorState({
 		blocks: [
-			{key: 'abc', type: BLOCKS.CODE, depth: 0, text: 'block 1', inlineStyleRanges: [], entityRanges: []},
-			{key: 'def', type: BLOCKS.UNSTYLED, depth: 0, text: 'block 2', inlineStyleRanges: [], entityRanges: []},
-			{key: '123', type: BLOCKS.CODE, depth: 0, text: 'block 3', inlineStyleRanges: [], entityRanges: []},
-			{key: '456', type: BLOCKS.ATOMIC, depth: 0, text: 'block 4', inlineStyleRanges: [], entityRanges: []}
+			{
+				key: 'abc',
+				type: BLOCKS.CODE,
+				depth: 0,
+				text: 'block 1',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
+			{
+				key: 'def',
+				type: BLOCKS.UNSTYLED,
+				depth: 0,
+				text: 'block 2',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
+			{
+				key: '123',
+				type: BLOCKS.CODE,
+				depth: 0,
+				text: 'block 3',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
+			{
+				key: '456',
+				type: BLOCKS.ATOMIC,
+				depth: 0,
+				text: 'block 4',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
 		],
-		entityMap: {}
+		entityMap: {},
 	});
 
-	let editorStateWithSelected = EditorState.forceSelection(editorState, selection);
+	let editorStateWithSelected = EditorState.forceSelection(
+		editorState,
+		selection
+	);
 
 	test('Test onChange sets correct scroll position', () => {
 		plugin.onChange(editorStateWithSelected);

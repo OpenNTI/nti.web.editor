@@ -1,10 +1,11 @@
-export default function getBlocksInSelection (content, selection) {
+export default function getBlocksInSelection(content, selection) {
 	const startKey = selection.getStartKey();
 	const endKey = selection.getEndKey();
 
 	let ended = false;
 
-	return content.getBlockMap()
+	return content
+		.getBlockMap()
 		.skipUntil(block => block.getKey() === startKey)
 		.takeUntil(block => {
 			const result = ended;

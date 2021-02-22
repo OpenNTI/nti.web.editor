@@ -1,30 +1,29 @@
-import {HANDLED, NOT_HANDLED} from '../Constants';
-import {insertAtomicBlocks} from '../../utils';
+import { HANDLED, NOT_HANDLED } from '../Constants';
+import { insertAtomicBlocks } from '../../utils';
 
 import Button from './components/Button';
 import BlockCount from './components/BlockCount';
-import {DRAG_DATA_TYPE} from './Constants';
+import { DRAG_DATA_TYPE } from './Constants';
 import {
 	insertBlock,
 	getSelectedText,
 	ensureMaintainSelection,
 	moveSelectionToNextBlock,
-	getBlockCount
+	getBlockCount,
 } from './utils';
 
 //https://github.com/facebook/draft-js/issues/442
 
 export default {
-	components: {Button, BlockCount},
+	components: { Button, BlockCount },
 
 	create: (/*config = {}*/) => {
 		const insertionHandlers = {};
 
 		return {
-			handleDrop (selection, dataTransfer) {
+			handleDrop(selection, dataTransfer) {
 				const insertionId = dataTransfer.data.getData(DRAG_DATA_TYPE);
 				const handler = insertionHandlers[insertionId];
-
 
 				if (handler) {
 					handler(selection);
@@ -34,8 +33,7 @@ export default {
 				return NOT_HANDLED;
 			},
 
-
-			getContext (getEditorState, setEditorState, focus, plugins = []) {
+			getContext(getEditorState, setEditorState, focus, plugins = []) {
 				let getNestedStateFns = [];
 
 				for (let plugin of plugins) {
@@ -44,7 +42,7 @@ export default {
 					}
 				}
 
-				function getNestedState (block) {
+				function getNestedState(block) {
 					for (let fn of getNestedStateFns) {
 						const blocks = fn(block);
 
@@ -55,13 +53,18 @@ export default {
 				}
 
 				return {
-					get allowInsertBlock () {
+					get allowInsertBlock() {
 						//TODO: add a config for disabling inserting blocks given certain selections
 						return true;
 					},
 
 					getInsertBlockCount: (predicate, group) => {
-						return getBlockCount(getEditorState(), predicate, group, getNestedState);
+						return getBlockCount(
+							getEditorState(),
+							predicate,
+							group,
+							getNestedState
+						);
 					},
 
 					getInsertAtomicBlockCount: (predicate, group) => {
@@ -69,33 +72,48 @@ export default {
 
 						return getBlockCount(
 							editorState,
-							(block) => predicate(block, editorState),
+							block => predicate(block, editorState),
 							group,
 							getNestedState
 						);
 					},
 
-
-					getInsertMethod: (selection) => {
+					getInsertMethod: selection => {
 						return (block, replaceRange, maintainSelection) => {
-							const newState = insertBlock(block, replaceRange, selection, getEditorState());
+							const newState = insertBlock(
+								block,
+								replaceRange,
+								selection,
+								getEditorState()
+							);
 
-							setEditorState(maintainSelection
-								? ensureMaintainSelection(newState)
-								: moveSelectionToNextBlock(newState), focus);
+							setEditorState(
+								maintainSelection
+									? ensureMaintainSelection(newState)
+									: moveSelectionToNextBlock(newState),
+								focus
+							);
 						};
 					},
 
-					getAtomicInsertMethod: (selection) => {
-						return (data) => {
-							const newState = insertAtomicBlocks(data, selection, getEditorState());
+					getAtomicInsertMethod: selection => {
+						return data => {
+							const newState = insertAtomicBlocks(
+								data,
+								selection,
+								getEditorState()
+							);
 
 							setEditorState(newState);
 						};
 					},
 
-					insertAtomicBlock (data, selection) {
-						const newState = insertAtomicBlocks(data, selection, getEditorState());
+					insertAtomicBlock(data, selection) {
+						const newState = insertAtomicBlocks(
+							data,
+							selection,
+							getEditorState()
+						);
 
 						setEditorState(newState);
 					},
@@ -104,17 +122,15 @@ export default {
 						return getSelectedText(getEditorState());
 					},
 
-
-					registerInsertHandler (id, handler) {
+					registerInsertHandler(id, handler) {
 						insertionHandlers[id] = handler;
 					},
 
-
-					unregisterInsertHandler (id) {
+					unregisterInsertHandler(id) {
 						delete insertionHandlers[id];
-					}
+					},
 				};
-			}
+			},
 		};
-	}
+	},
 };

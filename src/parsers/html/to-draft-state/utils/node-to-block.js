@@ -1,8 +1,8 @@
-import {genKey} from 'draft-js';
+import { genKey } from 'draft-js';
 
-import {getBlockTypeForNode, getBlockDepthForNode} from './BlockTypes';
-import {getStyleForNode} from './StyleTypes';
-import {getEntityForNode} from './EntityTypes';
+import { getBlockTypeForNode, getBlockDepthForNode } from './BlockTypes';
+import { getStyleForNode } from './StyleTypes';
+import { getEntityForNode } from './EntityTypes';
 import getTagName from './get-tag-name';
 
 const getEntityKey = () => {
@@ -12,9 +12,9 @@ const getEntityKey = () => {
 };
 
 const repeat = (value, times) => Array(times).fill(value);
-const createCharInfo = (styles = [], entity) => ({styles, entity});
+const createCharInfo = (styles = [], entity) => ({ styles, entity });
 
-function parseText (node, styles = [], entity, createEntity) {
+function parseText(node, styles = [], entity, createEntity) {
 	const tagName = getTagName(node);
 
 	if (tagName === '#text') {
@@ -22,7 +22,7 @@ function parseText (node, styles = [], entity, createEntity) {
 
 		return {
 			text,
-			charList: repeat(createCharInfo(styles, entity), text.length)
+			charList: repeat(createCharInfo(styles, entity), text.length),
 		};
 	}
 
@@ -36,7 +36,7 @@ function parseText (node, styles = [], entity, createEntity) {
 	for (let child of children) {
 		const parsed = parseText(
 			child,
-			style ? ([...styles, style]) : ([...styles]),
+			style ? [...styles, style] : [...styles],
 			newEntity,
 			createEntity
 		);
@@ -45,11 +45,10 @@ function parseText (node, styles = [], entity, createEntity) {
 		charList = [...charList, ...parsed.charList];
 	}
 
-	return {text, charList};	
+	return { text, charList };
 }
 
-
-function getInlineStyleRanges (charList) {
+function getInlineStyleRanges(charList) {
 	const styleRanges = [];
 
 	const getLength = (start, style) => {
@@ -58,7 +57,7 @@ function getInlineStyleRanges (charList) {
 		for (let i = start; i < charList.length; i++) {
 			const char = charList[i];
 			const styles = new Set(char.styles || []);
-		
+
 			if (styles.has(style)) {
 				length += 1;
 			} else {
@@ -77,7 +76,7 @@ function getInlineStyleRanges (charList) {
 			styleRanges.push({
 				style,
 				offset: i,
-				length: getLength(i, style)
+				length: getLength(i, style),
 			});
 		}
 	}
@@ -85,14 +84,16 @@ function getInlineStyleRanges (charList) {
 	return styleRanges;
 }
 
-function getEntityRanges (charList) {
+function getEntityRanges(charList) {
 	const entityRanges = [];
 
 	for (let i = 0; i < charList.length; i++) {
 		const char = charList[i];
-		const {entity} = char;
+		const { entity } = char;
 
-		if (!entity) { continue; }
+		if (!entity) {
+			continue;
+		}
 
 		const lastEntity = entityRanges[entityRanges.length - 1];
 
@@ -102,7 +103,7 @@ function getEntityRanges (charList) {
 			entityRanges.push({
 				offset: i,
 				length: 1,
-				key: entity
+				key: entity,
 			});
 		}
 	}
@@ -110,10 +111,12 @@ function getEntityRanges (charList) {
 	return entityRanges;
 }
 
-export default function nodeToBlock (node) {
+export default function nodeToBlock(node) {
 	const entityMap = {};
-	const createEntity = (data) => {
-		if (!data) { return null; }
+	const createEntity = data => {
+		if (!data) {
+			return null;
+		}
 
 		const key = getEntityKey();
 
@@ -123,7 +126,7 @@ export default function nodeToBlock (node) {
 
 	const blockType = getBlockTypeForNode(node);
 	const depth = getBlockDepthForNode(node);
-	const {text, charList} = parseText(node, [], null, createEntity);
+	const { text, charList } = parseText(node, [], null, createEntity);
 
 	return {
 		block: {
@@ -132,8 +135,8 @@ export default function nodeToBlock (node) {
 			text: text === '\uFEFF' ? '' : text,
 			depth,
 			inlineStyleRanges: getInlineStyleRanges(charList),
-			entityRanges: getEntityRanges(charList)
+			entityRanges: getEntityRanges(charList),
 		},
-		entityMap: {...entityMap}
+		entityMap: { ...entityMap },
 	};
 }

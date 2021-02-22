@@ -7,7 +7,7 @@ const MAP = Symbol('Map');
 const log = Logger.get('web:content:editor:draft-core:IdMap');
 
 class IdRegistry extends EventEmitter {
-	constructor () {
+	constructor() {
 		super();
 
 		this.generatedCount = 0;
@@ -15,30 +15,25 @@ class IdRegistry extends EventEmitter {
 		this[MAP] = {};
 	}
 
-
-	generateID () {
+	generateID() {
 		this.generatedCount += 1;
 
 		return `editor-${this.generatedCount}`;
 	}
 
-
-	getRegisterEvent (id) {
+	getRegisterEvent(id) {
 		return `${id}-registered`;
 	}
 
-
-	getUnregisterEvent (id) {
+	getUnregisterEvent(id) {
 		return `${id}-unregistered`;
 	}
 
-
-	get (id) {
+	get(id) {
 		return this[MAP][id];
 	}
 
-
-	register (id, editor) {
+	register(id, editor) {
 		if (this[MAP][id] && this[MAP][id] !== editor) {
 			log.warn('Multiple Editors with the same ID: ', id);
 		}
@@ -49,10 +44,12 @@ class IdRegistry extends EventEmitter {
 		this.emit(this.getRegisterEvent(id), editor);
 	}
 
-
-	unregister (id, editor) {
+	unregister(id, editor) {
 		if (this[MAP][id] && this[MAP][id] !== editor) {
-			log.warn('Unregistering a different editor than was registered. ID: ', id);
+			log.warn(
+				'Unregistering a different editor than was registered. ID: ',
+				id
+			);
 		}
 
 		delete this[MAP][id];

@@ -10,23 +10,27 @@ Base.propTypes = {
 	className: PropTypes.string,
 	strategy: PropTypes.shape({
 		DisplayCmp: PropTypes.any,
-		displayClassName: PropTypes.string
+		displayClassName: PropTypes.string,
 	}),
-	children: PropTypes.any
+	children: PropTypes.any,
 };
-export default function Base (props) {
-	const {className, strategy, children} = props;
+export default function Base(props) {
+	const { className, strategy, children } = props;
 
 	if (strategy?.DisplayCmp) {
 		const Cmp = strategy.DisplayCmp;
 
-		return (
-			<Cmp {...props} />
-		);
+		return <Cmp {...props} />;
 	}
 
 	return (
-		<span className={cx('tag-decorator', className, strategy.displayClassName)}>
+		<span
+			className={cx(
+				'tag-decorator',
+				className,
+				strategy.displayClassName
+			)}
+		>
 			{children}
 		</span>
 	);

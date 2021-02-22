@@ -1,8 +1,8 @@
-import {ContentState, EditorState, Modifier, convertFromHTML} from 'draft-js';
+import { ContentState, EditorState, Modifier, convertFromHTML } from 'draft-js';
 
-import {HANDLED} from '../Constants';
+import { HANDLED } from '../Constants';
 
-function cleanText (text) {
+function cleanText(text) {
 	return `<p>${text.replace('\n', ' ')}</p>`;
 }
 
@@ -11,7 +11,7 @@ export default {
 		return {
 			editorClass: 'single-line',
 
-			handlePastedText (text, html, editorState, {setEditorState}) {
+			handlePastedText(text, html, editorState, { setEditorState }) {
 				const state = convertFromHTML(html || cleanText(text));
 				const blocks = state.contentBlocks;
 
@@ -26,20 +26,18 @@ export default {
 					ContentState.createFromBlockArray([blocks[0]]).getBlockMap()
 				);
 
-				setEditorState(EditorState.push(
-					editorState,
-					newContent,
-					'insert-fragment'
-				));
+				setEditorState(
+					EditorState.push(editorState, newContent, 'insert-fragment')
+				);
 
 				return HANDLED;
 			},
 
-			handleReturn () {
+			handleReturn() {
 				//Block enters from being types
 				//by telling the editor we handled the event
 				return HANDLED;
-			}
+			},
 		};
-	}
+	},
 };

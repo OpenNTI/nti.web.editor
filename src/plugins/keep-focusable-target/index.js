@@ -1,6 +1,7 @@
-import {FocusableTargets} from './utils';
+import { FocusableTargets } from './utils';
 
-export const isFocusablePlaceholder = FocusableTargets.isPlaceholderFocusableTarget;
+export const isFocusablePlaceholder =
+	FocusableTargets.isPlaceholderFocusableTarget;
 
 /**
  * Through editing it is possible to remove any
@@ -8,16 +9,20 @@ export const isFocusablePlaceholder = FocusableTargets.isPlaceholderFocusableTar
  */
 export const create = () => {
 	return {
-		onChange (editorState) {
+		onChange(editorState) {
 			return FocusableTargets.add(editorState);
 		},
 
-		transformOutput (editorState) {
-			return editorState ? FocusableTargets.remove(editorState) : editorState;
+		transformOutput(editorState) {
+			return editorState
+				? FocusableTargets.remove(editorState)
+				: editorState;
 		},
 
-		transformInput (editorState) {
-			return editorState ? FocusableTargets.add(editorState) : editorState;
-		}
+		transformInput(editorState) {
+			return editorState
+				? FocusableTargets.add(editorState)
+				: editorState;
+		},
 	};
 };

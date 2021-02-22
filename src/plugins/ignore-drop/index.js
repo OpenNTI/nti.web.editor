@@ -1,11 +1,11 @@
-import {EVENT_HANDLED} from '../Constants';
+import { EVENT_HANDLED } from '../Constants';
 
 export default {
 	create: () => {
 		return {
-			handleDrop () {
+			handleDrop() {
 				return EVENT_HANDLED;
-			}
+			},
 		};
-	}
+	},
 };

@@ -1,8 +1,12 @@
-import {Modifier} from 'draft-js';
+import { Modifier } from 'draft-js';
 
-import {isLinkEntity, createLinkEntity, updateLinkEntity} from '../../link-utils';
+import {
+	isLinkEntity,
+	createLinkEntity,
+	updateLinkEntity,
+} from '../../link-utils';
 
-function getLinksInSelection (content, selection) {
+function getLinksInSelection(content, selection) {
 	const blockKey = selection.getFocusKey();
 	const focusOffset = selection.getFocusOffset();
 	const anchorOffset = selection.getAnchorOffset();
@@ -21,7 +25,9 @@ function getLinksInSelection (content, selection) {
 		const entityKey = char?.getEntity();
 		const entity = entityKey && content.getEntity(entityKey);
 
-		if (!entity || !isLinkEntity(entity)) { continue; }
+		if (!entity || !isLinkEntity(entity)) {
+			continue;
+		}
 
 		if (links[entityKey]) {
 			links[entityKey].end = i;
@@ -31,7 +37,7 @@ function getLinksInSelection (content, selection) {
 				start: i,
 				text: text.charAt(i),
 				entity,
-				entityKey
+				entityKey,
 			};
 		}
 	}
@@ -39,21 +45,22 @@ function getLinksInSelection (content, selection) {
 	return Object.values(links);
 }
 
-
-function applyNewLink (link, content) {
+function applyNewLink(link, content) {
 	const withEntity = createLinkEntity.createAutoLink(content, link.url);
 	const entity = withEntity.getLastCreatedEntityKey();
 
 	return Modifier.applyEntity(withEntity, link.selection, entity);
 }
 
-function updateExistingLink (existing, link, content) {
+function updateExistingLink(existing, link, content) {
 	//For now bail out of handling applying links over more than one
 	//existing link, or if the link wasn't an auto link
-	if (existing.length > 1) { return content; }
+	if (existing.length > 1) {
+		return content;
+	}
 
 	const updating = existing[0];
-	const {entityKey} = updating;
+	const { entityKey } = updating;
 
 	let newContent = updateLinkEntity(content, entityKey, link.url);
 
@@ -62,12 +69,14 @@ function updateExistingLink (existing, link, content) {
 	return newContent;
 }
 
-export function applyLink (link, content) {
+export function applyLink(link, content) {
 	const existing = getLinksInSelection(content, link.selection);
 
-	return existing.length > 0 ? updateExistingLink(existing, link, content) : applyNewLink(link, content);
+	return existing.length > 0
+		? updateExistingLink(existing, link, content)
+		: applyNewLink(link, content);
 }
 
-export function applyLinks (links, content) {
+export function applyLinks(links, content) {
 	return links.reduce((acc, link) => applyLink(link, acc), content);
 }

@@ -1,15 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {EditorState, ContentState} from 'draft-js';
+import { EditorState, ContentState } from 'draft-js';
 
 import Editor from './Editor';
 
-function getEditorStateForValue (value) {
-	return value ? EditorState.createWithContent(ContentState.createFromText(value)) : EditorState.createEmpty();
+function getEditorStateForValue(value) {
+	return value
+		? EditorState.createWithContent(ContentState.createFromText(value))
+		: EditorState.createEmpty();
 }
 
-
-function getValueForEditorState (editorState) {
+function getValueForEditorState(editorState) {
 	const content = editorState.getCurrentContent();
 	const blocks = content.getBlocksAsArray();
 
@@ -19,46 +20,42 @@ function getValueForEditorState (editorState) {
 export default class PlaintextEditor extends React.Component {
 	static propTypes = {
 		value: PropTypes.string,
-		onContentChange: PropTypes.func
-	}
+		onContentChange: PropTypes.func,
+	};
 
-
-	constructor (props) {
+	constructor(props) {
 		super(props);
 
-		const {value} = props;
+		const { value } = props;
 
 		this.state = {
-			editorState: getEditorStateForValue(value)
+			editorState: getEditorStateForValue(value),
 		};
 	}
 
-
-	componentDidUpdate (prevProps) {
-		const {value:nextValue} = this.props;
-		const {value:prevValue} = prevProps;
+	componentDidUpdate(prevProps) {
+		const { value: nextValue } = this.props;
+		const { value: prevValue } = prevProps;
 
 		if (prevValue !== nextValue) {
 			this.setState({
-				editorState: getEditorStateForValue(nextValue)
+				editorState: getEditorStateForValue(nextValue),
 			});
 		}
 	}
 
-
-	onContentChange = (editorState) => {
-		const {onContentChange} = this.props;
+	onContentChange = editorState => {
+		const { onContentChange } = this.props;
 		const newValue = getValueForEditorState(editorState);
 
 		if (onContentChange) {
 			onContentChange(newValue);
 		}
-	}
+	};
 
-
-	render () {
-		const {editorState} = this.state;
-		const {...otherProps} = this.props;
+	render() {
+		const { editorState } = this.state;
+		const { ...otherProps } = this.props;
 
 		delete otherProps.value;
 		delete otherProps.editorState;

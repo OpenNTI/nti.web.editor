@@ -1,6 +1,6 @@
-import {Entity} from 'draft-js';
+import { Entity } from 'draft-js';
 
-function getFirstEntityKeyInBlock (block, start, end) {
+function getFirstEntityKeyInBlock(block, start, end) {
 	start = start || 0;
 	end = end || block.text.length;
 
@@ -13,18 +13,24 @@ function getFirstEntityKeyInBlock (block, start, end) {
 	}
 }
 
-function getFirstEntityKey (editorState) {
+function getFirstEntityKey(editorState) {
 	const selection = editorState.getSelection();
 	const content = editorState.getCurrentContent();
 	const start = selection.getStartKey();
 	const end = selection.getEndKey();
 
-	if (start !== end) { return null; }
+	if (start !== end) {
+		return null;
+	}
 
-	return getFirstEntityKeyInBlock(content.getBlockForKey(start), selection.getStartOffset(), selection.getEndOffset());
+	return getFirstEntityKeyInBlock(
+		content.getBlockForKey(start),
+		selection.getStartOffset(),
+		selection.getEndOffset()
+	);
 }
 
-export default function getFirstSelectedEntityHref (editorState) {
+export default function getFirstSelectedEntityHref(editorState) {
 	const entityKey = getFirstEntityKey(editorState);
 	const entity = entityKey && Entity.get(entityKey);
 	const link = entity && entity.data && entity.data.href;

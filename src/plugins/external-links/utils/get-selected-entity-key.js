@@ -1,20 +1,20 @@
-function getStartAndEnd (selection) {
+function getStartAndEnd(selection) {
 	const start = selection.getStartOffset();
 	const end = selection.getEndOffset();
 
-	return {start, end: end - 1};
+	return { start, end: end - 1 };
 }
 
-
-function getCollapsedSelectedEntityKey (selection, currentBlock) {
+function getCollapsedSelectedEntityKey(selection, currentBlock) {
 	const start = selection.getStartOffset();
 
-	return currentBlock.getEntityAt(start) || currentBlock.getEntityAt(start - 1);
+	return (
+		currentBlock.getEntityAt(start) || currentBlock.getEntityAt(start - 1)
+	);
 }
 
-
-function getExpandedSelectionEntityKey (selection, currentBlock) {
-	const {start, end} = getStartAndEnd(selection);
+function getExpandedSelectionEntityKey(selection, currentBlock) {
+	const { start, end } = getStartAndEnd(selection);
 
 	let entityKey = void 0;
 
@@ -30,8 +30,8 @@ function getExpandedSelectionEntityKey (selection, currentBlock) {
 		//if we just started set the entity as the current one
 		if (i === start) {
 			entityKey = currentEntity;
-		//if we get an entity thats different from the other characters, there is more than one
-		//so say there is no selected entity
+			//if we get an entity thats different from the other characters, there is more than one
+			//so say there is no selected entity
 		} else if (entityKey !== currentEntity) {
 			entityKey = void 0;
 			break;
@@ -41,15 +41,20 @@ function getExpandedSelectionEntityKey (selection, currentBlock) {
 	return entityKey;
 }
 
-export default function getSelectedEntityKey (editorState) {
+export default function getSelectedEntityKey(editorState) {
 	const selection = editorState.getSelection();
 
-	if (!selection.getHasFocus() || selection.getStartKey() !== selection.getEndKey()) { return void 0; }
+	if (
+		!selection.getHasFocus() ||
+		selection.getStartKey() !== selection.getEndKey()
+	) {
+		return void 0;
+	}
 
 	const content = editorState.getCurrentContent();
 	const currentBlock = content.getBlockForKey(selection.getStartKey());
 
-	return selection.isCollapsed() ?
-		getCollapsedSelectedEntityKey(selection, currentBlock) :
-		getExpandedSelectionEntityKey(selection, currentBlock);
+	return selection.isCollapsed()
+		? getCollapsedSelectedEntityKey(selection, currentBlock)
+		: getExpandedSelectionEntityKey(selection, currentBlock);
 }

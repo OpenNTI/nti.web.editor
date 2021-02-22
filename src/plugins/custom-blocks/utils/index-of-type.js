@@ -1,4 +1,4 @@
-export default function indexOfType (contentBlock, isOfType, editorState) {
+export default function indexOfType(contentBlock, isOfType, editorState) {
 	const blocks = editorState.getCurrentContent().getBlocksAsArray();
 	let count = 0;
 

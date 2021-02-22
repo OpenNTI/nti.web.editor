@@ -1,17 +1,23 @@
 /* eslint-env jest */
-import {convertFromRaw, EditorState} from 'draft-js';
+import { convertFromRaw, EditorState } from 'draft-js';
 
 import singleLinePlugin from '../index';
-import {HANDLED} from '../../Constants';
+import { HANDLED } from '../../Constants';
 
 describe('singleLinePlugin', () => {
 	const plugin = singleLinePlugin.create();
 
 	const rawContent = {
 		blocks: [
-			{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+			{
+				text: 'paragraph',
+				type: 'unstyled',
+				depth: 0,
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
 		],
-		entityMap: {}
+		entityMap: {},
 	};
 
 	const content = convertFromRaw(rawContent);
@@ -19,9 +25,16 @@ describe('singleLinePlugin', () => {
 
 	test('Test text paste handler', () => {
 		let newState;
-		const result = plugin.handlePastedText (void 0, '<p>some html</p>', editorState, {setEditorState: (val) => {
-			newState = val;
-		}});
+		const result = plugin.handlePastedText(
+			void 0,
+			'<p>some html</p>',
+			editorState,
+			{
+				setEditorState: val => {
+					newState = val;
+				},
+			}
+		);
 
 		const blocks = newState.getCurrentContent().getBlocksAsArray();
 
@@ -35,9 +48,16 @@ describe('singleLinePlugin', () => {
 
 	test('Test html paste handler', () => {
 		let newState;
-		const result = plugin.handlePastedText ('some text', void 0, editorState, {setEditorState: (val) => {
-			newState = val;
-		}});
+		const result = plugin.handlePastedText(
+			'some text',
+			void 0,
+			editorState,
+			{
+				setEditorState: val => {
+					newState = val;
+				},
+			}
+		);
 
 		const blocks = newState.getCurrentContent().getBlocksAsArray();
 

@@ -1,29 +1,32 @@
-import {Modifier, EditorState, SelectionState} from 'draft-js';
+import { Modifier, EditorState, SelectionState } from 'draft-js';
 
-import {STYLE_SET} from '../../../Constants';
+import { STYLE_SET } from '../../../Constants';
 
-function setToMap (a) {
+function setToMap(a) {
 	let acc = {};
 
-	a.forEach(x => acc[x] = true);
+	a.forEach(x => (acc[x] = true));
 
 	return acc;
 }
 
-function diff (allowed, all) {
+function diff(allowed, all) {
 	const allowedMap = setToMap(allowed);
 
 	return Array.from(all).filter(x => !allowedMap[x]);
 }
 
-function computeDisallowedStyles (allowedStyles) {
+function computeDisallowedStyles(allowedStyles) {
 	return diff(allowedStyles, STYLE_SET);
 }
 
-function cleanStyles (disallowed, content, range, block) {
+function cleanStyles(disallowed, content, range, block) {
 	let styles = new Set();
 
-	block.findStyleRanges(x => styles = new Set([...styles, ...x.getStyle()]), () => {});
+	block.findStyleRanges(
+		x => (styles = new Set([...styles, ...x.getStyle()])),
+		() => {}
+	);
 
 	for (let style of styles) {
 		if (disallowed[style]) {
@@ -34,9 +37,11 @@ function cleanStyles (disallowed, content, range, block) {
 	return content;
 }
 
-export default function fixStateForAllowed (editorState, allowed, byBlockType) {
+export default function fixStateForAllowed(editorState, allowed, byBlockType) {
 	//TODO: instead of just checking the size check that they are the same set
-	if (allowed.size === STYLE_SET.size) { return editorState; }
+	if (allowed.size === STYLE_SET.size) {
+		return editorState;
+	}
 
 	const disallowedStyles = allowed && computeDisallowedStyles(allowed);
 	const styleMap = disallowedStyles && setToMap(disallowedStyles);
@@ -56,7 +61,7 @@ export default function fixStateForAllowed (editorState, allowed, byBlockType) {
 			anchorKey: blockKey,
 			anchorOffset: 0,
 			focusKey: blockKey,
-			focusOffset: block.getLength()
+			focusOffset: block.getLength(),
 		});
 
 		if (disallowedStyles && disallowedStyles.length > 0) {
@@ -68,9 +73,11 @@ export default function fixStateForAllowed (editorState, allowed, byBlockType) {
 		}
 	}
 
-	if (content === originalContent) { return editorState; }
+	if (content === originalContent) {
+		return editorState;
+	}
 
 	return EditorState.set(editorState, {
-		currentContent: content
+		currentContent: content,
 	});
 }

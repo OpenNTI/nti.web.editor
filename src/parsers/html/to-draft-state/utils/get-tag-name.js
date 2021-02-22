@@ -1,3 +1,3 @@
-export default function getTagName (tag) {
+export default function getTagName(tag) {
 	return tag.nodeName.toLowerCase();
 }

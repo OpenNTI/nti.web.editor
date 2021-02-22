@@ -7,16 +7,64 @@ describe('getBlockTags', () => {
 	test('Test various tag types', () => {
 		const rawContent = {
 			blocks: [
-				{ text: 'title', type: 'header-one', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'sub-title', type: 'header-two', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'list-item', type: 'ordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'list-item', type: 'unordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'list-item', type: 'unordered-list-item', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+				{
+					text: 'title',
+					type: 'header-one',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'sub-title',
+					type: 'header-two',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'paragraph',
+					type: 'unstyled',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'list-item',
+					type: 'ordered-list-item',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'list-item',
+					type: 'ordered-list-item',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'list-item',
+					type: 'ordered-list-item',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'list-item',
+					type: 'unordered-list-item',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'list-item',
+					type: 'unordered-list-item',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
 			],
-			entityMap: {}
+			entityMap: {},
 		};
 
 		const content = convertFromRaw(rawContent);

@@ -1,12 +1,12 @@
-import {ENTITIES} from '../../Constants';
+import { ENTITIES } from '../../Constants';
 
 export default function (contentBlock, callback, contentState) {
-	contentBlock.findEntityRanges(
-		(character) => {
-			const entityKey = character.getEntity();
+	contentBlock.findEntityRanges(character => {
+		const entityKey = character.getEntity();
 
-			return entityKey !== null && contentState.getEntity(entityKey).getType() === ENTITIES.LINK;
-		},
-		callback
-	);
+		return (
+			entityKey !== null &&
+			contentState.getEntity(entityKey).getType() === ENTITIES.LINK
+		);
+	}, callback);
 }

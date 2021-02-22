@@ -1,11 +1,11 @@
-function createTagList () {
+function createTagList() {
 	return {
-		open: {entity: null, style: new Set()},
-		close: {entity: null, style: new Set()}
+		open: { entity: null, style: new Set() },
+		close: { entity: null, style: new Set() },
 	};
 }
 
-function openStyles (tagList, styles) {
+function openStyles(tagList, styles) {
 	for (let style of styles) {
 		tagList.open.style.add(style);
 	}
@@ -13,7 +13,7 @@ function openStyles (tagList, styles) {
 	return tagList;
 }
 
-function closeStyles (tagList, styles) {
+function closeStyles(tagList, styles) {
 	for (let style of styles) {
 		tagList.close.style.add(style);
 	}
@@ -21,19 +21,19 @@ function closeStyles (tagList, styles) {
 	return tagList;
 }
 
-function openEntity (tagList, entity) {
+function openEntity(tagList, entity) {
 	tagList.open.entity = entity;
 
 	return tagList;
 }
 
-function closeEntity (tagList, entity) {
+function closeEntity(tagList, entity) {
 	tagList.close.entity = entity;
 
 	return tagList;
 }
 
-function getStylesToClose (open, styles) {
+function getStylesToClose(open, styles) {
 	const toClose = new Set(open.style);
 
 	for (let style of styles) {
@@ -43,7 +43,7 @@ function getStylesToClose (open, styles) {
 	return toClose;
 }
 
-function getStylesToOpen (open, styles) {
+function getStylesToOpen(open, styles) {
 	const toOpen = new Set(styles);
 
 	for (let style of open.style) {
@@ -53,9 +53,8 @@ function getStylesToOpen (open, styles) {
 	return toOpen;
 }
 
-
-function syncOpenedTags (open, tagList) {
-	open = {...open};
+function syncOpenedTags(open, tagList) {
+	open = { ...open };
 
 	if (tagList.close.entity === open.entity) {
 		open.entity = null;
@@ -76,7 +75,7 @@ function syncOpenedTags (open, tagList) {
 	return open;
 }
 
-function closeOpenTags (open) {
+function closeOpenTags(open) {
 	let tagList = createTagList();
 
 	if (open.entity) {
@@ -88,16 +87,15 @@ function closeOpenTags (open) {
 	return tagList;
 }
 
-
-export default function normalizeCharacterList (characterList) {
+export default function normalizeCharacterList(characterList) {
 	characterList = characterList.toJS();
 
 	let tags = {};
 
-	let open = {entity: null, style: new Set()};
+	let open = { entity: null, style: new Set() };
 
 	for (let i = 0; i < characterList.length; i++) {
-		let {entity, style} = characterList[i];
+		let { entity, style } = characterList[i];
 		let tagList = createTagList();
 
 		if (entity != null && entity !== open.entity) {

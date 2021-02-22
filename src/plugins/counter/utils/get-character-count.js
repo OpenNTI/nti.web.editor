@@ -10,7 +10,7 @@ const NEW_LINE_REGEX = /(?:\r\n|\r|\n)/g; //new line, carriage return, line feed
  * @param  {Object} editorStateOrBlock the editorState or block to get the character count from
  * @returns {number}             the number of characters in the editorState
  */
-export default function getCharacterCount (editorStateOrBlock) {
+export default function getCharacterCount(editorStateOrBlock) {
 	const text = getPlainText(editorStateOrBlock, '');
 	const cleanText = text.replace(NEW_LINE_REGEX, '');
 

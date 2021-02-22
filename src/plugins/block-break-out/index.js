@@ -1,9 +1,7 @@
-import {
-	RichUtils
-} from 'draft-js';
+import { RichUtils } from 'draft-js';
 
-import {BLOCKS} from '../../Constants';
-import {HANDLED, NOT_HANDLED} from '../Constants';
+import { BLOCKS } from '../../Constants';
+import { HANDLED, NOT_HANDLED } from '../Constants';
 
 import handleBreak from './handleBreak';
 import handleConvertIfEmpty from './handleConvertIfEmpty';
@@ -14,13 +12,13 @@ const DEFAULT_BREAK_TO = {
 	[BLOCKS.HEADER_THREE]: BLOCKS.UNSTYLED,
 	[BLOCKS.HEADER_FOUR]: BLOCKS.UNSTYLED,
 	[BLOCKS.HEADER_FIVE]: BLOCKS.UNSTYLED,
-	[BLOCKS.HEADER_SIX]: BLOCKS.HEADER_SIX
+	[BLOCKS.HEADER_SIX]: BLOCKS.HEADER_SIX,
 };
 
 const DEFAULT_CONVERT_IF_EMPTY = {
 	[BLOCKS.ORDERED_LIST_ITEM]: BLOCKS.UNSTYLED,
 	[BLOCKS.UNORDERED_LIST_ITEM]: BLOCKS.UNSTYLED,
-	[BLOCKS.BLOCKQUOTE]: BLOCKS.UNSTYLED
+	[BLOCKS.BLOCKQUOTE]: BLOCKS.UNSTYLED,
 };
 
 /**
@@ -34,29 +32,46 @@ const DEFAULT_CONVERT_IF_EMPTY = {
  * @return {Object}        the config
  */
 export default {
-	create: (config = {breakTo: DEFAULT_BREAK_TO, convertIfEmpty: DEFAULT_CONVERT_IF_EMPTY}) => {
-		const {breakTo, convertIfEmpty} = config;
+	create: (
+		config = {
+			breakTo: DEFAULT_BREAK_TO,
+			convertIfEmpty: DEFAULT_CONVERT_IF_EMPTY,
+		}
+	) => {
+		const { breakTo, convertIfEmpty } = config;
 
 		return {
-			handleReturn (e, editorState, {setEditorState}) {
+			handleReturn(e, editorState, { setEditorState }) {
 				const selection = editorState.getSelection();
 
 				//If the selection isn't collapsed there's nothing to do
-				if (!selection.isCollapsed()) { return NOT_HANDLED; }
+				if (!selection.isCollapsed()) {
+					return NOT_HANDLED;
+				}
 
-				const currentBlockType = RichUtils.getCurrentBlockType(editorState);
+				const currentBlockType = RichUtils.getCurrentBlockType(
+					editorState
+				);
 				let handled = NOT_HANDLED;
 
 				if (convertIfEmpty[currentBlockType]) {
-					handled = handleConvertIfEmpty(convertIfEmpty[currentBlockType], editorState, setEditorState);
+					handled = handleConvertIfEmpty(
+						convertIfEmpty[currentBlockType],
+						editorState,
+						setEditorState
+					);
 				}
 
 				if (handled !== HANDLED && breakTo[currentBlockType]) {
-					handled = handleBreak(breakTo[currentBlockType], editorState, setEditorState);
+					handled = handleBreak(
+						breakTo[currentBlockType],
+						editorState,
+						setEditorState
+					);
 				}
 
 				return handled;
-			}
+			},
 		};
-	}
+	},
 };

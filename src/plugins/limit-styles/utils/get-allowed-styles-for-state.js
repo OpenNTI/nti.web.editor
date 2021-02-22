@@ -1,4 +1,8 @@
-export default function getAlllowedStylesForState (editorState, allowed, byBlockType) {
+export default function getAlllowedStylesForState(
+	editorState,
+	allowed,
+	byBlockType
+) {
 	const selection = editorState.getSelection();
 	const anchorKey = selection.getAnchorKey();
 	const focusKey = selection.getFocusKey();

@@ -1,5 +1,9 @@
 /* eslint-env jest */
-import { getDefaultEditorState, getRawFromState, getEditorState } from '../../../../__test__/utils';
+import {
+	getDefaultEditorState,
+	getRawFromState,
+	getEditorState,
+} from '../../../../__test__/utils';
 import { BLOCKS } from '../../../../Constants';
 import fixStateForAllowed from '../fix-state-for-allowed';
 
@@ -19,11 +23,29 @@ describe('Fix state for allowed ', () => {
 	test('all blocks are unstyled or block', () => {
 		const editorState = getEditorState({
 			blocks: [
-				{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'code', type: 'code-block', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'quote', type: 'blockquote', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+				{
+					text: 'paragraph',
+					type: 'unstyled',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'code',
+					type: 'code-block',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'quote',
+					type: 'blockquote',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
 			],
-			entityMap: {}
+			entityMap: {},
 		});
 		const allowed = new Set([BLOCKS.UNSTYLED, BLOCKS.BLOCKQUOTE]);
 

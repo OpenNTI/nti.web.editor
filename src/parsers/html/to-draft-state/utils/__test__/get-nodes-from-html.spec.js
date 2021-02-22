@@ -2,7 +2,6 @@
 import getNodesFromHTML from '../get-nodes-from-html';
 import getTagName from '../get-tag-name';
 
-
 describe('getNodesFromHTML', () => {
 	test('simple case', () => {
 		const nodes = getNodesFromHTML(`
@@ -28,8 +27,7 @@ describe('getNodesFromHTML', () => {
 			implicit block 1
 <p>paragraph</p>
 implicit block 2
-`
-		);
+`);
 
 		expect(nodes.length).toBe(3);
 
@@ -44,7 +42,9 @@ implicit block 2
 	});
 
 	test('keeps node attributes', () => {
-		const nodes = getNodesFromHTML('<p attr="value">Paragraph <a href="test">link</a></p>');
+		const nodes = getNodesFromHTML(
+			'<p attr="value">Paragraph <a href="test">link</a></p>'
+		);
 
 		expect(nodes.length).toBe(1);
 
@@ -63,7 +63,9 @@ implicit block 2
 
 	describe('Whitespace', () => {
 		test('collapses whitespace', () => {
-			const nodes = getNodesFromHTML('<p>  Test Paragraph \nLine <a href="test"> Link <b>bold</b></a></p>');
+			const nodes = getNodesFromHTML(
+				'<p>  Test Paragraph \nLine <a href="test"> Link <b>bold</b></a></p>'
+			);
 
 			expect(nodes[0].textContent).toBe('Test Paragraph Line Link bold');
 
@@ -120,7 +122,7 @@ implicit block 2
 		</ol>
 	</li>
 	<li>item 1-3</li>
-</ul>`			
+</ul>`
 		);
 
 		expect(nodes.length).toBe(5);
@@ -129,10 +131,12 @@ implicit block 2
 			expect(getTagName(node)).toBe('li');
 		}
 
-		const isOrderedListItem = (node) => getTagName(node.parentNode) === 'ol';
-		const isUnorderedListItem = (node) => getTagName(node.parentNode) === 'ul';
+		const isOrderedListItem = node => getTagName(node.parentNode) === 'ol';
+		const isUnorderedListItem = node =>
+			getTagName(node.parentNode) === 'ul';
 
-		const getDepth = (node) => parseInt(node.parentNode.getAttribute('data-depth'), 10);
+		const getDepth = node =>
+			parseInt(node.parentNode.getAttribute('data-depth'), 10);
 
 		expect(nodes[0].textContent).toBe('item 1-1');
 		expect(isUnorderedListItem(nodes[0])).toBeTruthy();
@@ -145,11 +149,11 @@ implicit block 2
 		expect(nodes[2].textContent).toBe('item 2-1');
 		expect(isOrderedListItem(nodes[2])).toBeTruthy();
 		expect(getDepth(nodes[2])).toBe(1);
-		
+
 		expect(nodes[3].textContent).toBe('item 2-2');
 		expect(isOrderedListItem(nodes[3])).toBeTruthy();
 		expect(getDepth(nodes[3])).toBe(1);
-		
+
 		expect(nodes[4].textContent).toBe('item 1-3');
 		expect(isUnorderedListItem(nodes[4])).toBeTruthy();
 		expect(getDepth(nodes[4])).toBe(0);

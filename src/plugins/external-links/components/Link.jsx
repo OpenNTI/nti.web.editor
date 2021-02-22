@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
 
-import {SelectedEntityKey, EditingEntityKey} from '../Constants';
-import {getEventFor} from '../../Store';
+import { SelectedEntityKey, EditingEntityKey } from '../Constants';
+import { getEventFor } from '../../Store';
 
 const selectedEntityKeyEvent = getEventFor(SelectedEntityKey);
 const editingEntityKeyEvent = getEventFor(EditingEntityKey);
@@ -18,51 +18,51 @@ export default class ExternalLink extends React.Component {
 		getEditorState: PropTypes.func,
 		store: PropTypes.shape({
 			addListeners: PropTypes.func,
-			removeListeners: PropTypes.func
-		})
+			removeListeners: PropTypes.func,
+		}),
+	};
+
+	state = { focused: false, editing: false };
+
+	setAnchorRef = x => {
+		this.anchorRef = x;
+	};
+
+	get entityData() {
+		const { getEditorState, entityKey } = this.props;
+
+		return getEditorState()
+			.getCurrentContent()
+			.getEntity(entityKey)
+			.getData();
 	}
 
-	state = {focused: false, editing: false}
-
-	setAnchorRef = (x) => { this.anchorRef = x; }
-
-	get entityData () {
-		const {getEditorState, entityKey} = this.props;
-
-		return getEditorState().getCurrentContent().getEntity(entityKey).getData();
-	}
-
-
-	get offsetKey () {
+	get offsetKey() {
 		return this.props.offsetKey;
 	}
 
-
-	get decoratedText () {
+	get decoratedText() {
 		return this.props.decoratedText;
 	}
 
-	get node () {
+	get node() {
 		return this.anchorRef;
 	}
 
-
-	getBoundingClientRect () {
-		return this.anchorRef && this.anchorRef.getBoundingClientRect ?
-			this.anchorRef.getBoundingClientRect() :
-			{top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0};
+	getBoundingClientRect() {
+		return this.anchorRef && this.anchorRef.getBoundingClientRect
+			? this.anchorRef.getBoundingClientRect()
+			: { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 };
 	}
-
 
 	events = {
 		[selectedEntityKeyEvent]: x => this.onSelectedEntityKeyChanged(x),
-		[editingEntityKeyEvent]: x => this.onEditingEntityKeyChanged(x)
-	}
+		[editingEntityKeyEvent]: x => this.onEditingEntityKeyChanged(x),
+	};
 
-
-	componentDidUpdate (prevProps) {
-		const {entityKey:newKey} = this.props;
-		const {entityKey:oldKey} = prevProps;
+	componentDidUpdate(prevProps) {
+		const { entityKey: newKey } = this.props;
+		const { entityKey: oldKey } = prevProps;
 
 		if (newKey !== oldKey) {
 			this.unregisterCmp(prevProps);
@@ -70,9 +70,8 @@ export default class ExternalLink extends React.Component {
 		}
 	}
 
-
-	componentDidMount () {
-		const {store} = this.props;
+	componentDidMount() {
+		const { store } = this.props;
 
 		if (store) {
 			store.addListeners(this.events);
@@ -81,9 +80,8 @@ export default class ExternalLink extends React.Component {
 		}
 	}
 
-
-	componentWillUnmount () {
-		const {store} = this.props;
+	componentWillUnmount() {
+		const { store } = this.props;
 
 		if (store) {
 			store.removeListeners(this.events);
@@ -92,9 +90,8 @@ export default class ExternalLink extends React.Component {
 		}
 	}
 
-
-	registerCmp (props = this.props) {
-		const {store, entityKey} = props;
+	registerCmp(props = this.props) {
+		const { store, entityKey } = props;
 
 		if (store) {
 			this.unregisterCmp();
@@ -105,9 +102,8 @@ export default class ExternalLink extends React.Component {
 		}
 	}
 
-
-	unregisterCmp (props = this.props) {
-		const {store, entityKey} = props;
+	unregisterCmp(props = this.props) {
+		const { store, entityKey } = props;
 
 		if (store) {
 			const cmps = store.getItem(entityKey) || [];
@@ -121,34 +117,31 @@ export default class ExternalLink extends React.Component {
 		}
 	}
 
-
-	onSelectedEntityKeyChanged = (selectedKey) => {
-		const {entityKey} = this.props;
-		const {focused} = this.state;
+	onSelectedEntityKeyChanged = selectedKey => {
+		const { entityKey } = this.props;
+		const { focused } = this.state;
 		const shouldFocus = entityKey === selectedKey;
 
 		if (focused !== shouldFocus) {
 			this.setState({
-				focused: shouldFocus
+				focused: shouldFocus,
 			});
 		}
-	}
+	};
 
-
-	onEditingEntityKeyChanged = (editingKey) => {
-		const {entityKey} = this.props;
+	onEditingEntityKeyChanged = editingKey => {
+		const { entityKey } = this.props;
 
 		this.setState({
-			editing: entityKey === editingKey
+			editing: entityKey === editingKey,
 		});
-	}
+	};
 
-
-	render () {
-		const {children} = this.props;
-		const {focused, editing} = this.state;
-		const {href} = this.entityData;
-		const cls = cx('draft-core-external-link', {focused, editing});
+	render() {
+		const { children } = this.props;
+		const { focused, editing } = this.state;
+		const { href } = this.entityData;
+		const cls = cx('draft-core-external-link', { focused, editing });
 
 		return (
 			<a href={href} className={cls} ref={this.setAnchorRef}>

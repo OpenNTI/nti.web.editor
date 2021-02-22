@@ -1,33 +1,36 @@
 /* eslint-env jest */
-import {BLOCKS, ENTITIES, MUTABILITY} from '../../../../Constants';
+import { BLOCKS, ENTITIES, MUTABILITY } from '../../../../Constants';
 import getSelectionForEntityKeyAtOffset from '../get-selection-for-entity-key-at-offset';
 
-import {getStateAndOffsetKeys} from './utils';
-
+import { getStateAndOffsetKeys } from './utils';
 
 describe('get-selection-for-entity-key-at-offset', () => {
 	describe('Single Entity Range', () => {
 		test('Start of block', () => {
-			const {state, offsetKeys, blockKeys} = getStateAndOffsetKeys({
+			const { state, offsetKeys, blockKeys } = getStateAndOffsetKeys({
 				blocks: [
 					{
 						type: BLOCKS.UNSTYLED,
 						depth: 0,
 						text: 'link and then some',
 						inlineStyleRanges: [],
-						entityRanges: [{offset: 0, length: 4, key: 0}]
-					}
+						entityRanges: [{ offset: 0, length: 4, key: 0 }],
+					},
 				],
 				entityMap: {
 					0: {
 						type: ENTITIES.LINK,
 						mutability: MUTABILITY.MUTABLE,
-						data: {name: 0, href: 'http://www.google.com'}
-					}
-				}
+						data: { name: 0, href: 'http://www.google.com' },
+					},
+				},
 			});
 
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[0], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[0],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(0);
@@ -37,26 +40,30 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		});
 
 		test('Middle of block', () => {
-			const {state, offsetKeys, blockKeys} = getStateAndOffsetKeys({
+			const { state, offsetKeys, blockKeys } = getStateAndOffsetKeys({
 				blocks: [
 					{
 						type: BLOCKS.UNSTYLED,
 						depth: 0,
 						text: 'Some text and a link and then some',
 						inlineStyleRanges: [],
-						entityRanges: [{offset: 16, length: 4, key: 0}]
-					}
+						entityRanges: [{ offset: 16, length: 4, key: 0 }],
+					},
 				],
 				entityMap: {
 					0: {
 						type: ENTITIES.LINK,
 						mutability: MUTABILITY.MUTABLE,
-						data: {name: 0, href: 'http://www.google.com'}
-					}
-				}
+						data: { name: 0, href: 'http://www.google.com' },
+					},
+				},
 			});
 
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[0], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[0],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(16);
@@ -66,26 +73,30 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		});
 
 		test('End of block', () => {
-			const {state, offsetKeys, blockKeys} = getStateAndOffsetKeys({
+			const { state, offsetKeys, blockKeys } = getStateAndOffsetKeys({
 				blocks: [
 					{
 						type: BLOCKS.UNSTYLED,
 						depth: 0,
 						text: 'Some text and a link',
 						inlineStyleRanges: [],
-						entityRanges: [{offset: 16, length: 4, key: 0}]
-					}
+						entityRanges: [{ offset: 16, length: 4, key: 0 }],
+					},
 				],
 				entityMap: {
 					0: {
 						type: ENTITIES.LINK,
 						mutability: MUTABILITY.MUTABLE,
-						data: {name: 0, href: 'http://www.google.com'}
-					}
-				}
+						data: { name: 0, href: 'http://www.google.com' },
+					},
+				},
 			});
 
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[0], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[0],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(16);
@@ -101,27 +112,32 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		let blockKeys = null;
 
 		beforeEach(() => {
-			const {state:s, offsetKeys:o, blockKeys:b} = getStateAndOffsetKeys({
+			const {
+				state: s,
+				offsetKeys: o,
+				blockKeys: b,
+			} = getStateAndOffsetKeys({
 				blocks: [
 					{
 						type: BLOCKS.UNSTYLED,
 						depth: 0,
-						text: 'Some text and a link. Then some more text and another link. And one more link for good measure',
+						text:
+							'Some text and a link. Then some more text and another link. And one more link for good measure',
 						inlineStyleRanges: [],
 						entityRanges: [
-							{offset: 16, length: 4, key: 0},
-							{offset: 54, length: 5, key: 0},
-							{offset: 73, length: 4, key: 0}
-						]
-					}
+							{ offset: 16, length: 4, key: 0 },
+							{ offset: 54, length: 5, key: 0 },
+							{ offset: 73, length: 4, key: 0 },
+						],
+					},
 				],
 				entityMap: {
 					0: {
 						type: ENTITIES.LINK,
 						mutability: MUTABILITY.MUTABLE,
-						data: {name: 0, href: 'http://www.google.com'}
-					}
-				}
+						data: { name: 0, href: 'http://www.google.com' },
+					},
+				},
 			});
 
 			state = s;
@@ -130,7 +146,11 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		});
 
 		test('Selection for first entity range', () => {
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[0], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[0],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(16);
@@ -139,9 +159,12 @@ describe('get-selection-for-entity-key-at-offset', () => {
 			expect(selection.getEndOffset()).toEqual(20);
 		});
 
-
 		test('Selection for second entity range', () => {
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[1], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[1],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(54);
@@ -151,7 +174,11 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		});
 
 		test('Selection for third entity range', () => {
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[2], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[2],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(73);
@@ -161,14 +188,17 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		});
 	});
 
-
 	describe('Single Entity, Multiple Consecutive Entity Ranges', () => {
 		let state = null;
 		let offsetKeys = null;
 		let blockKeys = null;
 
 		beforeEach(() => {
-			const {state:s, offsetKeys:o, blockKeys:b} = getStateAndOffsetKeys({
+			const {
+				state: s,
+				offsetKeys: o,
+				blockKeys: b,
+			} = getStateAndOffsetKeys({
 				blocks: [
 					{
 						type: BLOCKS.UNSTYLED,
@@ -176,19 +206,19 @@ describe('get-selection-for-entity-key-at-offset', () => {
 						text: 'This has a link that is more than one range',
 						inlineStyleRanges: [],
 						entityRanges: [
-							{offset: 11, length: 10, key: 0},
-							{offset: 21, length: 12, key: 0},
-							{offset: 33, length: 10, key: 0}
-						]
-					}
+							{ offset: 11, length: 10, key: 0 },
+							{ offset: 21, length: 12, key: 0 },
+							{ offset: 33, length: 10, key: 0 },
+						],
+					},
 				],
 				entityMap: {
 					0: {
 						type: ENTITIES.LINK,
 						mutability: MUTABILITY.MUTABLE,
-						data: {name: 0, href: 'http://www.google.com'}
-					}
-				}
+						data: { name: 0, href: 'http://www.google.com' },
+					},
+				},
 			});
 
 			state = s;
@@ -197,7 +227,11 @@ describe('get-selection-for-entity-key-at-offset', () => {
 		});
 
 		test('Fist Range', () => {
-			const selection = getSelectionForEntityKeyAtOffset(0, offsetKeys[0], state);
+			const selection = getSelectionForEntityKeyAtOffset(
+				0,
+				offsetKeys[0],
+				state
+			);
 
 			expect(selection.getStartKey()).toEqual(blockKeys[0]);
 			expect(selection.getStartOffset()).toEqual(11);

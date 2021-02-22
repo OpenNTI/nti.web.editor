@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
-import {BLOCKS, STYLES} from '../Constants';
-import {HTML as HTMLParser} from '../parsers';
+import { BLOCKS, STYLES } from '../Constants';
+import { HTML as HTMLParser } from '../parsers';
 import Editor from '../components/Editor';
 import * as StyleButtons from '../components/style';
 import ContextProvider from '../ContextProvider';
@@ -18,23 +18,30 @@ const Initial = Symbol('Initial');
 const toDraftState = x => HTMLParser.toDraftState(x);
 const fromDraftState = x => HTMLParser.fromDraftState(x);
 
-const getEditorPlugins = () => ([
-	Plugins.LimitBlockTypes.create({allow: new Set([BLOCKS.UNSTYLED])}),
-	Plugins.LimitStyles.create({allow: new Set([STYLES.BOLD, STYLES.ITALIC, STYLES.UNDERLINE])}),
+const getEditorPlugins = () => [
+	Plugins.LimitBlockTypes.create({ allow: new Set([BLOCKS.UNSTYLED]) }),
+	Plugins.LimitStyles.create({
+		allow: new Set([STYLES.BOLD, STYLES.ITALIC, STYLES.UNDERLINE]),
+	}),
 
 	Plugins.Links.AutoLink.create(),
 	Plugins.Links.CustomLinks.create(),
 
 	Plugins.KeepFocusInView.create(),
-	Plugins.ContiguousEntities.create()
-]);
+	Plugins.ContiguousEntities.create(),
+];
 
 RichTextEditor.propTypes = {
 	className: PropTypes.string,
 	value: PropTypes.string,
-	onContentChange: PropTypes.func
+	onContentChange: PropTypes.func,
 };
-export default function RichTextEditor ({className, value, onContentChange:onContentChangeProp, ...otherProps}) {
+export default function RichTextEditor({
+	className,
+	value,
+	onContentChange: onContentChangeProp,
+	...otherProps
+}) {
 	const [editorRef, setEditorRef] = React.useState();
 
 	const contentRef = React.useRef(Initial);
@@ -52,7 +59,7 @@ export default function RichTextEditor ({className, value, onContentChange:onCon
 		setPlugins(getEditorPlugins());
 	}, []);
 
-	const onContentChange = (newEditorState) => {
+	const onContentChange = newEditorState => {
 		const newContent = fromDraftState(newEditorState)[0];
 
 		contentRef.current = newContent;
@@ -74,9 +81,21 @@ export default function RichTextEditor ({className, value, onContentChange:onCon
 			{editorRef && (
 				<ContextProvider editor={editorRef}>
 					<div className={cx('controls')}>
-						<StyleButtons.BoldButton plain className={cx('button')} activeClassName={cx('active')} />
-						<StyleButtons.ItalicButton plain className={cx('button')} activeClassName={cx('active')} />
-						<StyleButtons.UnderlineButton plain className={cx('button')} activeClassName={cx('active')} />
+						<StyleButtons.BoldButton
+							plain
+							className={cx('button')}
+							activeClassName={cx('active')}
+						/>
+						<StyleButtons.ItalicButton
+							plain
+							className={cx('button')}
+							activeClassName={cx('active')}
+						/>
+						<StyleButtons.UnderlineButton
+							plain
+							className={cx('button')}
+							activeClassName={cx('active')}
+						/>
 					</div>
 				</ContextProvider>
 			)}

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
-import {getEntityData} from '../../link-utils';
+import { getEntityData } from '../../link-utils';
 
 import Styles from './Link.css';
 
@@ -15,9 +15,9 @@ Link.propTypes = {
 	children: PropTypes.any,
 	linkRef: PropTypes.any,
 };
-function Link ({className, entityKey, getEditorState, children, linkRef}) {
+function Link({ className, entityKey, getEditorState, children, linkRef }) {
 	const entityData = getEntityData(entityKey, getEditorState);
-	const {href} = entityData ?? {};
+	const { href } = entityData ?? {};
 
 	return (
 		<a href={href} className={cx('editor-link', className)} ref={linkRef}>
@@ -26,5 +26,5 @@ function Link ({className, entityKey, getEditorState, children, linkRef}) {
 	);
 }
 
-const LinkRef = (props, ref) => (<Link {...props} linkRef={ref} />);
+const LinkRef = (props, ref) => <Link {...props} linkRef={ref} />;
 export default React.forwardRef(LinkRef);

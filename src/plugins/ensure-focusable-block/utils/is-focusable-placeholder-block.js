@@ -1,8 +1,9 @@
-export default function isFocusablePlaceholderBlock (block) {
-	const {data} = block;
+export default function isFocusablePlaceholderBlock(block) {
+	const { data } = block;
 
-	return data && (
-		(data.get && data.get('focusablePlaceholder')) ||
-		(data['focusablePlaceholder'])
+	return (
+		data &&
+		((data.get && data.get('focusablePlaceholder')) ||
+			data['focusablePlaceholder'])
 	);
 }

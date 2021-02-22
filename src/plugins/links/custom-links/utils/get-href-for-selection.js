@@ -1,9 +1,10 @@
-
-function getFirstEntityKey (content, selection) {
+function getFirstEntityKey(content, selection) {
 	const startBlock = selection.getStartKey();
 	const endBlock = selection.getEndKey();
 
-	if (startBlock !== endBlock) { return null; }
+	if (startBlock !== endBlock) {
+		return null;
+	}
 
 	const block = content.getBlockForKey(startBlock);
 	const start = selection.getStartOffset() || 0;
@@ -18,7 +19,7 @@ function getFirstEntityKey (content, selection) {
 	}
 }
 
-export default function getHrefForSelection (editorState) {
+export default function getHrefForSelection(editorState) {
 	const content = editorState.getCurrentContent();
 	const selection = editorState.getSelection();
 

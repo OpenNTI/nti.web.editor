@@ -1,53 +1,49 @@
 /* eslint-env jest */
-import {EditorState, convertFromRaw} from 'draft-js';
+import { EditorState, convertFromRaw } from 'draft-js';
 
-
-import {BLOCKS} from '../../../../Constants';
+import { BLOCKS } from '../../../../Constants';
 import getBlockCount from '../get-block-count';
 
-
-function createState (raw) {
+function createState(raw) {
 	return EditorState.createWithContent(convertFromRaw(raw));
 }
 
-function isBlock (block) {
+function isBlock(block) {
 	return block.getType() === BLOCKS.HEADER_ONE;
 }
 
-
-function createTarget () {
+function createTarget() {
 	return {
 		type: BLOCKS.HEADER_ONE,
 		depth: 0,
 		text: 'Target Block',
 		inlineStyleRanges: [],
-		entityRanges: []
+		entityRanges: [],
 	};
 }
 
-function createNonTarget () {
+function createNonTarget() {
 	return {
 		type: BLOCKS.UNSTYLED,
 		depth: 0,
 		text: 'Non-target Block',
 		inlineStyleRanges: [],
-		entityRanges: []
+		entityRanges: [],
 	};
 }
 
-function createNested () {
+function createNested() {
 	return {
 		type: BLOCKS.ATOMIC,
 		depth: 0,
 		text: 'Nested Block',
 		inlineStyleRanges: [],
-		entityRanges: []
+		entityRanges: [],
 	};
 }
 
-
-function getCount (blocks, group, getNested) {
-	const state = createState({blocks, entityMap: {}});
+function getCount(blocks, group, getNested) {
+	const state = createState({ blocks, entityMap: {} });
 
 	return getBlockCount(state, isBlock, group, getNested);
 }
@@ -55,25 +51,41 @@ function getCount (blocks, group, getNested) {
 describe('getBlockCount', () => {
 	describe('non-grouped', () => {
 		test('no blocks', () => {
-			const blocks = [createNonTarget(), createNonTarget(), createNonTarget()];
+			const blocks = [
+				createNonTarget(),
+				createNonTarget(),
+				createNonTarget(),
+			];
 
 			expect(getCount(blocks)).toEqual(0);
 		});
 
 		test('target block at the start', () => {
-			const blocks = [createTarget(), createNonTarget(), createNonTarget()];
+			const blocks = [
+				createTarget(),
+				createNonTarget(),
+				createNonTarget(),
+			];
 
 			expect(getCount(blocks)).toEqual(1);
 		});
 
 		test('target block at the end', () => {
-			const blocks = [createNonTarget(), createNonTarget(), createTarget()];
+			const blocks = [
+				createNonTarget(),
+				createNonTarget(),
+				createTarget(),
+			];
 
 			expect(getCount(blocks)).toEqual(1);
 		});
 
 		test('target block in the middle', () => {
-			const blocks = [createNonTarget(), createTarget(), createNonTarget()];
+			const blocks = [
+				createNonTarget(),
+				createTarget(),
+				createNonTarget(),
+			];
 
 			expect(getCount(blocks)).toEqual(1);
 		});
@@ -84,7 +96,6 @@ describe('getBlockCount', () => {
 			expect(getCount(blocks)).toEqual(2);
 		});
 
-
 		test('All target blocks', () => {
 			const blocks = [createTarget(), createTarget(), createTarget()];
 
@@ -94,45 +105,81 @@ describe('getBlockCount', () => {
 
 	describe('grouped', () => {
 		test('no blocks', () => {
-			const blocks = [createNonTarget(), createNonTarget(), createNonTarget(), createNonTarget(), createNonTarget()];
+			const blocks = [
+				createNonTarget(),
+				createNonTarget(),
+				createNonTarget(),
+				createNonTarget(),
+				createNonTarget(),
+			];
 
 			expect(getCount(blocks, true)).toEqual(0);
 		});
 
 		test('groups length one', () => {
-			const blocks = [createTarget(), createNonTarget(), createTarget(), createNonTarget(), createTarget()];
+			const blocks = [
+				createTarget(),
+				createNonTarget(),
+				createTarget(),
+				createNonTarget(),
+				createTarget(),
+			];
 
 			expect(getCount(blocks, true)).toEqual(3);
 		});
 
 		test('groups length two', () => {
-			const blocks = [createTarget(), createTarget(), createNonTarget(), createTarget(), createTarget()];
+			const blocks = [
+				createTarget(),
+				createTarget(),
+				createNonTarget(),
+				createTarget(),
+				createTarget(),
+			];
 
 			expect(getCount(blocks, true)).toEqual(2);
 		});
 
 		test('groups of mixed length', () => {
-			const blocks = [createTarget(), createTarget(), createTarget(), createNonTarget(), createTarget()];
+			const blocks = [
+				createTarget(),
+				createTarget(),
+				createTarget(),
+				createNonTarget(),
+				createTarget(),
+			];
 
 			expect(getCount(blocks, true)).toEqual(2);
 		});
 
 		test('all target blocks', () => {
-			const blocks = [createTarget(), createTarget(), createTarget(), createTarget(), createTarget()];
+			const blocks = [
+				createTarget(),
+				createTarget(),
+				createTarget(),
+				createTarget(),
+				createTarget(),
+			];
 
 			expect(getCount(blocks, true)).toEqual(1);
 		});
 	});
 
-
 	describe('Nested Blocks', () => {
 		describe('non-grouped', () => {
 			test('Counts nested blocks', () => {
-				const blocks = [createNonTarget(), createTarget(), createNested()];
+				const blocks = [
+					createNonTarget(),
+					createTarget(),
+					createNested(),
+				];
 
-				function getNested (block) {
+				function getNested(block) {
 					if (block.getType() === BLOCKS.ATOMIC) {
-						return createState({blocks: [createNonTarget(), createTarget()], entityMap: {}});
+						return createState({
+							blocks: [createNonTarget(), createTarget()],
+							entityMap: {},
+						});
 					}
 				}
 
@@ -142,11 +189,23 @@ describe('getBlockCount', () => {
 
 		describe('grouped', () => {
 			test('Counts nested blocks', () => {
-				const blocks = [createNonTarget(), createTarget(), createTarget(), createNested()];
+				const blocks = [
+					createNonTarget(),
+					createTarget(),
+					createTarget(),
+					createNested(),
+				];
 
-				function getNested (block) {
+				function getNested(block) {
 					if (block.getType() === BLOCKS.ATOMIC) {
-						return createState({blocks: [createNonTarget(), createTarget(), createTarget()], entityMap: {}});
+						return createState({
+							blocks: [
+								createNonTarget(),
+								createTarget(),
+								createTarget(),
+							],
+							entityMap: {},
+						});
 					}
 				}
 

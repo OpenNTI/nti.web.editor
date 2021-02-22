@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {convertFromRaw, EditorState} from 'draft-js';
+import { convertFromRaw, EditorState } from 'draft-js';
 
 import renderBlock from '../render-block';
 
@@ -7,11 +7,29 @@ describe('renderBlock', () => {
 	test('Test various types', () => {
 		const rawContent = {
 			blocks: [
-				{ text: 'some code', type: 'code-block', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
-				{ text: 'quote', type: 'blockquote', depth: 0, inlineStyleRanges: [], entityRanges: [] }
+				{
+					text: 'some code',
+					type: 'code-block',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'paragraph',
+					type: 'unstyled',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
+				{
+					text: 'quote',
+					type: 'blockquote',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
 			],
-			entityMap: {}
+			entityMap: {},
 		};
 
 		const content = convertFromRaw(rawContent);
@@ -19,7 +37,12 @@ describe('renderBlock', () => {
 		const blocks = content.getBlocksAsArray();
 
 		const verifyBlock = (index, type, prefix, postfix, blockContent) => {
-			const result = renderBlock(editorState, null, blocks[index], blocks[index].key);
+			const result = renderBlock(
+				editorState,
+				null,
+				blocks[index],
+				blocks[index].key
+			);
 
 			expect(result.type).toEqual(type);
 			expect(result.prefix).toEqual(prefix);

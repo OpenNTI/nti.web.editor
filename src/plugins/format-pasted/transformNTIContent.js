@@ -1,4 +1,4 @@
-const createSafeDocument = (html) => {
+const createSafeDocument = html => {
 	const doc = document.implementation.createHTMLDocument();
 	doc.getElementsByTagName('body')[0].innerHTML = html;
 
@@ -11,24 +11,38 @@ const replaceElement = (doc, oldEl, newTag) => {
 	oldEl && oldEl.parentElement.replaceChild(newEl, oldEl);
 };
 
-export default (html) => {
-	if (!(document.implementation && document.implementation.createHTMLDocument && html)) { return html; }
+export default html => {
+	if (
+		!(
+			document.implementation &&
+			document.implementation.createHTMLDocument &&
+			html
+		)
+	) {
+		return html;
+	}
 
 	const doc = createSafeDocument(html);
 
-	const h2Map = Array.from(doc.querySelectorAll('.chapter.title')).map(el => ({
-		el: el,
-		newType: 'h2'
-	}));
+	const h2Map = Array.from(doc.querySelectorAll('.chapter.title')).map(
+		el => ({
+			el: el,
+			newType: 'h2',
+		})
+	);
 
-	const quoteMap = Array.from(doc.querySelectorAll('[ntiid].sidebar')).map(el => ({
-		el: el,
-		newType: 'blockquote'
-	}));
+	const quoteMap = Array.from(doc.querySelectorAll('[ntiid].sidebar')).map(
+		el => ({
+			el: el,
+			newType: 'blockquote',
+		})
+	);
 
-	const h3Map = Array.from(doc.querySelectorAll('[ntiid].subsection.title')).map(el => ({
+	const h3Map = Array.from(
+		doc.querySelectorAll('[ntiid].subsection.title')
+	).map(el => ({
 		el: el,
-		newType: 'h3'
+		newType: 'h3',
 	}));
 
 	const allElements = [...h2Map, ...quoteMap, ...h3Map];

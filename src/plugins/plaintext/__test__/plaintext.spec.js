@@ -6,8 +6,6 @@ import { create } from '../index';
 import SimpleTestEditor from '../../../__test__/utils/simple-editor';
 import { getRawFromState } from '../../../__test__/utils';
 
-
-
 describe('plaintext plugin', () => {
 	test('should remove styles, block types', () => {
 		const rawContent = {
@@ -16,19 +14,33 @@ describe('plaintext plugin', () => {
 					text: 'test',
 					type: 'unstyled',
 					depth: 0,
-					inlineStyleRanges: [{
-						'offset': 0,
-						'length': 4,
-						'style': 'BOLD'
-					}],
-					entityRanges: []
+					inlineStyleRanges: [
+						{
+							offset: 0,
+							length: 4,
+							style: 'BOLD',
+						},
+					],
+					entityRanges: [],
 				},
-				{ text: 'code', type: 'code-block', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+				{
+					text: 'code',
+					type: 'code-block',
+					depth: 0,
+					inlineStyleRanges: [],
+					entityRanges: [],
+				},
 			],
-			entityMap: {}
+			entityMap: {},
 		};
 		let editor;
-		render(<SimpleTestEditor ref={x => editor = x} plugins={[create()]} rawContent={rawContent} />);
+		render(
+			<SimpleTestEditor
+				ref={x => (editor = x)}
+				plugins={[create()]}
+				rawContent={rawContent}
+			/>
+		);
 		const draftEditor = editor.state.editor;
 		const rawState = getRawFromState(draftEditor.getEditorState());
 		expect(rawState.blocks[0].inlineStyleRanges.length).toBe(0);

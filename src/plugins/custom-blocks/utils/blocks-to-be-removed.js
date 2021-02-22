@@ -1,6 +1,6 @@
-import {BLOCKS} from '../../../Constants';
+import { BLOCKS } from '../../../Constants';
 
-function getBlocksInExpandedSelection (editorState) {
+function getBlocksInExpandedSelection(editorState) {
 	const content = editorState.getCurrentContent();
 	const selection = editorState.getSelection();
 
@@ -8,12 +8,17 @@ function getBlocksInExpandedSelection (editorState) {
 	const endKey = selection.getEndKey();
 
 	const toRemove = [];
-	let pointer = content.getBlockForKey(startKey).getType() === BLOCKS.ATOMIC ? startKey : content.getKeyAfter(startKey);
+	let pointer =
+		content.getBlockForKey(startKey).getType() === BLOCKS.ATOMIC
+			? startKey
+			: content.getKeyAfter(startKey);
 
 	while (pointer) {
 		toRemove.push(pointer);
 
-		if (pointer === endKey) { break; }
+		if (pointer === endKey) {
+			break;
+		}
 
 		pointer = content.getKeyAfter(pointer);
 	}
@@ -21,19 +26,22 @@ function getBlocksInExpandedSelection (editorState) {
 	return toRemove;
 }
 
-
 const Commands = {
-	'backspace': (editorState) => {
+	backspace: editorState => {
 		const selection = editorState.getSelection();
 
-		if (!selection.isCollapsed()) { return getBlocksInExpandedSelection(editorState); }
+		if (!selection.isCollapsed()) {
+			return getBlocksInExpandedSelection(editorState);
+		}
 
 		const content = editorState.getCurrentContent();
 		const startKey = selection.getStartKey();
 		const startOffset = selection.getStartOffset();
 
 		//if we aren't at the beginning of a block nothing should get deleted
-		if (startOffset !== 0) { return []; }
+		if (startOffset !== 0) {
+			return [];
+		}
 
 		const blockBefore = content.getBlockBefore(startKey);
 
@@ -46,10 +54,12 @@ const Commands = {
 		return [startKey];
 	},
 
-	'delete': (editorState) => {
+	delete: editorState => {
 		const selection = editorState.getSelection();
 
-		if (!selection.isCollapsed()) { return getBlocksInExpandedSelection(editorState); }
+		if (!selection.isCollapsed()) {
+			return getBlocksInExpandedSelection(editorState);
+		}
 
 		const content = editorState.getCurrentContent();
 		const endKey = selection.getEndKey();
@@ -57,24 +67,28 @@ const Commands = {
 		const length = content.getBlockForKey(endKey).getLength();
 
 		//if we aren't at the end of a block nothing should get deleted
-		if (endOffset < length) { return []; }
+		if (endOffset < length) {
+			return [];
+		}
 
 		const blockAfter = content.getBlockAfter(endKey);
 
 		//No matter what on delete the next block will get removed. For text blocks their text will be added
 		//to the selected block, but that block will still get removed.
 		return [blockAfter?.getKey()].filter(Boolean);
-	}
+	},
 };
 
-export function command (commandName, editorState) {
+export function command(commandName, editorState) {
 	const handler = Commands[commandName];
 
 	return handler ? handler(editorState) : [];
 }
 
-export function beforeInput (chars, editorState) {
+export function beforeInput(chars, editorState) {
 	const selection = editorState.getSelection();
 
-	return selection.isCollapsed() ? [] : getBlocksInExpandedSelection(editorState);
+	return selection.isCollapsed()
+		? []
+		: getBlocksInExpandedSelection(editorState);
 }

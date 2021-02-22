@@ -1,8 +1,7 @@
 /* eslint-env jest */
-import {Entity} from 'draft-js';
+import { Entity } from 'draft-js';
 
 import createEntity from '../create-entity';
-
 
 describe('create-entity', () => {
 	test('Creates Mutable entity with the correct href', () => {

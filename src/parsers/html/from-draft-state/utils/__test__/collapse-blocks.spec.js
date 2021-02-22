@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {BLOCKS} from '../../../../../Constants';
+import { BLOCKS } from '../../../../../Constants';
 import collapseCodeBlocks from '../collapse-blocks';
 
 describe('collapseCodeBlocks', () => {
@@ -7,20 +7,20 @@ describe('collapseCodeBlocks', () => {
 		const mockBlocks = [
 			{
 				type: BLOCKS.CODE,
-				content: 'first code block'
+				content: 'first code block',
 			},
 			{
 				type: BLOCKS.H1,
-				content: 'first header'
+				content: 'first header',
 			},
 			{
 				type: BLOCKS.CODE,
-				content: 'second code block'
+				content: 'second code block',
 			},
 			{
 				type: BLOCKS.CODE,
-				content: 'third code block'
-			}
+				content: 'third code block',
+			},
 		];
 
 		const collapsed = collapseCodeBlocks(mockBlocks);

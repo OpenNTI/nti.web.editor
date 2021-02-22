@@ -1,4 +1,4 @@
-import {SelectionState} from 'draft-js';
+import { SelectionState } from 'draft-js';
 
 export default function (block) {
 	const key = block.getKey();
@@ -7,6 +7,6 @@ export default function (block) {
 		anchorKey: key,
 		anchorOffset: 0,
 		focusKey: key,
-		focusOffset: block.getLength()
+		focusOffset: block.getLength(),
 	});
 }

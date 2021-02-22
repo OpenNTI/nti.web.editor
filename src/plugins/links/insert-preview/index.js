@@ -1,13 +1,13 @@
-import {LinkTracker} from './utils';
+import { LinkTracker } from './utils';
 
 export const create = (config = {}) => {
 	const linkTracker = new LinkTracker(config);
 
 	return {
-		onChange (editorState) {
+		onChange(editorState) {
 			const fixedEditorState = linkTracker.fixEditorState(editorState);
 
 			return fixedEditorState;
-		}
+		},
 	};
 };

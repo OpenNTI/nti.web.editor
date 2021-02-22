@@ -1,14 +1,20 @@
-import {EditorState} from 'draft-js';
+import { EditorState } from 'draft-js';
 
-import {HANDLED, NOT_HANDLED} from '../Constants';
+import { HANDLED, NOT_HANDLED } from '../Constants';
 
-import {setBlockData, removeBlock, MoveBlock, BlockIndex, BlocksToBeRemoved} from './utils';
+import {
+	setBlockData,
+	removeBlock,
+	MoveBlock,
+	BlockIndex,
+	BlocksToBeRemoved,
+} from './utils';
 import CustomBlock from './components/CustomBlock';
 import * as DragStore from './DragStore';
 
 const RemovalListeners = new Map();
 
-function allowRemoval (key) {
+function allowRemoval(key) {
 	const listener = RemovalListeners.get(key) ?? (() => true);
 
 	try {
@@ -21,7 +27,12 @@ function allowRemoval (key) {
 export default {
 	CustomBlock,
 	create: (config = {}) => {
-		const {customBlocks = [], customRenderers = [], customStyles = [], blockProps} = config;
+		const {
+			customBlocks = [],
+			customRenderers = [],
+			customStyles = [],
+			blockProps,
+		} = config;
 
 		let extraProps = blockProps || {};
 		let unsubscribe = null;
@@ -37,41 +48,64 @@ export default {
 		}
 
 		return {
-			initialize ({setEditorState, getEditorState, getEditorRef}) {
-				unsubscribe = DragStore.subscribeToRemoveFromOtherEditors(() => {
-					//TODO: remove the block if it was in this editor and is no longer
-				});
+			initialize({ setEditorState, getEditorState, getEditorRef }) {
+				unsubscribe = DragStore.subscribeToRemoveFromOtherEditors(
+					() => {
+						//TODO: remove the block if it was in this editor and is no longer
+					}
+				);
 			},
 
-			willUnmount () {
+			willUnmount() {
 				unsubscribe?.();
 			},
 
-			handleKeyCommand (command, editorState) {
-				const toRemove = BlocksToBeRemoved.command(command, editorState);
+			handleKeyCommand(command, editorState) {
+				const toRemove = BlocksToBeRemoved.command(
+					command,
+					editorState
+				);
 
 				//If any of the blocks getting removed are blocked from removal,
 				//stop the command
-				return toRemove.every(key => allowRemoval(key)) ? NOT_HANDLED : HANDLED;
+				return toRemove.every(key => allowRemoval(key))
+					? NOT_HANDLED
+					: HANDLED;
 			},
 
-			handleBeforeInput (chars, editorState) {
-				const toRemove = BlocksToBeRemoved.beforeInput(chars, editorState);
+			handleBeforeInput(chars, editorState) {
+				const toRemove = BlocksToBeRemoved.beforeInput(
+					chars,
+					editorState
+				);
 
 				//If any of the blocks getting removed are blocked from removal,
 				//stop the command
-				return toRemove.every(key => allowRemoval(key)) ? NOT_HANDLED : HANDLED;
+				return toRemove.every(key => allowRemoval(key))
+					? NOT_HANDLED
+					: HANDLED;
 			},
 
-			handleDrop (selection, dataTransfer, type, {getEditorState, setEditorState, getEditorRef}) {
+			handleDrop(
+				selection,
+				dataTransfer,
+				type,
+				{ getEditorState, setEditorState, getEditorRef }
+			) {
 				const dragData = DragStore.getDataForDrop(dataTransfer);
 
-				const newEditorState = dragData && MoveBlock.toSelection(
-					dragData,
-					selection,
-					getEditorState(),
-					() => DragStore.removeFromOtherEditors(dragData, getEditorRef())
-				);
+				const newEditorState =
+					dragData &&
+					MoveBlock.toSelection(
+						dragData,
+						selection,
+						getEditorState(),
+						() =>
+							DragStore.removeFromOtherEditors(
+								dragData,
+								getEditorRef()
+							)
+					);
 
 				if (newEditorState) {
 					setEditorState(newEditorState);
@@ -86,11 +120,10 @@ export default {
 			},
 
 			mergeExtraProps: (props = {}) => {
-				extraProps = {...extraProps, ...props};
+				extraProps = { ...extraProps, ...props };
 			},
 
-
-			getNestedState (block) {
+			getNestedState(block) {
 				for (let renderer of customRenderers) {
 					if (renderer.getNestedState) {
 						return renderer.getNestedState(block);
@@ -98,13 +131,11 @@ export default {
 				}
 			},
 
-
 			blockRendererFn: (contentBlock, pluginProps) => {
-				const {getEditorState, setEditorState} = pluginProps;
+				const { getEditorState, setEditorState } = pluginProps;
 				const editorState = getEditorState();
 
 				let pendingUpdates = null;
-
 
 				for (let renderer of customRenderers) {
 					if (renderer.handlesBlock(contentBlock, editorState)) {
@@ -117,13 +148,26 @@ export default {
 								...(extraProps || {}),
 								editorState,
 
-								index: BlockIndex.getIndex(contentBlock, editorState),
-								indexOfType: BlockIndex.getIndex(contentBlock, editorState, renderer.handlesBlock),
-								isFirst: BlockIndex.isFirst(contentBlock, editorState),
-								isLast: BlockIndex.isLast(contentBlock, editorState),
+								index: BlockIndex.getIndex(
+									contentBlock,
+									editorState
+								),
+								indexOfType: BlockIndex.getIndex(
+									contentBlock,
+									editorState,
+									renderer.handlesBlock
+								),
+								isFirst: BlockIndex.isFirst(
+									contentBlock,
+									editorState
+								),
+								isLast: BlockIndex.isLast(
+									contentBlock,
+									editorState
+								),
 
 								//If the fn returns false it can stop the block removal
-								subscribeToRemoval: (fn) => {
+								subscribeToRemoval: fn => {
 									const key = contentBlock.getKey();
 
 									RemovalListeners.set(key, fn);
@@ -133,40 +177,75 @@ export default {
 
 								moveBlockUp: () => {
 									const currentEditorState = getEditorState();
-									const newEditorState = MoveBlock.up(contentBlock, currentEditorState);
+									const newEditorState = MoveBlock.up(
+										contentBlock,
+										currentEditorState
+									);
 
-									if (newEditorState && newEditorState !== currentEditorState) {
+									if (
+										newEditorState &&
+										newEditorState !== currentEditorState
+									) {
 										setEditorState(newEditorState);
 									}
 								},
 								moveBlockDown: () => {
 									const currentEditorState = getEditorState();
-									const newEditorState = MoveBlock.down(contentBlock, currentEditorState);
+									const newEditorState = MoveBlock.down(
+										contentBlock,
+										currentEditorState
+									);
 
-									if (newEditorState && newEditorState !== currentEditorState) {
+									if (
+										newEditorState &&
+										newEditorState !== currentEditorState
+									) {
 										setEditorState(newEditorState);
 									}
 								},
 
-								setBlockDataImmediately: (data, doNotKeepFocus, useEntity, callback) => {
+								setBlockDataImmediately: (
+									data,
+									doNotKeepFocus,
+									useEntity,
+									callback
+								) => {
 									const currentEditorState = getEditorState();
 									const selection = currentEditorState.getSelection();
 
-									let newEditorState = setBlockData(contentBlock, data, useEntity, currentEditorState);
+									let newEditorState = setBlockData(
+										contentBlock,
+										data,
+										useEntity,
+										currentEditorState
+									);
 
 									if (doNotKeepFocus) {
-										newEditorState = EditorState.forceSelection(newEditorState, selection);
+										newEditorState = EditorState.forceSelection(
+											newEditorState,
+											selection
+										);
 									}
 
 									setEditorState(newEditorState);
 								},
 
-								setBlockData: (data, doNotKeepFocus, useEntity, callback) => {
+								setBlockData: (
+									data,
+									doNotKeepFocus,
+									useEntity,
+									callback
+								) => {
 									const first = !pendingUpdates;
 
 									pendingUpdates = pendingUpdates ?? [];
 
-									pendingUpdates.push({data, doNotKeepFocus, useEntity, callback});
+									pendingUpdates.push({
+										data,
+										doNotKeepFocus,
+										useEntity,
+										callback,
+									});
 
 									if (first) {
 										setTimeout(() => {
@@ -176,33 +255,46 @@ export default {
 											let newEditorState = currentEditorState;
 
 											for (let update of pendingUpdates) {
-												newEditorState = setBlockData(contentBlock, update.data, update.useEntity, newEditorState);
+												newEditorState = setBlockData(
+													contentBlock,
+													update.data,
+													update.useEntity,
+													newEditorState
+												);
 
 												if (!update.doNotKeepFocus) {
-													newEditorState = EditorState.forceSelection(newEditorState, selection);
+													newEditorState = EditorState.forceSelection(
+														newEditorState,
+														selection
+													);
 												}
 											}
 
 											setEditorState(newEditorState);
 
-											pendingUpdates.forEach(p => p.callback?.());
+											pendingUpdates.forEach(p =>
+												p.callback?.()
+											);
 
 											pendingUpdates = null;
 										}, 100);
 									}
 								},
 								removeBlock: () => {
-									const newState = removeBlock(contentBlock, getEditorState());
+									const newState = removeBlock(
+										contentBlock,
+										getEditorState()
+									);
 
 									setEditorState(newState);
-								}
-							}
+								},
+							},
 						};
 					}
 				}
 			},
 
-			blockStyleFn: (contentBlock, {getEditorState}) => {
+			blockStyleFn: (contentBlock, { getEditorState }) => {
 				const editorState = getEditorState();
 
 				for (let style of customStyles) {
@@ -212,13 +304,15 @@ export default {
 				}
 			},
 
-			getContext (getEditorState, setEditorState) {
+			getContext(getEditorState, setEditorState) {
 				return {
-					get customBlockTypes () {
-						return new Set(customBlocks.map(c => c.type).filter(Boolean));
-					}
+					get customBlockTypes() {
+						return new Set(
+							customBlocks.map(c => c.type).filter(Boolean)
+						);
+					},
 				};
-			}
+			},
 		};
-	}
+	},
 };

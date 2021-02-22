@@ -1,22 +1,21 @@
-import {EditorState} from 'draft-js';
+import { EditorState } from 'draft-js';
 
+import { getLinksInBlock } from './GetLinks';
+import { applyLinks } from './ApplyLinks';
 
-import {getLinksInBlock} from './GetLinks';
-import {applyLinks} from './ApplyLinks';
-
-export function autoLink (editorState, prevHash = {}, config) {
+export function autoLink(editorState, prevHash = {}, config) {
 	const content = editorState.getCurrentContent();
 	const blocks = content.getBlocksAsArray();
 
-	const {content: newContent, hash} = blocks
-		.reduce((acc, block) => {
+	const { content: newContent, hash } = blocks.reduce(
+		(acc, block) => {
 			const key = block.getKey();
 			const text = block.getText();
 
 			if (prevHash[key] === text) {
 				return {
 					content: acc.content,
-					hash: {...acc.hash, [key]: text}
+					hash: { ...acc.hash, [key]: text },
 				};
 			}
 
@@ -24,17 +23,20 @@ export function autoLink (editorState, prevHash = {}, config) {
 
 			return {
 				content: applyLinks(links ?? [], acc.content),
-				hash: {...acc.hash, [key]: text}
+				hash: { ...acc.hash, [key]: text },
 			};
-		}, {content, hash: {}});
+		},
+		{ content, hash: {} }
+	);
 
 	return {
-		editorState: newContent === content ?
-			editorState :
-			EditorState.forceSelection(
-				EditorState.push(editorState, newContent),
-				editorState.getSelection()
-			),
-		hash
+		editorState:
+			newContent === content
+				? editorState
+				: EditorState.forceSelection(
+						EditorState.push(editorState, newContent),
+						editorState.getSelection()
+				  ),
+		hash,
 	};
 }

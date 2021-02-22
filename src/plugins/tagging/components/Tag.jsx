@@ -5,24 +5,20 @@ import ClosedSuggestions from './types/ClosedSuggestions';
 import OpenSuggestions from './types/OpenSuggestions';
 import NoSuggestions from './types/NoSuggestions';
 
-const Types = [
-	ClosedSuggestions,
-	OpenSuggestions,
-	NoSuggestions
-];
+const Types = [ClosedSuggestions, OpenSuggestions, NoSuggestions];
 
 Tag.propTypes = {
 	strategy: PropTypes.shape({
 		type: PropTypes.string,
-		getId: PropTypes.func
-	})
+		getId: PropTypes.func,
+	}),
 };
-export default function Tag ({strategy, ...otherProps}) {
+export default function Tag({ strategy, ...otherProps }) {
 	const Type = Types.find(t => t.handlesStrategy(strategy));
 
-	if (!Type) { throw new Error('Unknown tag strategy: ' + strategy.getId()); }
+	if (!Type) {
+		throw new Error('Unknown tag strategy: ' + strategy.getId());
+	}
 
-	return (
-		<Type strategy={strategy} {...otherProps} />
-	);
+	return <Type strategy={strategy} {...otherProps} />;
 }

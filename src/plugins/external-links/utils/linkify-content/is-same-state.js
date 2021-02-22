@@ -1,4 +1,4 @@
-export default function isSameState (a, b) {
+export default function isSameState(a, b) {
 	const selectionA = a.getSelection();
 	const selectionB = b.getSelection();
 	const contentA = a.getCurrentContent();

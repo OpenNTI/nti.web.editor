@@ -1,14 +1,14 @@
-import {ENTITIES, MUTABILITY} from '../../../../Constants';
+import { ENTITIES, MUTABILITY } from '../../../../Constants';
 
 import getTagName from './get-tag-name';
 
 const EntityTag = 'a';
 
-function attributesToEntityData (node) {
+function attributesToEntityData(node) {
 	const entity = {
 		type: ENTITIES.LINK,
 		mutability: MUTABILITY.MUTABLE,
-		data: {}
+		data: {},
 	};
 
 	const attributes = Array.from(node.attributes);
@@ -17,8 +17,12 @@ function attributesToEntityData (node) {
 		const name = attribute.name;
 		let value = attribute.value;
 
-		if (value === 'false') { value = false; }
-		if (value === 'true') { value = true; }
+		if (value === 'false') {
+			value = false;
+		}
+		if (value === 'true') {
+			value = true;
+		}
 
 		if (name === 'href') {
 			entity.data.href = value;
@@ -38,15 +42,14 @@ function attributesToEntityData (node) {
 	return entity;
 }
 
-
-export function getEntityForNode (node) {
+export function getEntityForNode(node) {
 	const tagName = getTagName(node);
 
-	if (tagName !== EntityTag) { return null; }
+	if (tagName !== EntityTag) {
+		return null;
+	}
 
 	return attributesToEntityData(node);
 }
 
-export function getNodeForEntity (node) {
-
-}
+export function getNodeForEntity(node) {}

@@ -1,4 +1,4 @@
-import {EditorState} from 'draft-js';
+import { EditorState } from 'draft-js';
 
 /**
  * Some browsers (COUGHfirefoxCOUGH) don't automatically show the selection, so
@@ -8,10 +8,13 @@ import {EditorState} from 'draft-js';
  * @param  {EditorState} editorState State of the editor after block insertion
  * @returns {EditorState}             State of the editor after selection updated
  */
-export default function ensureMaintainSelection (editorState) {
-	const selectionState = editorState.getSelection && editorState.getSelection();
-	const contentState = editorState.getCurrentContent && editorState.getCurrentContent();
-	const currBlock = contentState && contentState.getBlockForKey(selectionState.focusKey);
+export default function ensureMaintainSelection(editorState) {
+	const selectionState =
+		editorState.getSelection && editorState.getSelection();
+	const contentState =
+		editorState.getCurrentContent && editorState.getCurrentContent();
+	const currBlock =
+		contentState && contentState.getBlockForKey(selectionState.focusKey);
 
 	if (editorState && contentState) {
 		let newEditorState;
@@ -19,10 +22,13 @@ export default function ensureMaintainSelection (editorState) {
 		if (currBlock) {
 			const newSelectionState = selectionState.merge({
 				anchorKey: currBlock.getKey(),
-				focusKey: currBlock.getKey()
+				focusKey: currBlock.getKey(),
 			});
 
-			newEditorState = EditorState.acceptSelection(editorState, newSelectionState);
+			newEditorState = EditorState.acceptSelection(
+				editorState,
+				newSelectionState
+			);
 		}
 
 		return newEditorState;

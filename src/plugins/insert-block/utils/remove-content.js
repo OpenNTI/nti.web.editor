@@ -1,5 +1,5 @@
-import {Modifier} from 'draft-js';
+import { Modifier } from 'draft-js';
 
-export default function removeRangeAndFixSelection (content, selection) {
+export default function removeRangeAndFixSelection(content, selection) {
 	return Modifier.removeRange(content, selection, 'backward');
 }

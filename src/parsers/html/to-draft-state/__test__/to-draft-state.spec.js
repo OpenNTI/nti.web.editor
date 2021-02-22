@@ -1,13 +1,29 @@
 /* eslint-env jest */
 import toDraftState from '../index';
-import {BLOCKS, STYLES} from '../../../../Constants';
+import { BLOCKS, STYLES } from '../../../../Constants';
 
 describe('HTML to DraftState', () => {
 	test('Headers', () => {
-		const headers = ['Header 1', 'Header 2', 'Header 3', 'Header 4', 'Header 5', 'Header 6'];
-		const types = [BLOCKS.HEADER_ONE, BLOCKS.HEADER_TWO, BLOCKS.HEADER_THREE, BLOCKS.HEADER_FOUR, BLOCKS.HEADER_FIVE, BLOCKS.HEADER_SIX];
+		const headers = [
+			'Header 1',
+			'Header 2',
+			'Header 3',
+			'Header 4',
+			'Header 5',
+			'Header 6',
+		];
+		const types = [
+			BLOCKS.HEADER_ONE,
+			BLOCKS.HEADER_TWO,
+			BLOCKS.HEADER_THREE,
+			BLOCKS.HEADER_FOUR,
+			BLOCKS.HEADER_FIVE,
+			BLOCKS.HEADER_SIX,
+		];
 
-		const html = headers.map((h, i) => `<h${i + 1}>${h}</h${i + 1}>`).join('\n');
+		const html = headers
+			.map((h, i) => `<h${i + 1}>${h}</h${i + 1}>`)
+			.join('\n');
 
 		const editorState = toDraftState(html);
 		const content = editorState.getCurrentContent();
@@ -26,7 +42,7 @@ describe('HTML to DraftState', () => {
 	test('Paragraphs', () => {
 		const paragraphs = ['paragraph 1', 'paragraph 2', 'paragraph 3'];
 
-		const html = paragraphs.map((h) => `<p>${h}</p>`).join('\n');
+		const html = paragraphs.map(h => `<p>${h}</p>`).join('\n');
 
 		const editorState = toDraftState(html);
 		const content = editorState.getCurrentContent();
@@ -124,9 +140,8 @@ describe('HTML to DraftState', () => {
 		const styles = {
 			8: STYLES.BOLD,
 			11: STYLES.ITALIC,
-			14: STYLES.UNDERLINE
+			14: STYLES.UNDERLINE,
 		};
-
 
 		const editorState = toDraftState(html);
 		const content = editorState.getCurrentContent();
@@ -151,7 +166,6 @@ describe('HTML to DraftState', () => {
 				expect(charList.style.length).toEqual(0);
 			}
 		}
-
 	});
 
 	test('Nested Inline Styles', () => {
@@ -163,7 +177,7 @@ describe('HTML to DraftState', () => {
 			11: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
 			12: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
 			13: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
-			14: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC]
+			14: [STYLES.BOLD, STYLES.UNDERLINE, STYLES.ITALIC],
 		};
 
 		const editorState = toDraftState(html);
@@ -189,7 +203,6 @@ describe('HTML to DraftState', () => {
 				for (let s of style) {
 					expect(set.has(s)).toBeTruthy();
 				}
-
 			} else {
 				expect(charList.style.length).toEqual(0);
 			}
@@ -197,7 +210,8 @@ describe('HTML to DraftState', () => {
 	});
 
 	test('Code block', () => {
-		const html = '<pre><pre>Block 1</pre><pre>Block 2</pre><pre>  Block 3</pre></pre>';
+		const html =
+			'<pre><pre>Block 1</pre><pre>Block 2</pre><pre>  Block 3</pre></pre>';
 
 		const editorState = toDraftState(html);
 		const content = editorState.getCurrentContent();
@@ -211,7 +225,8 @@ describe('HTML to DraftState', () => {
 	});
 
 	test('Empty paragraph between two code blocks', () => {
-		const html = '<pre>First code block</pre><p>\uFEFF</p><pre>Second code block</pre>';
+		const html =
+			'<pre>First code block</pre><p>\uFEFF</p><pre>Second code block</pre>';
 
 		const editorState = toDraftState(html);
 		const content = editorState.getCurrentContent();
@@ -225,7 +240,8 @@ describe('HTML to DraftState', () => {
 	});
 
 	test('link', () => {
-		const html = '<p>Paragraph with a <a href="www.google.com" data-nti-entity-type="link" data-nti-entity-mutability="mutable" data-nti-entity-username="test">link.</a>';
+		const html =
+			'<p>Paragraph with a <a href="www.google.com" data-nti-entity-type="link" data-nti-entity-mutability="mutable" data-nti-entity-username="test">link.</a>';
 		const linkStart = 17;
 		const linkEnd = 221;
 
@@ -267,8 +283,8 @@ describe('HTML to DraftState', () => {
 	test('modeled content', () => {
 		const html = [
 			'<h1>heading</h1>',
-			{MimeType: 'test', foo: 'bar'},
-			'<p>paragraph</p>'
+			{ MimeType: 'test', foo: 'bar' },
+			'<p>paragraph</p>',
 		];
 
 		const editorState = toDraftState(html);
@@ -286,7 +302,6 @@ describe('HTML to DraftState', () => {
 		expect(blocks[1].getType()).toEqual(BLOCKS.ATOMIC);
 		expect(entity.getType()).toEqual('test');
 		expect(entity.getData().foo).toEqual('bar');
-
 
 		expect(blocks[2].getType()).toEqual(BLOCKS.UNSTYLED);
 		expect(blocks[2].getText()).toEqual('paragraph');

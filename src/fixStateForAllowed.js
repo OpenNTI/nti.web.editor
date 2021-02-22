@@ -1,9 +1,8 @@
-import {EditorState, Modifier, SelectionState} from 'draft-js';
+import { EditorState, Modifier, SelectionState } from 'draft-js';
 
-import {STYLE_SET, BLOCK_SET, BLOCKS} from './Constants';
+import { STYLE_SET, BLOCK_SET, BLOCKS } from './Constants';
 
-
-function arrayToMap (a) {
+function arrayToMap(a) {
 	return a.reduce((acc, x) => {
 		acc[x] = true;
 
@@ -11,28 +10,27 @@ function arrayToMap (a) {
 	}, {});
 }
 
-
-function diff (allowed, all) {
+function diff(allowed, all) {
 	const allowedMap = arrayToMap(allowed);
 
 	return all.filter(x => !allowedMap[x]);
 }
 
-
-function computeDisallowedBlocks (allowedBlocks) {
+function computeDisallowedBlocks(allowedBlocks) {
 	return diff(allowedBlocks, BLOCK_SET);
 }
 
-
-function computeDisallowedStyles (allowedStyles) {
+function computeDisallowedStyles(allowedStyles) {
 	return diff(allowedStyles, STYLE_SET);
 }
 
-
-function cleanStyles (disallowed, content, range, block) {
+function cleanStyles(disallowed, content, range, block) {
 	let styles = new Set();
 
-	block.findStyleRanges(x => styles = new Set([...styles, ...x.getStyle()]), () => {});
+	block.findStyleRanges(
+		x => (styles = new Set([...styles, ...x.getStyle()])),
+		() => {}
+	);
 
 	for (let style of styles) {
 		if (disallowed[style]) {
@@ -43,8 +41,7 @@ function cleanStyles (disallowed, content, range, block) {
 	return content;
 }
 
-
-function cleanBlock (disallowed, content, range, block) {
+function cleanBlock(disallowed, content, range, block) {
 	if (disallowed[block.type] && block.type !== BLOCKS.UNSTYLED) {
 		content = Modifier.setBlockType(content, range, BLOCKS.UNSTYLED);
 	}
@@ -52,18 +49,28 @@ function cleanBlock (disallowed, content, range, block) {
 	return content;
 }
 
-
-function cleanLinks (content/*, range, block*/) {
+function cleanLinks(content /*, range, block*/) {
 	//TODO: fill this out
 
 	return content;
 }
 
-export default function fixStateForAllowed (newState, allowedStyles = [], allowedBlocks = [], allowLinks = true) {
+export default function fixStateForAllowed(
+	newState,
+	allowedStyles = [],
+	allowedBlocks = [],
+	allowLinks = true
+) {
 	const disallowedStyles = computeDisallowedStyles(allowedStyles);
 	const disallowedBlocks = computeDisallowedBlocks(allowedBlocks);
 
-	if (disallowedStyles.length > 0 && disallowedBlocks.length > 0 && allowLinks) { return newState; }
+	if (
+		disallowedStyles.length > 0 &&
+		disallowedBlocks.length > 0 &&
+		allowLinks
+	) {
+		return newState;
+	}
 
 	const styleMap = arrayToMap(disallowedStyles);
 	const blockMap = arrayToMap(disallowedBlocks);
@@ -77,7 +84,7 @@ export default function fixStateForAllowed (newState, allowedStyles = [], allowe
 			anchorKey: blockKey,
 			anchorOffset: 0,
 			focusKey: blockKey,
-			focusOffset: block.getLength()
+			focusOffset: block.getLength(),
 		});
 
 		if (disallowedStyles.length > 0) {
@@ -95,14 +102,18 @@ export default function fixStateForAllowed (newState, allowedStyles = [], allowe
 
 	const blocks = content.getBlocksAsArray();
 
-	if (blocks.length < 1) { return EditorState.createEmpty(); }
+	if (blocks.length < 1) {
+		return EditorState.createEmpty();
+	}
 
-	if (content === originalContent) { return newState; }
+	if (content === originalContent) {
+		return newState;
+	}
 
 	return EditorState.create({
 		currentContent: content,
 		allowUndo: newState.getAllowUndo(),
 		decorator: newState.getDecorator(),
-		selection: newState.getSelection()
+		selection: newState.getSelection(),
 	});
 }

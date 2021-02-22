@@ -2,16 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { convertFromRaw, EditorState } from 'draft-js';
 
-
 import { Editor, Parsers, generateID } from '../../index';
-
 
 const defaultRawContent = {
 	blocks: [
-		{ text: 'paragraph', type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [] },
+		{
+			text: 'paragraph',
+			type: 'unstyled',
+			depth: 0,
+			inlineStyleRanges: [],
+			entityRanges: [],
+		},
 	],
-	entityMap: {
-	}
+	entityMap: {},
 };
 const editorID = generateID();
 
@@ -19,36 +22,40 @@ class SimpleEditor extends React.Component {
 	static propTypes = {
 		rawContent: PropTypes.object,
 		editorState: PropTypes.object,
-		plugins: PropTypes.array
-	}
+		plugins: PropTypes.array,
+	};
 
-	constructor (props) {
+	constructor(props) {
 		super(props);
 
-		const content = props.rawContent ? convertFromRaw(props.rawContent) : convertFromRaw(defaultRawContent);
+		const content = props.rawContent
+			? convertFromRaw(props.rawContent)
+			: convertFromRaw(defaultRawContent);
 		const editorState = EditorState.createWithContent(content);
 		this.state = {
 			editorState: props.editorState || editorState,
-			editor: null
+			editor: null,
 		};
 	}
 
 	attachEditorRef = x => {
-		this.setState({editor: x});
-	}
+		this.setState({ editor: x });
+	};
 
-	onContentChange = (editorState) => {
+	onContentChange = editorState => {
 		this.setState({
-			editorState: Parsers.HTML.toDraftState(Parsers.HTML.fromDraftState(editorState))
+			editorState: Parsers.HTML.toDraftState(
+				Parsers.HTML.fromDraftState(editorState)
+			),
 		});
-	}
+	};
 
-	render () {
+	render() {
 		const { editorState } = this.state;
 		const { plugins } = this.props;
 
 		return (
-			<Editor 
+			<Editor
 				ref={this.attachEditorRef}
 				editorState={editorState}
 				plugins={plugins}

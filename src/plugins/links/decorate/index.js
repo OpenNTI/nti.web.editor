@@ -1,21 +1,21 @@
 import React from 'react';
 
-import {ENTITIES} from '../../../Constants';
+import { ENTITIES } from '../../../Constants';
 
 import Link from './components/Link';
 
 const Name = Symbol('Link Decorate');
 const Wrappers = Symbol('Wrappers');
 
-function strategy (contentBlock, callback, contentState) {
-	contentBlock.findEntityRanges(
-		(character) => {
-			const entityKey = character.getEntity();
+function strategy(contentBlock, callback, contentState) {
+	contentBlock.findEntityRanges(character => {
+		const entityKey = character.getEntity();
 
-			return entityKey !== null && contentState.getEntity(entityKey).getType() === ENTITIES.LINK;
-		},
-		callback
-	);
+		return (
+			entityKey !== null &&
+			contentState.getEntity(entityKey).getType() === ENTITIES.LINK
+		);
+	}, callback);
 }
 
 export const create = (config = {}) => {
@@ -23,11 +23,14 @@ export const create = (config = {}) => {
 
 	return {
 		name: Name,
-		get [Wrappers] () { return wrappers; },
+		get [Wrappers]() {
+			return wrappers;
+		},
 
-
-		combine (otherPlugin) {
-			if (otherPlugin.name !== Name) { throw new Error('Cannot combine a different plugin type'); }
+		combine(otherPlugin) {
+			if (otherPlugin.name !== Name) {
+				throw new Error('Cannot combine a different plugin type');
+			}
 
 			wrappers = [...wrappers, ...otherPlugin[Wrappers]];
 		},
@@ -35,20 +38,16 @@ export const create = (config = {}) => {
 		decorators: [
 			{
 				strategy,
-				component: function LinkWrapper (props) {
-					let link = (<Link {...props} />);
-				
+				component: function LinkWrapper(props) {
+					let link = <Link {...props} />;
+
 					for (let Wrapper of wrappers) {
-						link = (
-							<Wrapper {...props}>
-								{link}
-							</Wrapper>
-						);
+						link = <Wrapper {...props}>{link}</Wrapper>;
 					}
 
 					return link;
-				}
-			}
-		]
+				},
+			},
+		],
 	};
 };

@@ -7,6 +7,8 @@ describe('getFullHref', () => {
 	});
 
 	test('does nothing if there is a protocol', () => {
-		expect(getFullHref('http://www.google.com')).toEqual('http://www.google.com');
+		expect(getFullHref('http://www.google.com')).toEqual(
+			'http://www.google.com'
+		);
 	});
 });

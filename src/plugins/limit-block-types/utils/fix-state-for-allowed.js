@@ -1,15 +1,21 @@
-import {Modifier, EditorState} from 'draft-js';
+import { Modifier, EditorState } from 'draft-js';
 
-import {BLOCKS, BLOCK_SET} from '../../../Constants';
-import {getRangeForBlock} from '../../../utils';
+import { BLOCKS, BLOCK_SET } from '../../../Constants';
+import { getRangeForBlock } from '../../../utils';
 
-function changeBlockType (block, content, defaultType) {
+function changeBlockType(block, content, defaultType) {
 	return Modifier.setBlockType(content, getRangeForBlock(block), defaultType);
 }
 
-export default function fixStateForAllowed (editorState, allowed, defaultType = BLOCKS.UNSTYLED) {
+export default function fixStateForAllowed(
+	editorState,
+	allowed,
+	defaultType = BLOCKS.UNSTYLED
+) {
 	//TODO: instead of just checking the size check that they are the same set
-	if (allowed.size === BLOCK_SET.size) { return editorState; }
+	if (allowed.size === BLOCK_SET.size) {
+		return editorState;
+	}
 
 	let content = editorState.getCurrentContent();
 	const originalContent = content;
@@ -20,9 +26,11 @@ export default function fixStateForAllowed (editorState, allowed, defaultType = 
 		}
 	}
 
-	if (content === originalContent) { return editorState; }
+	if (content === originalContent) {
+		return editorState;
+	}
 
 	return EditorState.set(editorState, {
-		currentContent: content
+		currentContent: content,
 	});
 }

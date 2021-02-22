@@ -3,7 +3,9 @@
 	box-shadow: 0 0 0 1px var(--border-grey-light);
 	border-radius: 2px;
 
-	& .editor :global(.nti-draft-core-container .nti-draft-core .DraftEditor-root) {
+	&
+		.editor
+		:global(.nti-draft-core-container .nti-draft-core .DraftEditor-root) {
 		min-height: 3rem;
 	}
 

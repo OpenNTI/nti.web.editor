@@ -1,6 +1,6 @@
-import {parent} from '@nti/lib-dom';
+import { parent } from '@nti/lib-dom';
 
-import {BLOCKS} from '../../../../Constants';
+import { BLOCKS } from '../../../../Constants';
 
 import getTagName from './get-tag-name';
 
@@ -15,41 +15,50 @@ const BlocksToTag = {
 	[BLOCKS.HEADER_FIVE]: 'h5',
 	[BLOCKS.HEADER_SIX]: 'h6',
 	[BLOCKS.ORDERED_LIST_ITEM]: 'li',
-	[BLOCKS.UNORDERED_LIST_ITEM]: 'li'
+	[BLOCKS.UNORDERED_LIST_ITEM]: 'li',
 };
 
 const TagsToBlocks = {
-	'div': [BLOCKS.UNSTYLED]
+	div: [BLOCKS.UNSTYLED],
 };
 
 for (let [key, value] of Object.entries(BlocksToTag)) {
-	TagsToBlocks[value] = [...(TagsToBlocks[value] || []),key];
+	TagsToBlocks[value] = [...(TagsToBlocks[value] || []), key];
 }
 
-
-export function getBlockTypeForNode (node) {
+export function getBlockTypeForNode(node) {
 	const tagName = getTagName(node);
 	const blocks = TagsToBlocks[tagName];
 
-	if (blocks.length === 1) { return blocks[0]; }
+	if (blocks.length === 1) {
+		return blocks[0];
+	}
 
 	if (tagName === 'li') {
 		const listParent = parent(node, 'ul,ol');
 		const type = listParent ? getTagName(listParent) : null;
 
-		if (!type) { throw new Error('Invalid List Item'); }
+		if (!type) {
+			throw new Error('Invalid List Item');
+		}
 
-		if (type === 'ul') { return BLOCKS.UNORDERED_LIST_ITEM; }
-		if (type === 'ol') { return BLOCKS.ORDERED_LIST_ITEM; }
+		if (type === 'ul') {
+			return BLOCKS.UNORDERED_LIST_ITEM;
+		}
+		if (type === 'ol') {
+			return BLOCKS.ORDERED_LIST_ITEM;
+		}
 	}
 
 	throw new Error(`Unknown node type: ${tagName}`);
 }
 
-export function getBlockDepthForNode (node) {
+export function getBlockDepthForNode(node) {
 	const tagName = getTagName(node);
 
-	if (tagName !== 'li') { return 0; }
+	if (tagName !== 'li') {
+		return 0;
+	}
 
 	const listParent = parent(node, 'ul,ol');
 
@@ -60,6 +69,4 @@ export function getBlockDepthForNode (node) {
 	return 0;
 }
 
-export function getTagNameForBlockType (blockType) {
-
-}
+export function getTagNameForBlockType(blockType) {}

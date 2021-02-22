@@ -1,14 +1,15 @@
 /* eslint-env jest */
-import {getLinksInBlock} from '../GetLinks';
+import { getLinksInBlock } from '../GetLinks';
 
 describe('GetLinks', () => {
 	describe('getLinksInBlock', () => {
 		test('basic', () => {
 			const blockKey = 'asdf';
 			const block = {
-				getText: () => 'www.google.com and not a link then www.facebook.com',
+				getText: () =>
+					'www.google.com and not a link then www.facebook.com',
 				getType: () => 'unstyled',
-				getKey: () => blockKey
+				getKey: () => blockKey,
 			};
 
 			const links = getLinksInBlock(block, {});
@@ -22,7 +23,6 @@ describe('GetLinks', () => {
 			expect(links[0].selection.getFocusKey()).toBe(blockKey);
 			expect(links[0].selection.getAnchorOffset()).toBe(0);
 			expect(links[0].selection.getFocusOffset()).toBe(14);
-
 
 			expect(links[1].selection.getAnchorKey()).toBe(blockKey);
 			expect(links[1].selection.getFocusKey()).toBe(blockKey);

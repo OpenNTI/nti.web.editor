@@ -4,17 +4,15 @@ import {
 	Modifier,
 	EditorState,
 	convertFromHTML,
-	getSafeBodyFromHTML
+	getSafeBodyFromHTML,
 } from 'draft-js';
 
+const BlockRenderMap = DefaultDraftBlockRenderMap.set('p', { element: 'p' })
+	.set('P', { element: 'P' })
+	.set('blockquote', { element: 'blockquote' })
+	.set('BLOCKQUOTE', { element: 'BLOCKQUOTE' });
 
-const BlockRenderMap = DefaultDraftBlockRenderMap
-	.set('p', {element: 'p'})
-	.set('P', {element: 'P'})
-	.set('blockquote', {element: 'blockquote'})
-	.set('BLOCKQUOTE', {element: 'BLOCKQUOTE'});
-
-function formatBlocks (blocks, formatTypeChangeMap) {
+function formatBlocks(blocks, formatTypeChangeMap) {
 	return blocks.map(block => {
 		const oldType = block.getType();
 		const newType = formatTypeChangeMap[oldType];
@@ -23,7 +21,7 @@ function formatBlocks (blocks, formatTypeChangeMap) {
 	});
 }
 
-function getFormatTypeChangeMap (config) {
+function getFormatTypeChangeMap(config) {
 	const map = config.formatTypeChangeMap || {};
 
 	if (!map['p']) {
@@ -46,25 +44,44 @@ function getFormatTypeChangeMap (config) {
 }
 
 export default {
-	shouldFormat (text, html) {
+	shouldFormat(text, html) {
 		return !!html;
 	},
 
-
-	format (text, html, editorState, config) {
-		const stateFromHTML = convertFromHTML(html, getSafeBodyFromHTML, BlockRenderMap);
+	format(text, html, editorState, config) {
+		const stateFromHTML = convertFromHTML(
+			html,
+			getSafeBodyFromHTML,
+			BlockRenderMap
+		);
 		const formatTypeChangeMap = getFormatTypeChangeMap(config);
-		const formattedBlocks = formatBlocks(stateFromHTML.contentBlocks, formatTypeChangeMap);
+		const formattedBlocks = formatBlocks(
+			stateFromHTML.contentBlocks,
+			formatTypeChangeMap
+		);
 
 		const fragment = ContentState.createFromBlockArray(formattedBlocks);
 
-		const pastedState = Modifier.replaceWithFragment(editorState.getCurrentContent(), editorState.getSelection(), fragment.blockMap);
-		const newState = config.transformHTMLState ? config.transformHTMLState(pastedState) : pastedState;
+		const pastedState = Modifier.replaceWithFragment(
+			editorState.getCurrentContent(),
+			editorState.getSelection(),
+			fragment.blockMap
+		);
+		const newState = config.transformHTMLState
+			? config.transformHTMLState(pastedState)
+			: pastedState;
 
-		const newEditorState = EditorState.push(editorState, newState, 'insert-fragment');
+		const newEditorState = EditorState.push(
+			editorState,
+			newState,
+			'insert-fragment'
+		);
 
-		return newState === pastedState ?
-			newEditorState :
-			EditorState.forceSelection(newEditorState, newState.getSelectionAfter());
-	}
+		return newState === pastedState
+			? newEditorState
+			: EditorState.forceSelection(
+					newEditorState,
+					newState.getSelectionAfter()
+			  );
+	},
 };

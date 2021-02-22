@@ -2,9 +2,9 @@ import './TypeButton.scss';
 import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
-import {scoped} from '@nti/lib-locale';
+import { scoped } from '@nti/lib-locale';
 
-import {BLOCKS} from '../../Constants';
+import { BLOCKS } from '../../Constants';
 
 const stop = e => (e.preventDefault(), e.stopPropagation());
 
@@ -21,23 +21,23 @@ export const Types = Object.freeze({
 	[BLOCKS.ORDERED_LIST_ITEM]: BLOCKS.ORDERED_LIST_ITEM,
 	[BLOCKS.PULLQUOTE]: BLOCKS.PULLQUOTE,
 	[BLOCKS.UNORDERED_LIST_ITEM]: BLOCKS.UNORDERED_LIST_ITEM,
-	[BLOCKS.UNSTYLED]: BLOCKS.UNSTYLED
+	[BLOCKS.UNSTYLED]: BLOCKS.UNSTYLED,
 });
 
 const t = scoped('web-editor.components.type.TypeButton', Types);
 
 export default class TypeButton extends React.Component {
-	static Types = Types
+	static Types = Types;
 
 	static contextTypes = {
 		editorContext: PropTypes.shape({
 			plugins: PropTypes.shape({
 				toggleBlockType: PropTypes.func.isRequired,
 				currentBlockType: PropTypes.string,
-				allowedBlockTypes: PropTypes.object
-			})
-		})
-	}
+				allowedBlockTypes: PropTypes.object,
+			}),
+		}),
+	};
 
 	static propTypes = {
 		className: PropTypes.string,
@@ -48,43 +48,44 @@ export default class TypeButton extends React.Component {
 		plain: PropTypes.bool,
 		checkmark: PropTypes.bool,
 		inlineStyle: PropTypes.bool,
-		onMouseDown: PropTypes.func
-	}
+		onMouseDown: PropTypes.func,
+	};
 
-	get editorContext () {
+	get editorContext() {
 		return this.context.editorContext || {};
 	}
 
-
-	get pluginContext () {
+	get pluginContext() {
 		return this.editorContext.plugins || {};
 	}
 
-
-	get getString () {
-		const {getString} = this.props;
+	get getString() {
+		const { getString } = this.props;
 
 		return getString ? t.override(getString) : t;
 	}
 
-	get isAllowed () {
-		const {type} = this.props;
-		const {allowedBlockTypes} = this.pluginContext;
+	get isAllowed() {
+		const { type } = this.props;
+		const { allowedBlockTypes } = this.pluginContext;
 
-		return !this.editorContext.readOnly && allowedBlockTypes && allowedBlockTypes.has(type);
+		return (
+			!this.editorContext.readOnly &&
+			allowedBlockTypes &&
+			allowedBlockTypes.has(type)
+		);
 	}
 
-	get isCurrent () {
-		const {type} = this.props;
-		const {currentBlockType} = this.pluginContext;
+	get isCurrent() {
+		const { type } = this.props;
+		const { currentBlockType } = this.pluginContext;
 
 		return type === currentBlockType;
 	}
 
-
-	onMouseDown = (e) => {
-		const {type, onMouseDown} = this.props;
-		const {toggleBlockType} = this.pluginContext;
+	onMouseDown = e => {
+		const { type, onMouseDown } = this.props;
+		const { toggleBlockType } = this.pluginContext;
 
 		if (e) {
 			e.preventDefault();
@@ -97,13 +98,24 @@ export default class TypeButton extends React.Component {
 		if (onMouseDown) {
 			onMouseDown();
 		}
-	}
+	};
 
-
-	render () {
-		const {type = '_', className, plain, checkmark, inlineStyle} = this.props;
-		const {isAllowed, isCurrent} = this;
-		const cls = cx('draft-core-type-button', className, type, {inline: inlineStyle, active: isCurrent, disabled: !isAllowed, plain, checkmark});
+	render() {
+		const {
+			type = '_',
+			className,
+			plain,
+			checkmark,
+			inlineStyle,
+		} = this.props;
+		const { isAllowed, isCurrent } = this;
+		const cls = cx('draft-core-type-button', className, type, {
+			inline: inlineStyle,
+			active: isCurrent,
+			disabled: !isAllowed,
+			plain,
+			checkmark,
+		});
 
 		return (
 			<button
@@ -118,17 +130,14 @@ export default class TypeButton extends React.Component {
 		);
 	}
 
-
-	renderLabel = (type) => {
-		const {label, children} = this.props;
+	renderLabel = type => {
+		const { label, children } = this.props;
 		const child = children && React.Children.only(children);
 
 		if (child) {
 			return child;
 		}
 
-		return (
-			<span>{label || this.getString(type)}</span>
-		);
-	}
+		return <span>{label || this.getString(type)}</span>;
+	};
 }

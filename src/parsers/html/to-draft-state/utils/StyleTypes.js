@@ -1,4 +1,4 @@
-import {STYLES} from '../../../../Constants';
+import { STYLES } from '../../../../Constants';
 
 import getTagName from './get-tag-name';
 
@@ -6,7 +6,7 @@ const StylesToTag = {
 	[STYLES.BOLD]: ['b'],
 	[STYLES.CODE]: ['code'],
 	[STYLES.ITALIC]: ['em', 'i'],
-	[STYLES.UNDERLINE]: ['u']
+	[STYLES.UNDERLINE]: ['u'],
 };
 
 const TagToStyles = {};
@@ -17,12 +17,10 @@ for (let [key, value] of Object.entries(StylesToTag)) {
 	}
 }
 
-export function getStyleForNode (node) {
+export function getStyleForNode(node) {
 	const tagName = getTagName(node);
 
 	return TagToStyles[tagName];
 }
 
-export function getTagnameForStyle (style) {
-
-}
+export function getTagnameForStyle(style) {}

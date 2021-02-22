@@ -1,29 +1,35 @@
-import {Modifier, SelectionState, EditorState} from 'draft-js';
+import { Modifier, SelectionState, EditorState } from 'draft-js';
 
-import {BLOCKS, CHANGE_TYPES} from '../Constants';
+import { BLOCKS, CHANGE_TYPES } from '../Constants';
 
-function fixContentAndSelection (content, selection) {
+function fixContentAndSelection(content, selection) {
 	const willRemove = !selection.isCollapsed();
-	const fixedContent = willRemove ? Modifier.removeRange(content, selection, 'backward') : content;
-	const fixedSelection = willRemove ? fixedContent.getSelectionAfter() : selection;
+	const fixedContent = willRemove
+		? Modifier.removeRange(content, selection, 'backward')
+		: content;
+	const fixedSelection = willRemove
+		? fixedContent.getSelectionAfter()
+		: selection;
 
 	return {
 		content: fixedContent,
-		selection: fixedSelection
+		selection: fixedSelection,
 	};
 }
 
-function splitContentAndGetSelection (content, selection) {
+function splitContentAndGetSelection(content, selection) {
 	const splitContent = Modifier.splitBlock(content, selection);
 
 	return {
 		content: splitContent,
-		selection: splitContent.getSelectionAfter()
+		selection: splitContent.getSelectionAfter(),
 	};
 }
 
-function getNewSelection (content, block, key) {
-	if (block.type === BLOCKS.ATOMIC) { return content.getSelectionAfter().set('hasFocus', true); }
+function getNewSelection(content, block, key) {
+	if (block.type === BLOCKS.ATOMIC) {
+		return content.getSelectionAfter().set('hasFocus', true);
+	}
 
 	const offset = block.text.length;
 
@@ -32,11 +38,11 @@ function getNewSelection (content, block, key) {
 		anchorOffset: offset,
 		focusKey: key,
 		focusOffset: offset,
-		hasFocus: true
+		hasFocus: true,
 	});
 }
 
-function getPreviousSelection (editorState, selection) {
+function getPreviousSelection(editorState, selection) {
 	const focusKey = selection.getFocusKey();
 	const currentContent = editorState.getCurrentContent();
 
@@ -51,26 +57,48 @@ function getPreviousSelection (editorState, selection) {
 	return new SelectionState({
 		...selection.toJS(),
 		anchorKey: nextBlockKey,
-		focusKey: nextBlockKey
+		focusKey: nextBlockKey,
 	});
 }
 
-export default function insertFragment (fragment, selection, editorState) {
+export default function insertFragment(fragment, selection, editorState) {
 	const block = fragment.first();
 
 	const currentContent = editorState.getCurrentContent();
 	const previousSelection = getPreviousSelection(editorState, selection);
 
-	const {content:fixedContent, selection:fixedSelection} = fixContentAndSelection(currentContent, previousSelection);
-	const {content:splitContent, selection: splitSelection} = splitContentAndGetSelection(fixedContent, fixedSelection);
+	const {
+		content: fixedContent,
+		selection: fixedSelection,
+	} = fixContentAndSelection(currentContent, previousSelection);
+	const {
+		content: splitContent,
+		selection: splitSelection,
+	} = splitContentAndGetSelection(fixedContent, fixedSelection);
 
-	const asType = Modifier.setBlockType(splitContent, splitSelection, block.type);
+	const asType = Modifier.setBlockType(
+		splitContent,
+		splitSelection,
+		block.type
+	);
 
-	const withBlock = Modifier.replaceWithFragment(asType, splitSelection, fragment);
+	const withBlock = Modifier.replaceWithFragment(
+		asType,
+		splitSelection,
+		fragment
+	);
 	const newContent = withBlock.merge({
 		selectionBefore: previousSelection,
-		selectionAfter: getNewSelection(withBlock, block, splitSelection.getStartKey())
+		selectionAfter: getNewSelection(
+			withBlock,
+			block,
+			splitSelection.getStartKey()
+		),
 	});
 
-	return EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_FRAGMENT);
+	return EditorState.push(
+		editorState,
+		newContent,
+		CHANGE_TYPES.INSERT_FRAGMENT
+	);
 }

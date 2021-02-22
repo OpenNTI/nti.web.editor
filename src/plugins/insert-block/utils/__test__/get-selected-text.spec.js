@@ -1,17 +1,31 @@
 /* eslint-env jest */
-import {EditorState, SelectionState, convertFromRaw} from 'draft-js';
+import { EditorState, SelectionState, convertFromRaw } from 'draft-js';
 
-import {BLOCKS} from '../../../../Constants';
+import { BLOCKS } from '../../../../Constants';
 import getSelectedText from '../get-selected-text';
 
-function createEditorState (raw) {
+function createEditorState(raw) {
 	return EditorState.createWithContent(convertFromRaw(raw));
 }
 
 const currKey = 'curr';
 const nextKey = 'next';
-const protoBlock = {key: currKey, type: BLOCKS.UNSTYLED, depth: 0, text: 'block 1', inlineStyleRanges: [], entityRanges: []};
-const atomicBlock = {key: nextKey, type: BLOCKS.ATOMIC, depth: 0, text: 'block 2', inlineStyleRanges: [], entityRanges: []};
+const protoBlock = {
+	key: currKey,
+	type: BLOCKS.UNSTYLED,
+	depth: 0,
+	text: 'block 1',
+	inlineStyleRanges: [],
+	entityRanges: [],
+};
+const atomicBlock = {
+	key: nextKey,
+	type: BLOCKS.ATOMIC,
+	depth: 0,
+	text: 'block 2',
+	inlineStyleRanges: [],
+	entityRanges: [],
+};
 
 describe('getSelectedText', () => {
 	test('Test selected text matches selection range', () => {
@@ -19,18 +33,18 @@ describe('getSelectedText', () => {
 			anchorKey: currKey,
 			anchorOffset: 3,
 			focusKey: currKey,
-			focusOffset: 7
+			focusOffset: 7,
 		});
 
 		const editorState = createEditorState({
-			blocks: [
-				{...protoBlock},
-				{...atomicBlock}
-			],
-			entityMap: {}
+			blocks: [{ ...protoBlock }, { ...atomicBlock }],
+			entityMap: {},
 		});
 
-		const editorStateWithSelected = EditorState.forceSelection(editorState, selection);
+		const editorStateWithSelected = EditorState.forceSelection(
+			editorState,
+			selection
+		);
 
 		const result = getSelectedText(editorStateWithSelected);
 
@@ -39,11 +53,8 @@ describe('getSelectedText', () => {
 
 	test('Test null due to isCollapsed=true', () => {
 		const editorState = createEditorState({
-			blocks: [
-				{...protoBlock},
-				{...atomicBlock}
-			],
-			entityMap: {}
+			blocks: [{ ...protoBlock }, { ...atomicBlock }],
+			entityMap: {},
 		});
 
 		const result = getSelectedText(editorState);

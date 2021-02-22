@@ -1,15 +1,17 @@
-import {getBlocksInSelection} from '../../../utils';
+import { getBlocksInSelection } from '../../../utils';
 
-export default function getSelectedText (editorState) {
+export default function getSelectedText(editorState) {
 	const selection = editorState.getSelection();
 
-	if (selection.isCollapsed()) { return null; }
+	if (selection.isCollapsed()) {
+		return null;
+	}
 
 	const startKey = selection.getStartKey();
 	const endKey = selection.getEndKey();
 
-	return getBlocksInSelection(editorState.getCurrentContent(), selection)
-		.map(block => {
+	return getBlocksInSelection(editorState.getCurrentContent(), selection).map(
+		block => {
 			const key = block.getKey();
 			const text = block.getText();
 
@@ -25,5 +27,6 @@ export default function getSelectedText (editorState) {
 			}
 
 			return text.slice(start, end);
-		});
+		}
+	);
 }

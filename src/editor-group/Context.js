@@ -4,20 +4,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class SelectedManager extends EventsEmitter {
-
 	#focused = null;
 	#defaultEditor = null;
 	#parent = null;
 
-	constructor (parent) {
+	constructor(parent) {
 		super();
 
 		this.#parent = parent;
 	}
 
-	get focusedEditor () { return this.#focused || this.#defaultEditor; }
+	get focusedEditor() {
+		return this.#focused || this.#defaultEditor;
+	}
 
-	setDefaultEditor (editor) {
+	setDefaultEditor(editor) {
 		this.#defaultEditor = editor;
 
 		if (!this.#focused) {
@@ -25,7 +26,7 @@ class SelectedManager extends EventsEmitter {
 		}
 	}
 
-	setFocused (editor) {
+	setFocused(editor) {
 		const changed = this.#focused !== editor;
 
 		this.#focused = editor;
@@ -37,7 +38,7 @@ class SelectedManager extends EventsEmitter {
 		this.#parent?.setFocused(editor);
 	}
 
-	clearFocused (editor) {
+	clearFocused(editor) {
 		if (this.#focused === editor) {
 			this.setFocused(null);
 		}
@@ -45,7 +46,7 @@ class SelectedManager extends EventsEmitter {
 		this.#parent?.clearFocused(editor);
 	}
 
-	subscribeToFocused (fn) {
+	subscribeToFocused(fn) {
 		this.addListener('changed', fn);
 		return () => this.removeListener('changed', fn);
 	}
@@ -61,16 +62,14 @@ const useFocusedEditor = () => {
 	React.useEffect(() => groupContext?.subscribeToFocused?.(setFocused), []);
 
 	return focused;
-
 };
 
 const useDefaultEditorRef = () => {
 	const groupContext = React.useContext(Context);
 
-	return React.useCallback(
-		(editor) => (groupContext?.setDefaultEditor(editor)),
-		[groupContext]
-	);
+	return React.useCallback(editor => groupContext?.setDefaultEditor(editor), [
+		groupContext,
+	]);
 };
 
 EditorGroupContext.useFocusedEditor = useFocusedEditor;
@@ -78,9 +77,9 @@ EditorGroupContext.useDefaultEditorRef = useDefaultEditorRef;
 EditorGroupContext.useGroup = () => React.useContext(Context);
 EditorGroupContext.propTypes = {
 	onFocusedChange: PropTypes.func,
-	children: PropTypes.any
+	children: PropTypes.any,
 };
-export default function EditorGroupContext ({onFocusedChange, children}) {
+export default function EditorGroupContext({ onFocusedChange, children }) {
 	const parentManager = React.useContext(Context);
 	const managerRef = React.useRef(null);
 
@@ -88,9 +87,12 @@ export default function EditorGroupContext ({onFocusedChange, children}) {
 		managerRef.current = new SelectedManager(parentManager);
 	}
 
-	React.useEffect(() => (
-		onFocusedChange && managerRef.current.subscribeToFocused(onFocusedChange)
-	),[onFocusedChange]);
+	React.useEffect(
+		() =>
+			onFocusedChange &&
+			managerRef.current.subscribeToFocused(onFocusedChange),
+		[onFocusedChange]
+	);
 
 	return (
 		<Context.Provider value={managerRef.current}>

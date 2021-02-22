@@ -2,7 +2,7 @@
 import toDraftState from '../to-draft-state';
 
 describe('Plaintext to DraftState', () => {
-	test('Should create unstyled block', ()=> {
+	test('Should create unstyled block', () => {
 		const text = 'here is some plaintext';
 		const draft = toDraftState(text);
 		const blocks = draft.getCurrentContent().getBlocksAsArray();

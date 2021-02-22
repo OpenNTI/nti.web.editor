@@ -1,11 +1,11 @@
-import {fixStateForAllowed} from './utils';
+import { fixStateForAllowed } from './utils';
 
 export default {
 	create: () => {
 		return {
-			onChange (editorState) {
+			onChange(editorState) {
 				return fixStateForAllowed(editorState);
-			}
+			},
 		};
-	}
+	},
 };

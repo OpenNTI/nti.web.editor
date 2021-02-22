@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {BLOCKS} from '../../../../../Constants';
+import { BLOCKS } from '../../../../../Constants';
 import buildHTML from '../build-html';
 
 describe('buildHTML', () => {
@@ -7,7 +7,7 @@ describe('buildHTML', () => {
 		const mockBlock = {
 			prefix: '<p>',
 			postfix: '</p>',
-			content: ''
+			content: '',
 		};
 
 		const html = buildHTML(mockBlock);
@@ -21,7 +21,7 @@ describe('buildHTML', () => {
 			prefix: '<pre>',
 			postfix: '</pre>',
 			type: BLOCKS.CODE,
-			content: 'this is some code'
+			content: 'this is some code',
 		};
 
 		const html = buildHTML(mockBlock);
@@ -35,7 +35,7 @@ describe('buildHTML', () => {
 			prefix: '<pre>',
 			postfix: '</pre>',
 			type: BLOCKS.CODE,
-			content: '\uFEFFthis is some code'
+			content: '\uFEFFthis is some code',
 		};
 
 		const html = buildHTML(mockBlock);
@@ -49,7 +49,7 @@ describe('buildHTML', () => {
 			prefix: '<h1>',
 			postfix: '</h1>',
 			type: BLOCKS.HEADER_ONE,
-			content: 'this is a header'
+			content: 'this is a header',
 		};
 
 		const html = buildHTML(mockBlock);

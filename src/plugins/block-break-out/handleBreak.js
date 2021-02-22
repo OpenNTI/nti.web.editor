@@ -1,58 +1,58 @@
-import {genKey, ContentBlock, EditorState} from 'draft-js';
+import { genKey, ContentBlock, EditorState } from 'draft-js';
 //We don't really need immutable its just something draft needs so let draft depend on it
-import {List} from 'immutable';//eslint-disable-line import/no-extraneous-dependencies
+import { List } from 'immutable'; //eslint-disable-line import/no-extraneous-dependencies
 
-import {HANDLED, NOT_HANDLED} from '../Constants';
+import { HANDLED, NOT_HANDLED } from '../Constants';
 
-function getStartOrEnd (selection, currentBlock) {
+function getStartOrEnd(selection, currentBlock) {
 	const endOffset = selection.getEndOffset();
 
 	return {
 		startOfBlock: endOffset === 0,
-		endOfBlock: endOffset === currentBlock.getLength()
+		endOfBlock: endOffset === currentBlock.getLength(),
 	};
 }
 
-function buildNewBlock (type) {
+function buildNewBlock(type) {
 	return new ContentBlock({
 		key: genKey(),
 		text: '',
 		type,
 		characterList: List(),
-		depth: 0
+		depth: 0,
 	});
 }
 
-function getBlocksAround (currentContent, currentBlock) {
+function getBlocksAround(currentContent, currentBlock) {
 	const blockMap = currentContent.getBlockMap();
 
 	return {
 		before: blockMap.toSeq().takeUntil(x => x === currentBlock),
-		after: blockMap.toSeq().skipUntil(x => x === currentBlock)
+		after: blockMap.toSeq().skipUntil(x => x === currentBlock),
 	};
 }
 
-function getAugmentedState (currentBlock, newBlock, endOfBlock) {
+function getAugmentedState(currentBlock, newBlock, endOfBlock) {
 	let blocks;
 	let focus;
 
 	if (endOfBlock) {
 		blocks = [
 			[currentBlock.getKey(), currentBlock],
-			[newBlock.getKey(), newBlock]
+			[newBlock.getKey(), newBlock],
 		];
 
 		focus = newBlock.getKey();
 	} else {
 		blocks = [
 			[newBlock.getKey(), newBlock],
-			[currentBlock.getKey(), currentBlock]
+			[currentBlock.getKey(), currentBlock],
 		];
 
 		focus = currentBlock.getKey();
 	}
 
-	return {blocks, focus};
+	return { blocks, focus };
 }
 
 /**
@@ -68,13 +68,19 @@ export default function (breakToType, editorState, setEditorState) {
 	const selection = editorState.getSelection();
 	const currentContent = editorState.getCurrentContent();
 	const currentBlock = currentContent.getBlockForKey(selection.getEndKey());
-	const {startOfBlock, endOfBlock} = getStartOrEnd(selection, currentBlock);
+	const { startOfBlock, endOfBlock } = getStartOrEnd(selection, currentBlock);
 
-	if (!startOfBlock && !endOfBlock) { return NOT_HANDLED; }
+	if (!startOfBlock && !endOfBlock) {
+		return NOT_HANDLED;
+	}
 
 	const newBlock = buildNewBlock(breakToType);
-	const {before, after} = getBlocksAround(currentContent, currentBlock);
-	const {blocks, focus} = getAugmentedState(currentBlock, newBlock, endOfBlock);
+	const { before, after } = getBlocksAround(currentContent, currentBlock);
+	const { blocks, focus } = getAugmentedState(
+		currentBlock,
+		newBlock,
+		endOfBlock
+	);
 
 	const newState = currentContent.merge({
 		blockMap: before.concat(blocks, after).toOrderedMap(),
@@ -84,13 +90,11 @@ export default function (breakToType, editorState, setEditorState) {
 			anchorOffset: 0,
 			focusKey: focus,
 			focusOffset: 0,
-			isBackward: false
-		})
+			isBackward: false,
+		}),
 	});
 
-	setEditorState(
-		EditorState.push(editorState, newState, 'split-block')
-	);
+	setEditorState(EditorState.push(editorState, newState, 'split-block'));
 
 	return HANDLED;
 }

@@ -1,14 +1,16 @@
-import {EditorState, Modifier} from 'draft-js';
+import { EditorState, Modifier } from 'draft-js';
 
-import {MUTABILITY} from '../../../Constants';
+import { MUTABILITY } from '../../../Constants';
 
-export default function getStateForInput (input, editorState) {
+export default function getStateForInput(input, editorState) {
 	const selection = editorState.getSelection();
 	const startOffset = selection.getStartOffset();
 
 	//There are no entities to escape if the selection is not collapsed
 	//or we are at the start of a block
-	if (!selection.isCollapsed() || startOffset === 0) { return; }
+	if (!selection.isCollapsed() || startOffset === 0) {
+		return;
+	}
 
 	const content = editorState.getCurrentContent();
 	const block = content.getBlockForKey(selection.getStartKey());
@@ -17,15 +19,25 @@ export default function getStateForInput (input, editorState) {
 	const entityKeyAfter = block.getEntityAt(startOffset);
 
 	//if there is no entity before or we are in the middle of an entity, there's nothing to do
-	if (!entityKeyBefore || entityKeyBefore === entityKeyAfter) { return; }
+	if (!entityKeyBefore || entityKeyBefore === entityKeyAfter) {
+		return;
+	}
 
 	const entity = content.getEntity(entityKeyBefore);
-	const {contiguous = true} = entity.getData();
+	const { contiguous = true } = entity.getData();
 
 	//If the entity isn't mutable or it is contiguous there is nothing to do
-	if (entity.getMutability() !== MUTABILITY.MUTABLE || contiguous) { return; }
+	if (entity.getMutability() !== MUTABILITY.MUTABLE || contiguous) {
+		return;
+	}
 
-	const newContent = Modifier.insertText(content, selection, input, editorState.getCurrentInlineStyle(), null);
+	const newContent = Modifier.insertText(
+		content,
+		selection,
+		input,
+		editorState.getCurrentInlineStyle(),
+		null
+	);
 
 	return EditorState.push(editorState, newContent, 'insert-characters');
 }

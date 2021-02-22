@@ -1,5 +1,5 @@
-import {STYLES} from '../../../../Constants';
-import {normalizeCharacterList} from '../../../utils';
+import { STYLES } from '../../../../Constants';
+import { normalizeCharacterList } from '../../../utils';
 
 import openTag from './open-tag';
 import closeTag from './close-tag';
@@ -9,15 +9,15 @@ const TAGS = {
 	[STYLES.BOLD]: 'b',
 	[STYLES.CODE]: 'code',
 	[STYLES.ITALIC]: 'i',
-	[STYLES.UNDERLINE]: 'u'
+	[STYLES.UNDERLINE]: 'u',
 };
 
 const TAG_ORDER = [STYLES.BOLD, STYLES.ITALIC, STYLES.CODE, STYLES.UNDERLINE];
 
-function getEntityAttributes (entity) {
+function getEntityAttributes(entity) {
 	const attributes = {
 		'data-nti-entity-type': entity.type,
-		'data-nti-entity-mutability': entity.mutability
+		'data-nti-entity-mutability': entity.mutability,
 	};
 
 	if (entity.data.href) {
@@ -31,13 +31,17 @@ function getEntityAttributes (entity) {
 	return attributes;
 }
 
-function generateOpenTags (tagList, content) {
-	const {open} = tagList;
+function generateOpenTags(tagList, content) {
+	const { open } = tagList;
 
-	const styleTags = TAG_ORDER.reverse().map(x => open.style.has(x) ? openTag(TAGS[x]) : '');
+	const styleTags = TAG_ORDER.reverse().map(x =>
+		open.style.has(x) ? openTag(TAGS[x]) : ''
+	);
 
 	const entity = open.entity != null ? content.getEntity(open.entity) : null;
-	const entityTags = entity ? [openTag('a', getEntityAttributes(entity))] : [];
+	const entityTags = entity
+		? [openTag('a', getEntityAttributes(entity))]
+		: [];
 
 	const tags = [...entityTags, ...styleTags];
 
@@ -53,12 +57,15 @@ function generateOpenTags (tagList, content) {
 	// return tags.join('');
 }
 
-function generateCloseTags (tagList, content) {
-	const {close} = tagList;
+function generateCloseTags(tagList, content) {
+	const { close } = tagList;
 
-	const styleTags = TAG_ORDER.reverse().map(x => close.style.has(x) ? closeTag(TAGS[x]) : '');
+	const styleTags = TAG_ORDER.reverse().map(x =>
+		close.style.has(x) ? closeTag(TAGS[x]) : ''
+	);
 
-	const entity = close.entity != null ? content.getEntity(close.entity) : null;
+	const entity =
+		close.entity != null ? content.getEntity(close.entity) : null;
 	const entityTags = entity ? [closeTag('a')] : [];
 
 	const tags = [...styleTags, ...entityTags];
@@ -75,7 +82,7 @@ function generateCloseTags (tagList, content) {
 	// return tags.join('');
 }
 
-export default function renderContentBlockContent (tree, block, content) {
+export default function renderContentBlockContent(tree, block, content) {
 	const tags = normalizeCharacterList(block.getCharacterList());
 
 	let text = block.getText();
@@ -85,9 +92,11 @@ export default function renderContentBlockContent (tree, block, content) {
 		let tagList = tags[i];
 		let char = text.charAt(i);
 
-		parsedText += `${generateCloseTags(tagList, content)}${generateOpenTags(tagList, content)}${escapeHTML(char)}`;
+		parsedText += `${generateCloseTags(tagList, content)}${generateOpenTags(
+			tagList,
+			content
+		)}${escapeHTML(char)}`;
 	}
-
 
 	parsedText += `${generateCloseTags(tags[text.length], content)}`;
 

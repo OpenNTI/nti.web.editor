@@ -1,15 +1,19 @@
-import {BLOCK_SET, MUTABILITY} from '../../Constants';
+import { BLOCK_SET, MUTABILITY } from '../../Constants';
 
 const IsNonWhiteSpace = /\S/;
 
-function buildIsValidMember ({allowWhiteSpace = false, isValidCharacters}) {
-	if (isValidCharacters) { return (chars) => isValidCharacters(chars); }
-	if (allowWhiteSpace) { return () => true; }
+function buildIsValidMember({ allowWhiteSpace = false, isValidCharacters }) {
+	if (isValidCharacters) {
+		return chars => isValidCharacters(chars);
+	}
+	if (allowWhiteSpace) {
+		return () => true;
+	}
 
-	return (chars) => IsNonWhiteSpace.test(chars);
+	return chars => IsNonWhiteSpace.test(chars);
 }
 
-function getDefaultMutability ({suggestedOnly}) {
+function getDefaultMutability({ suggestedOnly }) {
 	return suggestedOnly ? MUTABILITY.IMMUTABLE : MUTABILITY.MUTABLE;
 }
 
@@ -34,7 +38,7 @@ export default class TaggingStrategy {
 
 	#isValidMember = null;
 
-	constructor (configArg) {
+	constructor(configArg) {
 		const {
 			trigger,
 			type,
@@ -50,8 +54,12 @@ export default class TaggingStrategy {
 			...config
 		} = configArg;
 
-		if (!trigger) { throw new Error('Tagging Strategies must be given a trigger.'); }
-		if (!type) { throw new Error('Tagging Strategies must be given a type.'); }
+		if (!trigger) {
+			throw new Error('Tagging Strategies must be given a trigger.');
+		}
+		if (!type) {
+			throw new Error('Tagging Strategies must be given a type.');
+		}
 
 		this.#trigger = trigger;
 		this.#type = type;
@@ -70,48 +78,69 @@ export default class TaggingStrategy {
 		this.#isValidMember = buildIsValidMember(config);
 	}
 
-	set key (i) { this.#key = i; }
+	set key(i) {
+		this.#key = i;
+	}
 
-	get trigger () { return this.#trigger; }
-	get type () { return this.#type; }
-	get mutability () { return this.#mutability; }
-	get allowedInBlockTypes () { return this.#allowedInBlockTypes; }
+	get trigger() {
+		return this.#trigger;
+	}
+	get type() {
+		return this.#type;
+	}
+	get mutability() {
+		return this.#mutability;
+	}
+	get allowedInBlockTypes() {
+		return this.#allowedInBlockTypes;
+	}
 
-	get DisplayCmp () { return this.#DisplayCmp; }
-	get displayClassName () { return this.#displayClassName; }
-	getDisplayText (suggestion, displayText) {
+	get DisplayCmp() {
+		return this.#DisplayCmp;
+	}
+	get displayClassName() {
+		return this.#displayClassName;
+	}
+	getDisplayText(suggestion, displayText) {
 		return this.#getDisplayText?.(suggestion) ?? displayText;
 	}
 
-	get hasSuggestions () { return Boolean(this.#SuggestionsCmp); }
-	get SuggestionsCmp () { return this.#SuggestionsCmp; }
-	get suggestedOnly () { return this.#suggestedOnly; }
-	get suggestionKey () { return this.#suggestionKey || 'suggestion'; }
+	get hasSuggestions() {
+		return Boolean(this.#SuggestionsCmp);
+	}
+	get SuggestionsCmp() {
+		return this.#SuggestionsCmp;
+	}
+	get suggestedOnly() {
+		return this.#suggestedOnly;
+	}
+	get suggestionKey() {
+		return this.#suggestionKey || 'suggestion';
+	}
 
-	getSuggestionData (suggestion) {
+	getSuggestionData(suggestion) {
 		return this.#getSuggestionData?.(suggestion) ?? suggestion;
 	}
 
-	getId () {
+	getId() {
 		return `tagging-strategy-${this.trigger}-${this.type}-${this.#key}`;
 	}
 
-	getEntityData () {
+	getEntityData() {
 		return {
-			id: this.getId()
+			id: this.getId(),
 		};
 	}
 
-	coversEntity (entity) {
+	coversEntity(entity) {
 		return entity?.type === this.type && entity?.data?.id === this.getId();
 	}
 
-
-	isValidStart (chars) {
+	isValidStart(chars) {
 		return chars.indexOf(this.trigger) === 0;
 	}
 
-	isValidContinuation (chars) {
+	isValidContinuation(chars) {
 		if (this.hasSuggestions && this.suggestedOnly) {
 			return false;
 		}
@@ -119,7 +148,7 @@ export default class TaggingStrategy {
 		return this.#isValidMember(chars);
 	}
 
-	isValidMember (chars) {
+	isValidMember(chars) {
 		return this.#isValidMember(chars);
 	}
 }

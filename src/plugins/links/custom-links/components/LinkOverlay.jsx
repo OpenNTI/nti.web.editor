@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
-import {Hooks, Flyout} from '@nti/web-commons';
+import { Hooks, Flyout } from '@nti/web-commons';
 
-import {getEntityData} from '../../link-utils';
-import {getBestEntityDesc, removeEntity, updateEntityDesc} from '../utils';
+import { getEntityData } from '../../link-utils';
+import { getBestEntityDesc, removeEntity, updateEntityDesc } from '../utils';
 
 import Styles from './Styles.css';
 import LinkEditor from './LinkEditor';
@@ -24,7 +24,7 @@ CustomLinkWrapper.propTypes = {
 
 	editor: PropTypes.shape({
 		focus: PropTypes.func,
-		onContentChange: PropTypes.func
+		onContentChange: PropTypes.func,
 	}),
 
 	store: PropTypes.shape({
@@ -33,13 +33,13 @@ CustomLinkWrapper.propTypes = {
 		EditingKey: PropTypes.string,
 		getItem: PropTypes.func,
 		setItem: PropTypes.func,
-	})
+	}),
 };
-export default function CustomLinkWrapper ({
+export default function CustomLinkWrapper({
 	getEditorState,
 	setEditorState,
 	editor,
-	store
+	store,
 }) {
 	const forceUpdate = Hooks.useForceUpdate();
 	const [entityDesc, setEntityDesc] = React.useState();
@@ -49,15 +49,14 @@ export default function CustomLinkWrapper ({
 
 	const entityKey = selectedEntityKey ?? editingKey;
 
-	React.useEffect(() => (
-		store.subscribeTo(
-			[
-				store.SelectedEntityKey,
-				store.EditingKey
-			],
-			forceUpdate
-		)
-	), [store]);
+	React.useEffect(
+		() =>
+			store.subscribeTo(
+				[store.SelectedEntityKey, store.EditingKey],
+				forceUpdate
+			),
+		[store]
+	);
 
 	React.useEffect(() => {
 		const bestEntityDesc = getBestEntityDesc(
@@ -68,12 +67,14 @@ export default function CustomLinkWrapper ({
 		setEntityDesc(bestEntityDesc);
 	}, [entityKey]);
 
-	if (!entityDesc || !entityKey) { return null; }
+	if (!entityDesc || !entityKey) {
+		return null;
+	}
 
-	const {linkRef, offsetKey, decoratedText} = entityDesc;
+	const { linkRef, offsetKey, decoratedText } = entityDesc;
 	const entityData = {
 		...getEntityData(entityKey, getEditorState),
-		decoratedText
+		decoratedText,
 	};
 
 	const editing = Boolean(editingKey);
@@ -81,7 +82,9 @@ export default function CustomLinkWrapper ({
 	const startEditing = () => store.setItem(store.EditingKey, entityKey);
 	const stopEditing = () => {
 		if (!entityData.href) {
-			setEditorState(removeEntity(entityKey, offsetKey, getEditorState()));
+			setEditorState(
+				removeEntity(entityKey, offsetKey, getEditorState())
+			);
 		}
 
 		store.setItem(store.EditingKey, null);
@@ -94,7 +97,7 @@ export default function CustomLinkWrapper ({
 		editor?.focus()
 	);
 
-	const onSave = (data) => (
+	const onSave = data =>
 		setEditorState(
 			updateEntityDesc(data, entityDesc, getEditorState()),
 			() => (
@@ -102,28 +105,33 @@ export default function CustomLinkWrapper ({
 				store.setItem(store.SelectedEntityKey, null),
 				editor?.focus()
 			)
-		)
-	);
+		);
 
 	return (
 		<Flyout.Aligned
 			className={cx('custom-link-flyout')}
 			alignTo={linkRef.current}
 			visible
-
 			arrow
 			alignToArrow
 			constrain
 			focusOnOpen={false}
-
-			reservedMargin={{bottom: 75}}
-
+			reservedMargin={{ bottom: 75 }}
 			horizontalAlign={Flyout.ALIGNMENTS.LEFT_OR_RIGHT}
 		>
-			{editing ?
-				(<LinkEditor entityData={entityData} onCancel={stopEditing} onSave={onSave} />) :
-				(<LinkInfo entityData={entityData} onRemove={onRemove} onEdit={startEditing} />)
-			}
+			{editing ? (
+				<LinkEditor
+					entityData={entityData}
+					onCancel={stopEditing}
+					onSave={onSave}
+				/>
+			) : (
+				<LinkInfo
+					entityData={entityData}
+					onRemove={onRemove}
+					onEdit={startEditing}
+				/>
+			)}
 		</Flyout.Aligned>
 	);
 }

@@ -1,14 +1,14 @@
 /* eslint-env jest */
-import {EditorState, convertFromRaw} from 'draft-js';
+import { EditorState, convertFromRaw } from 'draft-js';
 
-import {BLOCKS} from '../../../../Constants';
+import { BLOCKS } from '../../../../Constants';
 import removeBlock from '../remove-block';
 
-function createEditorState (raw) {
+function createEditorState(raw) {
 	return EditorState.createWithContent(convertFromRaw(raw));
 }
 
-function getBlock (state, key) {
+function getBlock(state, key) {
 	const blocks = state.getCurrentContent().getBlocksAsArray();
 
 	for (let block of blocks) {
@@ -22,19 +22,31 @@ function getBlock (state, key) {
 
 describe('removeBlock tests', () => {
 	test('turns block to an empty unstyled block', () => {
-		const protoBlock = {type: BLOCKS.UNSTYLED, depth: 0, text: 'asdf', inlineStyleRanges: [], entityRanges: []};
-		const atomicBlock = {type: BLOCKS.ATOMIC, depth: 0, text: '', inlineStyleRanges: [], entityRanges: []};
+		const protoBlock = {
+			type: BLOCKS.UNSTYLED,
+			depth: 0,
+			text: 'asdf',
+			inlineStyleRanges: [],
+			entityRanges: [],
+		};
+		const atomicBlock = {
+			type: BLOCKS.ATOMIC,
+			depth: 0,
+			text: '',
+			inlineStyleRanges: [],
+			entityRanges: [],
+		};
 
 		const editorState = createEditorState({
 			blocks: [
-				{...protoBlock},
-				{...atomicBlock},
-				{...protoBlock},
-				{...atomicBlock},
-				{...protoBlock},
-				{...atomicBlock}
+				{ ...protoBlock },
+				{ ...atomicBlock },
+				{ ...protoBlock },
+				{ ...atomicBlock },
+				{ ...protoBlock },
+				{ ...atomicBlock },
 			],
-			entityMap: {}
+			entityMap: {},
 		});
 
 		const blocks = editorState.getCurrentContent().getBlocksAsArray();

@@ -1,4 +1,4 @@
-@import "~@nti/style-common";
+@import '~@nti/style-common';
 
 .draft-core-type-button {
 	&.plain {
@@ -96,7 +96,8 @@
 			pointer-events: none;
 		}
 
-		i[class^="icon-"], i[class*=" icon-"] {
+		i[class^='icon-'],
+		i[class*=' icon-'] {
 			font-size: 1rem;
 			line-height: 2rem;
 		}

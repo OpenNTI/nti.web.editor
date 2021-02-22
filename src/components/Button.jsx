@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Button} from '@nti/web-commons';
+import { Button } from '@nti/web-commons';
 
 import ContextProvider from '../ContextProvider';
 
 EditorButton.propTypes = {
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
 };
-export default function EditorButton ({onClick:onClickProp, ...otherProps}) {
+export default function EditorButton({ onClick: onClickProp, ...otherProps }) {
 	const editor = ContextProvider.useContext();
 
 	const onClick = async (...args) => {

@@ -1,12 +1,11 @@
 import linkifyIt from 'linkify-it';
-import {SelectionState} from 'draft-js';
+import { SelectionState } from 'draft-js';
 
 const linkify = linkifyIt();
 
 const IS_WHITE_SPACE = /\s/;
 
-
-function getWordBeforeOffset (block, offset) {
+function getWordBeforeOffset(block, offset) {
 	const text = block.getText();
 
 	let word = '';
@@ -26,13 +25,14 @@ function getWordBeforeOffset (block, offset) {
 	return word;
 }
 
-export default function getLinkBeforeSelection (editorState, allowedIn) {
+export default function getLinkBeforeSelection(editorState, allowedIn) {
 	const selection = editorState.getSelection();
 	const focusKey = selection.getFocusKey();
 	const anchorKey = selection.getAnchorKey();
 
-	if (focusKey !== anchorKey) { return null; }
-
+	if (focusKey !== anchorKey) {
+		return null;
+	}
 
 	const focusOffset = selection.getFocusOffset();
 	const anchorOffset = selection.getAnchorOffset();
@@ -41,12 +41,16 @@ export default function getLinkBeforeSelection (editorState, allowedIn) {
 	const content = editorState.getCurrentContent();
 	const block = content.getBlockForKey(focusKey);
 
-	if (allowedIn && !allowedIn.has(block.getType())) { return null; }
+	if (allowedIn && !allowedIn.has(block.getType())) {
+		return null;
+	}
 
 	const word = getWordBeforeOffset(block, offset);
 	const links = word && linkify.match(word);
 
-	if (!links || !links.length) { return null; }
+	if (!links || !links.length) {
+		return null;
+	}
 
 	const link = links[0];
 	const newAnchorOffset = offset - word.length;
@@ -56,8 +60,8 @@ export default function getLinkBeforeSelection (editorState, allowedIn) {
 			anchorKey: anchorKey,
 			anchorOffset: newAnchorOffset,
 			focusKey: focusKey,
-			focusOffset: newAnchorOffset + link.lastIndex
+			focusOffset: newAnchorOffset + link.lastIndex,
 		}),
-		url: link.url
+		url: link.url,
 	};
 }

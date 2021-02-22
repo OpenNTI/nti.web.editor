@@ -1,4 +1,4 @@
-export default function joinTextBlock (output, item, separator = '') {
+export default function joinTextBlock(output, item, separator = '') {
 	const last = output.length - 1;
 	const lastItem = output[last];
 
@@ -11,4 +11,5 @@ export default function joinTextBlock (output, item, separator = '') {
 	return output;
 }
 
-export const joinWithSeparator = separator => (output, item) => joinTextBlock(output, item, separator);
+export const joinWithSeparator = separator => (output, item) =>
+	joinTextBlock(output, item, separator);

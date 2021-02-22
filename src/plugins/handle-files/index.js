@@ -1,9 +1,8 @@
-import {insertAtomicBlocks} from '../../utils';
-import {HANDLED, NOT_HANDLED} from '../Constants';
+import { insertAtomicBlocks } from '../../utils';
+import { HANDLED, NOT_HANDLED } from '../Constants';
 
-export const create = (config) => {
-
-	function getNewEditorState (files, editorState, selection) {
+export const create = config => {
+	function getNewEditorState(files, editorState, selection) {
 		let newEditorState = null;
 
 		if (config.getAtomicBlockData) {
@@ -18,11 +17,15 @@ export const create = (config) => {
 	}
 
 	return {
-		handlePastedFiles (files, {getEditorState, setEditorState}) {
+		handlePastedFiles(files, { getEditorState, setEditorState }) {
 			const editorState = getEditorState();
 			const selection = editorState.getSelection();
 
-			const newEditorState = getNewEditorState(files, editorState, selection);
+			const newEditorState = getNewEditorState(
+				files,
+				editorState,
+				selection
+			);
 
 			if (newEditorState) {
 				setEditorState(newEditorState);
@@ -32,10 +35,18 @@ export const create = (config) => {
 			return NOT_HANDLED;
 		},
 
-		handleDroppedFiles (selection, files, {getEditorState, setEditorState}) {
+		handleDroppedFiles(
+			selection,
+			files,
+			{ getEditorState, setEditorState }
+		) {
 			const editorState = getEditorState();
 
-			const newEditorState = getNewEditorState(files, editorState, selection);
+			const newEditorState = getNewEditorState(
+				files,
+				editorState,
+				selection
+			);
 
 			if (newEditorState) {
 				setEditorState(newEditorState);
@@ -43,6 +54,6 @@ export const create = (config) => {
 			}
 
 			return NOT_HANDLED;
-		}
+		},
 	};
 };

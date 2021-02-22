@@ -1,28 +1,28 @@
 /* eslint-env jest */
-import {convertFromRaw, SelectionState} from 'draft-js';
+import { convertFromRaw, SelectionState } from 'draft-js';
 
-import {BLOCKS} from '../../Constants';
+import { BLOCKS } from '../../Constants';
 import getBlocksInSelection from '../get-blocks-in-selection';
 
-function createBlock (text, type = BLOCKS.UNSTYLED) {
-	return {type, text, depth: 0, inlineStyleRanges: [], entityRanges: []};
+function createBlock(text, type = BLOCKS.UNSTYLED) {
+	return { type, text, depth: 0, inlineStyleRanges: [], entityRanges: [] };
 }
 
-function createSelection (anchorKey, focusKey) {
+function createSelection(anchorKey, focusKey) {
 	return new SelectionState({
 		anchorKey,
 		focusKey,
 		anchorOffset: 0,
-		focusOffset: 0
+		focusOffset: 0,
 	});
 }
-
 
 describe('getBlocksInSelection', () => {
 	let content;
 	let keys;
 
-	const getBlocks = (start, end) => getBlocksInSelection(content, createSelection(start, end));
+	const getBlocks = (start, end) =>
+		getBlocksInSelection(content, createSelection(start, end));
 
 	beforeEach(() => {
 		content = convertFromRaw({
@@ -30,9 +30,9 @@ describe('getBlocksInSelection', () => {
 				createBlock('Block 1'),
 				createBlock('Block 2'),
 				createBlock('Block 3'),
-				createBlock('Block 4')
+				createBlock('Block 4'),
 			],
-			entityMap: {}
+			entityMap: {},
 		});
 
 		keys = content.getBlocksAsArray().map(x => x.getKey());
@@ -112,7 +112,6 @@ describe('getBlocksInSelection', () => {
 			expect(blocks[1].getKey()).toEqual(keys[1]);
 			expect(blocks[2].getKey()).toEqual(keys[2]);
 			expect(blocks[3].getKey()).toEqual(keys[3]);
-
 		});
 	});
 });

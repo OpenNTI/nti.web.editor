@@ -1,22 +1,29 @@
-import {EditorState, Modifier, SelectionState} from 'draft-js';
+import { EditorState, Modifier, SelectionState } from 'draft-js';
 
-import {CHANGE_TYPES} from '../../../Constants';
+import { CHANGE_TYPES } from '../../../Constants';
 
-import {findNewTagBeforeSelection, findExistingTagBeforeSelection} from './find-tags';
+import {
+	findNewTagBeforeSelection,
+	findExistingTagBeforeSelection,
+} from './find-tags';
 
-function createTagEntity (content, strat) {
-	return content.createEntity(strat.type, strat.mutability, strat.getEntityData()).getLastCreatedEntityKey();
+function createTagEntity(content, strat) {
+	return content
+		.createEntity(strat.type, strat.mutability, strat.getEntityData())
+		.getLastCreatedEntityKey();
 }
 
-export function onChange (strategies, editorState) {
+export function onChange(strategies, editorState) {
 	//TODO: fill this in
 	return editorState;
 }
 
-export function beforeInput (strategies, chars, editorState) {
+export function beforeInput(strategies, chars, editorState) {
 	const content = editorState.getCurrentContent();
 	const selection = editorState.getSelection();
-	const modify = selection.isCollapsed() ? Modifier.insertText : Modifier.replaceText;
+	const modify = selection.isCollapsed()
+		? Modifier.insertText
+		: Modifier.replaceText;
 
 	const existingTag = findExistingTagBeforeSelection(strategies, editorState);
 
@@ -28,7 +35,9 @@ export function beforeInput (strategies, chars, editorState) {
 				selection,
 				chars,
 				editorState.getCurrentInlineStyle(),
-				existingTag.strategy.isValidContinuation(chars) ? existingTag.entity : null
+				existingTag.strategy.isValidContinuation(chars)
+					? existingTag.entity
+					: null
 			),
 			CHANGE_TYPES.INSERT_CHARACTERS
 		);
@@ -36,18 +45,34 @@ export function beforeInput (strategies, chars, editorState) {
 
 	const nextEditorState = EditorState.push(
 		editorState,
-		modify(content, selection, chars, editorState.getCurrentInlineStyle(), null),
+		modify(
+			content,
+			selection,
+			chars,
+			editorState.getCurrentInlineStyle(),
+			null
+		),
 		CHANGE_TYPES.INSERT_CHARACTERS
 	);
 
 	const newTag = findNewTagBeforeSelection(strategies, nextEditorState);
 
-	if (!newTag) { return null; }
+	if (!newTag) {
+		return null;
+	}
 
 	let newContent = modify(content, selection, chars, null, null);
-	newContent = Modifier.applyEntity(newContent, newTag.selection, createTagEntity(newContent, newTag.strategy));
+	newContent = Modifier.applyEntity(
+		newContent,
+		newTag.selection,
+		createTagEntity(newContent, newTag.strategy)
+	);
 
-	const newEditorState = EditorState.push(editorState, newContent, CHANGE_TYPES.APPLY_ENTITY);
+	const newEditorState = EditorState.push(
+		editorState,
+		newContent,
+		CHANGE_TYPES.APPLY_ENTITY
+	);
 
 	return EditorState.forceSelection(
 		newEditorState,
@@ -55,10 +80,9 @@ export function beforeInput (strategies, chars, editorState) {
 			focusKey: selection.getFocusKey(),
 			focusOffset: selection.getFocusOffset() + chars.length,
 			anchorKey: selection.getAnchorKey(),
-			anchorOffset: selection.getAnchorOffset() + chars.length
+			anchorOffset: selection.getAnchorOffset() + chars.length,
 		})
 	);
 }
 
-export function afterInput () {
-}
+export function afterInput() {}

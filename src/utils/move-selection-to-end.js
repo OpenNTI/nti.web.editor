@@ -1,11 +1,13 @@
-import {EditorState} from 'draft-js';
+import { EditorState } from 'draft-js';
 
-export default function moveSelectionToEnd (editorState) {
+export default function moveSelectionToEnd(editorState) {
 	const selection = editorState.getSelection();
 	const currentContent = editorState.getCurrentContent();
 	const lastBlock = currentContent.getLastBlock();
 
-	if (!lastBlock) { return editorState; }
+	if (!lastBlock) {
+		return editorState;
+	}
 
 	const key = lastBlock.getKey();
 	const length = lastBlock.getLength();
@@ -15,7 +17,7 @@ export default function moveSelectionToEnd (editorState) {
 		focusOffset: length,
 		anchorKey: key,
 		anchorOffset: length,
-		hasFocus: true
+		hasFocus: true,
 	});
 
 	return EditorState.forceSelection(editorState, updatedSelection);

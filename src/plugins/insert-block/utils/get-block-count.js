@@ -1,4 +1,4 @@
-function getCount (blocks, predicate, getNested) {
+function getCount(blocks, predicate, getNested) {
 	let count = 0;
 
 	for (let i = 0; i < blocks.length; i++) {
@@ -17,8 +17,7 @@ function getCount (blocks, predicate, getNested) {
 	return count;
 }
 
-
-function getGroupedCount (blocks, predicate, getNested) {
+function getGroupedCount(blocks, predicate, getNested) {
 	let lastBlockMatched = false;
 	let count = 0;
 
@@ -27,7 +26,9 @@ function getGroupedCount (blocks, predicate, getNested) {
 		let nested = getNested && getNested(block);
 
 		if (predicate(block, i, blocks)) {
-			if (!lastBlockMatched) { count += 1; }
+			if (!lastBlockMatched) {
+				count += 1;
+			}
 
 			lastBlockMatched = true;
 		} else {
@@ -42,21 +43,34 @@ function getGroupedCount (blocks, predicate, getNested) {
 	return count;
 }
 
-export default function getBlockCount (editorState, predicate, group, getNestedState) {
+export default function getBlockCount(
+	editorState,
+	predicate,
+	group,
+	getNestedState
+) {
 	const content = editorState.getCurrentContent();
 	const blocks = content.getBlocksAsArray();
 
-	function getNestedBlocks (block) {
-		if (!getNestedState) { return null; }
+	function getNestedBlocks(block) {
+		if (!getNestedState) {
+			return null;
+		}
 
 		const state = getNestedState(block);
 
-		if (!state) { return null; }
+		if (!state) {
+			return null;
+		}
 
-		const blockContent = state.getCurrentContent ? state.getCurrentContent() : state;
+		const blockContent = state.getCurrentContent
+			? state.getCurrentContent()
+			: state;
 
 		return blockContent.getBlocksAsArray();
 	}
 
-	return group ? getGroupedCount(blocks, predicate, getNestedBlocks) : getCount(blocks, predicate, getNestedBlocks);
+	return group
+		? getGroupedCount(blocks, predicate, getNestedBlocks)
+		: getCount(blocks, predicate, getNestedBlocks);
 }

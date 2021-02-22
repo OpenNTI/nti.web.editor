@@ -1,10 +1,14 @@
 import React from 'react';
 
-import {ENTITIES} from '../../Constants';
-import {HANDLED, NOT_HANDLED} from '../Constants';
-import {createStore, getEventFor} from '../Store';
+import { ENTITIES } from '../../Constants';
+import { HANDLED, NOT_HANDLED } from '../Constants';
+import { createStore, getEventFor } from '../Store';
 
-import {createDecoratorStrategy, MaybeTag, getAllTags as getAllTagsUtil} from './utils';
+import {
+	createDecoratorStrategy,
+	MaybeTag,
+	getAllTags as getAllTagsUtil,
+} from './utils';
 import TaggingStrategy from './TaggingStrategy';
 import Tag from './components/Tag';
 
@@ -22,30 +26,34 @@ const FocusedKey = 'has-focus';
 const FocusedEvent = getEventFor(FocusedKey);
 
 const throwIfNotTaggingStrategy = x => {
-	if (!(x instanceof TaggingStrategy)) { throw new Error('Tagging Strategies must be build using BuildStrategy.'); }
+	if (!(x instanceof TaggingStrategy)) {
+		throw new Error(
+			'Tagging Strategies must be build using BuildStrategy.'
+		);
+	}
 };
-function setupStrategies (strategies) {
-	if (!strategies) { throw new Error('Tagging Plugin must be given a strategy'); }
+function setupStrategies(strategies) {
+	if (!strategies) {
+		throw new Error('Tagging Plugin must be given a strategy');
+	}
 
 	if (typeof strategies === 'object') {
-		return Object.entries(strategies)
-			.map(([key, strat]) => {
-				throwIfNotTaggingStrategy(strat);
-				strat.key = key;
-				return strat;
-			});
+		return Object.entries(strategies).map(([key, strat]) => {
+			throwIfNotTaggingStrategy(strat);
+			strat.key = key;
+			return strat;
+		});
 	}
 
 	if (!Array.isArray(strategies)) {
 		strategies = [strategies];
 	}
 
-	return strategies
-		.map((strat, key) => {
-			throwIfNotTaggingStrategy(strat);
-			strat.key = key;
-			return strat;
-		});
+	return strategies.map((strat, key) => {
+		throwIfNotTaggingStrategy(strat);
+		strat.key = key;
+		return strat;
+	});
 }
 
 /**
@@ -58,7 +66,7 @@ function setupStrategies (strategies) {
  * @param  {string} strategies.type    the type of tag
  * @returns {[type]}        [description]
  */
-export const create = (config) => {
+export const create = config => {
 	const strategies = setupStrategies(config);
 
 	const store = createStore({});
@@ -69,7 +77,7 @@ export const create = (config) => {
 
 	let updatedSelectionTimeout = null;
 
-	function maybeUpdateSelection (editorState) {
+	function maybeUpdateSelection(editorState) {
 		const oldSelection = store.getItem(SelectionKey);
 		const selection = editorState?.getSelection();
 
@@ -81,9 +89,9 @@ export const create = (config) => {
 		}
 	}
 
-	function subscribeToSelection (fn) {
+	function subscribeToSelection(fn) {
 		const listeners = {
-			[SelectionKeyEvent]: fn
+			[SelectionKeyEvent]: fn,
 		};
 
 		store.addListeners(listeners);
@@ -93,9 +101,9 @@ export const create = (config) => {
 		};
 	}
 
-	function subscribeToFocused (fn) {
+	function subscribeToFocused(fn) {
 		const listeners = {
-			[FocusedEvent]: fn
+			[FocusedEvent]: fn,
 		};
 
 		fn(store.getItem(FocusedKey));
@@ -108,19 +116,18 @@ export const create = (config) => {
 	}
 
 	return {
-		onFocus () {
+		onFocus() {
 			clearTimeout(blurTimeout);
 			store.setItem(FocusedKey, true);
 		},
 
-		onBlur () {
+		onBlur() {
 			blurTimeout = setTimeout(() => {
 				store.setItem(FocusedKey, false);
 			}, 10);
 		},
 
-		onChange (editorState) {
-
+		onChange(editorState) {
 			const oldEditorState = lastEditorState;
 			lastEditorState = editorState;
 
@@ -132,20 +139,30 @@ export const create = (config) => {
 			}
 
 			//If the content hasn't changed from the last change
-			if (oldEditorState && editorState.getCurrentContent() === oldEditorState.getCurrentContent()) {
+			if (
+				oldEditorState &&
+				editorState.getCurrentContent() ===
+					oldEditorState.getCurrentContent()
+			) {
 				maybeUpdateSelection(editorState);
 				return editorState;
 			}
 
-			const updatedEditorState = MaybeTag.onChange(strategies, editorState);
+			const updatedEditorState = MaybeTag.onChange(
+				strategies,
+				editorState
+			);
 
 			maybeUpdateSelection(updatedEditorState || editorState);
 			return updatedEditorState || editorState;
 		},
 
-
-		handleBeforeInput (chars, editorState, time, {setEditorState}) {
-			const newEditorState = MaybeTag.beforeInput(strategies, chars, editorState);
+		handleBeforeInput(chars, editorState, time, { setEditorState }) {
+			const newEditorState = MaybeTag.beforeInput(
+				strategies,
+				chars,
+				editorState
+			);
 
 			handled = true;
 
@@ -157,10 +174,9 @@ export const create = (config) => {
 			return NOT_HANDLED;
 		},
 
-
-		decorators: strategies.map((s) => ({
+		decorators: strategies.map(s => ({
 			strategy: createDecoratorStrategy(s),
-			component: function TagWrapper (props) {
+			component: function TagWrapper(props) {
 				return (
 					<Tag
 						strategy={s}
@@ -172,7 +188,7 @@ export const create = (config) => {
 						{props.children}
 					</Tag>
 				);
-			}
-		}))
+			},
+		})),
 	};
 };

@@ -1,16 +1,16 @@
 /* eslint-env jest */
-import {SelectionState} from 'draft-js';
+import { SelectionState } from 'draft-js';
 
 import fixSelection from '../fix-selection';
 
 describe('fixSelection for inserting a block', () => {
-	test('Doesn\'t change a collapsed selection', () => {
+	test("Doesn't change a collapsed selection", () => {
 		const anchorKey = 'test';
 		const selection = new SelectionState({
 			anchorKey,
 			anchorOffset: 0,
 			focusKey: anchorKey,
-			focusOffset: 0
+			focusOffset: 0,
 		});
 
 		expect(fixSelection(null, selection)).toEqual(selection);
@@ -24,7 +24,7 @@ describe('fixSelection for inserting a block', () => {
 			anchorKey: 'anchor',
 			anchorOffset: 0,
 			focusKey,
-			focusOffset
+			focusOffset,
 		});
 
 		const fixed = fixSelection(null, selection);

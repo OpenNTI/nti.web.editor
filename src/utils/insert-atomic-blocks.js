@@ -1,23 +1,32 @@
-import {EditorState, AtomicBlockUtils} from 'draft-js';
+import { EditorState, AtomicBlockUtils } from 'draft-js';
 
-import {MUTABILITY, CHANGE_TYPES} from '../Constants';
+import { MUTABILITY, CHANGE_TYPES } from '../Constants';
 
-export default function insertAtomicBlock (data, selection, editorState) {
-	if (!Array.isArray(data)) { data = [data]; }
+export default function insertAtomicBlock(data, selection, editorState) {
+	if (!Array.isArray(data)) {
+		data = [data];
+	}
 
 	let newContent = editorState.getCurrentContent();
 	let newSelection = selection || editorState.getSelection();
 	let newEditorState = EditorState.create({
 		currentContent: newContent,
-		selection: newSelection
+		selection: newSelection,
 	});
 
 	for (let datum of data) {
-		newContent = newContent.createEntity(datum.MimeType || 'unknown', MUTABILITY.IMMUTABLE, datum);
+		newContent = newContent.createEntity(
+			datum.MimeType || 'unknown',
+			MUTABILITY.IMMUTABLE,
+			datum
+		);
 		const entityKey = newContent.getLastCreatedEntityKey();
 
 		newEditorState = AtomicBlockUtils.insertAtomicBlock(
-			EditorState.set(newEditorState, {currentContent: newContent, selection: newSelection}),
+			EditorState.set(newEditorState, {
+				currentContent: newContent,
+				selection: newSelection,
+			}),
 			entityKey,
 			' '
 		);
@@ -26,5 +35,9 @@ export default function insertAtomicBlock (data, selection, editorState) {
 		newSelection = newEditorState.getSelection();
 	}
 
-	return EditorState.push(editorState, newContent, CHANGE_TYPES.INSERT_FRAGMENT);
+	return EditorState.push(
+		editorState,
+		newContent,
+		CHANGE_TYPES.INSERT_FRAGMENT
+	);
 }

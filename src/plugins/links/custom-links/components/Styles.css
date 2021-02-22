@@ -34,7 +34,8 @@
 .link-editor {
 	padding: 0.625rem;
 
-	& .url-input, & .display-input {
+	& .url-input,
+	& .display-input {
 		width: 280px;
 	}
 
@@ -42,13 +43,15 @@
 		display: flex;
 		justify-content: space-between;
 
-		& .cancel, & .save {
+		& .cancel,
+		& .save {
 			flex: 0 0 135px;
 			text-align: center;
 			border: none;
 			margin: 0;
 
-			&:focus, &:focus-within {
+			&:focus,
+			&:focus-within {
 				box-shadow: 0 0 1px 0 var(--primary-blue);
 			}
 		}

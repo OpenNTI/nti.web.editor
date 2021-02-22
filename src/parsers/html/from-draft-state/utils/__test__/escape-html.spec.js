@@ -11,6 +11,8 @@ describe('escapeHTML', () => {
 	test('Escaped', () => {
 		const raw = 'this is < more > complex & html';
 
-		expect(escapeHTML(raw)).toEqual('this is &lt; more &gt; complex &amp; html');
+		expect(escapeHTML(raw)).toEqual(
+			'this is &lt; more &gt; complex &amp; html'
+		);
 	});
 });

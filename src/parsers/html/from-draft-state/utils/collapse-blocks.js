@@ -1,10 +1,10 @@
-import {BLOCKS} from '../../../../Constants';
+import { BLOCKS } from '../../../../Constants';
 
 const COLLAPSE_TYPES = {
-	[BLOCKS.CODE]: true
+	[BLOCKS.CODE]: true,
 };
 
-export default function collapseCodeBlocks (htmlBlocks) {
+export default function collapseCodeBlocks(htmlBlocks) {
 	return htmlBlocks.reduce((acc, block) => {
 		const last = acc[acc.length - 1];
 

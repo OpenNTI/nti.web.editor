@@ -6,7 +6,7 @@ describe('trimEmptiesOffEnd', () => {
 		const blocks = [
 			'<div>something</div>',
 			'<pre>code</pre>',
-			'<p>content</p>'
+			'<p>content</p>',
 		];
 
 		const result = trimEmptiesOffEnd(blocks);
@@ -15,11 +15,7 @@ describe('trimEmptiesOffEnd', () => {
 	});
 
 	test('Test trim end', () => {
-		const blocks = [
-			'<div>something</div>',
-			'<pre>code</pre>',
-			'<p></p>'
-		];
+		const blocks = ['<div>something</div>', '<pre>code</pre>', '<p></p>'];
 
 		const result = trimEmptiesOffEnd(blocks);
 

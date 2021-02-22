@@ -1,19 +1,19 @@
 /* eslint-env jest */
-import {EditorState, SelectionState, convertFromRaw} from 'draft-js';
+import { EditorState, SelectionState, convertFromRaw } from 'draft-js';
 
-import {HANDLED, NOT_HANDLED} from '../../Constants';
-import {BLOCKS} from '../../../Constants';
+import { HANDLED, NOT_HANDLED } from '../../Constants';
+import { BLOCKS } from '../../../Constants';
 import insertBlockPlugin from '../index';
 
-function createEditorState (raw) {
+function createEditorState(raw) {
 	return EditorState.createWithContent(convertFromRaw(raw));
 }
 
-function isCodeBlock (block) {
+function isCodeBlock(block) {
 	return block.getType() === BLOCKS.CODE;
 }
 
-function isAtomic (block) {
+function isAtomic(block) {
 	return block.getType() === BLOCKS.ATOMIC;
 }
 
@@ -24,30 +24,65 @@ describe('insertBlock plugin', () => {
 		anchorKey: 'def',
 		anchorOffset: 1,
 		focusKey: 'def',
-		focusOffset: 6
+		focusOffset: 6,
 	});
 
 	const editorState = createEditorState({
 		blocks: [
-			{key: 'abc', type: BLOCKS.CODE, depth: 0, text: 'block 1', inlineStyleRanges: [], entityRanges: []},
-			{key: 'def', type: BLOCKS.UNSTYLED, depth: 0, text: 'block 2', inlineStyleRanges: [], entityRanges: []},
-			{key: '123', type: BLOCKS.CODE, depth: 0, text: 'block 3', inlineStyleRanges: [], entityRanges: []},
-			{key: '456', type: BLOCKS.ATOMIC, depth: 0, text: 'block 4', inlineStyleRanges: [], entityRanges: []}
+			{
+				key: 'abc',
+				type: BLOCKS.CODE,
+				depth: 0,
+				text: 'block 1',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
+			{
+				key: 'def',
+				type: BLOCKS.UNSTYLED,
+				depth: 0,
+				text: 'block 2',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
+			{
+				key: '123',
+				type: BLOCKS.CODE,
+				depth: 0,
+				text: 'block 3',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
+			{
+				key: '456',
+				type: BLOCKS.ATOMIC,
+				depth: 0,
+				text: 'block 4',
+				inlineStyleRanges: [],
+				entityRanges: [],
+			},
 		],
-		entityMap: {}
+		entityMap: {},
 	});
 
-	let editorStateWithSelected = EditorState.forceSelection(editorState, selection);
+	let editorStateWithSelected = EditorState.forceSelection(
+		editorState,
+		selection
+	);
 
-	function getEditorState () {
+	function getEditorState() {
 		return editorStateWithSelected;
 	}
 
-	function setEditorState (newState) {
+	function setEditorState(newState) {
 		editorStateWithSelected = newState;
 	}
 
-	const pluginContext = plugin.getContext(getEditorState, setEditorState, false);
+	const pluginContext = plugin.getContext(
+		getEditorState,
+		setEditorState,
+		false
+	);
 
 	test('Test block count', () => {
 		const numCodeBlocks = pluginContext.getInsertBlockCount(isCodeBlock);
@@ -70,11 +105,11 @@ describe('insertBlock plugin', () => {
 			data: {
 				getData: function () {
 					return id;
-				}
-			}
+				},
+			},
 		};
 
-		function handler () {}
+		function handler() {}
 
 		pluginContext.registerInsertHandler(id, handler);
 
@@ -87,6 +122,5 @@ describe('insertBlock plugin', () => {
 		const unhandledResult = plugin.handleDrop(selection, dataTransfer);
 
 		expect(unhandledResult).toEqual(NOT_HANDLED);
-
 	});
 });
