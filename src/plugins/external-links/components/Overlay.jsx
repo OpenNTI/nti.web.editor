@@ -1,6 +1,7 @@
 import './Overlay.scss';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import { Flyout } from '@nti/web-commons';
 
 import { getEventFor } from '../../Store';

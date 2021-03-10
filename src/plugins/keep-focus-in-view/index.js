@@ -1,4 +1,5 @@
 import { getVisibleSelectionRect } from 'draft-js';
+
 import { getViewportHeight, getViewportWidth } from '@nti/lib-dom';
 
 //TODO: move this out into utility files

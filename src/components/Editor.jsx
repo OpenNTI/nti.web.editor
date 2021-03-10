@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
 import { EditorState } from 'draft-js';
+
 import { buffer } from '@nti/lib-commons';
 import { parent } from '@nti/lib-dom';
 

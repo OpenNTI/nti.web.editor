@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { v4 as uuid } from 'uuid';
+
 import { DnD } from '@nti/web-commons';
 
 import ContextProvider from '../../../ContextProvider';

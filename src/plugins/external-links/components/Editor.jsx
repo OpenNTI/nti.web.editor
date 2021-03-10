@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
 import { Entity } from 'draft-js';
+
 import { scoped } from '@nti/lib-locale';
 import { Button, Input } from '@nti/web-commons';
 

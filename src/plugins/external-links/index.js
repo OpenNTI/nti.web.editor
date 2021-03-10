@@ -1,5 +1,6 @@
 import React from 'react';
 import { EditorState, Modifier } from 'draft-js';
+
 import { wait } from '@nti/lib-commons';
 
 import { CHANGE_TYPES } from '../../Constants';

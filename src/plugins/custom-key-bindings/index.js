@@ -1,6 +1,7 @@
+import { getDefaultKeyBinding } from 'draft-js';
+
 import { Events } from '@nti/lib-commons';
 import Logger from '@nti/util-logger';
-import { getDefaultKeyBinding } from 'draft-js';
 
 import { HANDLED, NOT_HANDLED } from '../Constants';
 

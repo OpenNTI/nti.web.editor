@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
+
 import { DnD } from '@nti/web-commons';
 
 import * as DragStore from '../DragStore';
