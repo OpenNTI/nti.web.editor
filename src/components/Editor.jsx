@@ -408,10 +408,16 @@ class DraftCoreEditor extends React.Component {
 		if (this.editorContext) {
 			this.editorContext.updateExternalLinks();
 		}
+
+		if (editorState.getSelection().getHasFocus() && !this.focused) {
+			this.onFocus();
+		}
 	};
 
 	onFocus = e => {
 		const { onFocus } = this.props;
+
+		this.focused = true;
 
 		if (onFocus) {
 			onFocus(this, e);
@@ -420,6 +426,8 @@ class DraftCoreEditor extends React.Component {
 
 	onBlur = e => {
 		const { onBlur } = this.props;
+
+		this.focused = false;
 
 		if (onBlur) {
 			onBlur(this, e);
@@ -535,7 +543,7 @@ const DraftCoreEditorWrapper = React.forwardRef(
 		const blurTimeout = React.useRef();
 
 		const onInnerFocus = (editor, e) => {
-			if (isNestedFocusEvent(editor, e)) {
+			if (e && isNestedFocusEvent(editor, e)) {
 				return;
 			}
 
@@ -547,7 +555,7 @@ const DraftCoreEditorWrapper = React.forwardRef(
 		};
 
 		const onInnerBlur = (editor, e) => {
-			if (isNestedFocusEvent(editor, e)) {
+			if (e && isNestedFocusEvent(editor, e)) {
 				return;
 			}
 
@@ -572,7 +580,6 @@ const DraftCoreEditorWrapper = React.forwardRef(
 	}
 );
 
-DraftCoreEditorWrapper.displayName = 'DraftCoreEditorWrapper';
 DraftCoreEditorWrapper.propTypes = {
 	onFocus: PropTypes.func,
 	onBlur: PropTypes.func,
