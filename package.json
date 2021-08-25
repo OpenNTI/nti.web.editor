@@ -18,14 +18,8 @@
     "type": "git",
     "url": "git+https://github.com/NextThought/nti.web.editor.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.nextthought.com"
-  },
   "author": "nextthought",
   "license": "UNLICENSED",
-  "bugs": {
-    "url": "https://github.com/NextThought/nti.web.editor/issues"
-  },
   "homepage": "https://github.com/NextThought/nti.web.editor#readme",
   "dependencies": {
     "@nti/lib-commons": "NextThought/nti.lib.commons",
@@ -45,5 +39,8 @@
   },
   "devDependencies": {
     "@nti/cmp-scripts": "^2.31.8"
+  },
+  "peerDependencies": {
+    "react": "*"
   }
 }
