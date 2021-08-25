@@ -5,7 +5,8 @@ import cx from 'classnames';
 import { Entity } from 'draft-js';
 
 import { scoped } from '@nti/lib-locale';
-import { Button, Input } from '@nti/web-commons';
+import { Input } from '@nti/web-commons';
+import { Button } from "@nti/web-core";
 
 import { EditingEntityKey, SelectedEntityKey } from '../Constants';
 import { getEventFor } from '../../Store';

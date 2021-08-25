@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
 import { scoped } from '@nti/lib-locale';
-import { Form, Button, Input } from '@nti/web-commons';
+import { Form, Input } from '@nti/web-commons';
+import { Button } from "@nti/web-core";
 
 import Styles from './Styles.css';
 
