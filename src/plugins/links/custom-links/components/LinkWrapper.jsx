@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
-import { Hooks } from '@nti/web-commons';
+import { useForceUpdate } from '@nti/web-core';
 
 import Styles from './Styles.css';
 
@@ -30,7 +30,7 @@ export default function LinkWrapper({
 	store,
 }) {
 	const linkRef = React.useRef();
-	const forceUpdate = Hooks.useForceUpdate();
+	const forceUpdate = useForceUpdate();
 
 	React.useEffect(() => {
 		const existing = store.getItem(entityKey) || [];

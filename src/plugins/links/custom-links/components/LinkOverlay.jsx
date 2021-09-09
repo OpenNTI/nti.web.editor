@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
-import { Hooks, Flyout } from '@nti/web-commons';
+import { Flyout } from '@nti/web-commons';
+import { useForceUpdate } from '@nti/web-core';
 
 import { getEntityData } from '../../link-utils';
 import { getBestEntityDesc, removeEntity, updateEntityDesc } from '../utils';
@@ -42,7 +43,7 @@ export default function CustomLinkWrapper({
 	editor,
 	store,
 }) {
-	const forceUpdate = Hooks.useForceUpdate();
+	const forceUpdate = useForceUpdate();
 	const [entityDesc, setEntityDesc] = React.useState();
 
 	const selectedEntityKey = store.getItem(store.SelectedEntityKey);
