@@ -1,21 +1,18 @@
-import Url from 'url';
+import { url } from '@nti/lib-commons';
 
-const defaultProtocol = 'http:';
-
-export default function getFullHref(href) {
+export default function getFullHref(href, defaultProtocol = 'http:') {
 	if (!href) {
 		return '';
 	}
 
-	let parts = Url.parse(href);
+	const parts = url.parse(href);
 
-	if (!parts.protocol) {
-		parts.protocol = defaultProtocol;
+	if (!parts.protocol || parts.protocol === 'file:') {
 		parts.host = href;
 		parts.pathname = '';
-		parts.path = '';
+		parts.protocol = defaultProtocol;
 
-		return Url.format(parts);
+		return parts.toString().replace(/\/$/, '');
 	}
 
 	return href;
