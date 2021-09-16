@@ -1,6 +1,6 @@
 {
   "name": "@nti/web-editor",
-  "version": "0.31.0-alpha",
+  "version": "0.31.0",
   "description": "'Editor and plugins'",
   "main": "src/index.js",
   "module": "src/index.js",
