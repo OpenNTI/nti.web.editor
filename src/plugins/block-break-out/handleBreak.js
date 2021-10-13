@@ -1,6 +1,6 @@
 import { genKey, ContentBlock, EditorState } from 'draft-js';
 //We don't really need immutable its just something draft needs so let draft depend on it
-import { List } from 'immutable'; //eslint-disable-line import/no-extraneous-dependencies
+import { List } from 'immutable';  
 
 import { HANDLED, NOT_HANDLED } from '../Constants';
 

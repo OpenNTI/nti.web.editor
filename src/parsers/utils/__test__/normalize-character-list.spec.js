@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import { CharacterMetadata } from 'draft-js';
-import { List, Repeat } from 'immutable'; //eslint-disable-line import/no-extraneous-dependencies
+import { List, Repeat } from 'immutable';  
 
 import normalizeCharacterList from '../normalize-character-list';
 

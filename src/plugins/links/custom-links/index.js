@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modifier, EditorState } from 'draft-js';
 
 import { wait } from '@nti/lib-commons';

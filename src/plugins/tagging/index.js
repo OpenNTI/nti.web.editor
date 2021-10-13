@@ -1,4 +1,3 @@
-import React from 'react';
 
 import { ENTITIES } from '../../Constants';
 import { HANDLED, NOT_HANDLED } from '../Constants';

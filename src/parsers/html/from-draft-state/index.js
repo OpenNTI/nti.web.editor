@@ -8,6 +8,7 @@ import {
 
 /**
  * Convert DraftJS editor state into HTML.
+ *
  * @param  {Object} editorState               editor state to convert
  * @param  {Object} strategy                  override the default parser behaviour
  * @param  {Object} strategy.TypeToTag        override the HTML tag used for a block type

@@ -5,6 +5,7 @@ export const isFocusablePlaceholder =
 
 /**
  * Through editing it is possible to remove any
+ *
  * @returns {Object} draft-js editor plugin
  */
 export const create = () => {

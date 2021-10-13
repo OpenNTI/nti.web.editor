@@ -1,6 +1,6 @@
 import { Modifier, EditorState, ContentState } from 'draft-js';
 //We don't really need immutable its just something draft needs so let draft depend on it
-import { Map as ImmutableMap } from 'immutable'; //eslint-disable-line import/no-extraneous-dependencies
+import { Map as ImmutableMap } from 'immutable';  
 
 import { getRangeForBlock } from '../../../utils';
 import { CHANGE_TYPES } from '../../../Constants';

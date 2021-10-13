@@ -1,5 +1,4 @@
 import './LimitOverlay.scss';
-import React from 'react';
 import PropTypes from 'prop-types';
 
 LimitOverlay.propTypes = {

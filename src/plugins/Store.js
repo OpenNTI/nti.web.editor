@@ -14,6 +14,7 @@ export default class PluginStore extends EventEmitter {
 
 	/**
 	 * Attach multiple listeners
+	 *
 	 * @param {Object} events a map of key to handler
 	 * @returns {void}
 	 */
@@ -26,6 +27,7 @@ export default class PluginStore extends EventEmitter {
 
 	/**
 	 * Remove multiple listenrs
+	 *
 	 * @param  {Object} events a map of key to handler
 	 * @returns {void}
 	 */

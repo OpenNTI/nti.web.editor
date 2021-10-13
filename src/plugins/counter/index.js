@@ -1,4 +1,3 @@
-import React from 'react';
 
 import CharacterCounter from './components/CharacterCounter';
 import LimitOverlay from './components/LimitOverlay';

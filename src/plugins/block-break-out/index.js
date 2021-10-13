@@ -29,7 +29,7 @@ const DEFAULT_CONVERT_IF_EMPTY = {
  * @param  {Object} config define the behavior
  * @param {Object} config.breakTo a map of type to type to convert the new block to on enter
  * @param {Object} config.convertIfEmpty a map of types to convert the current type to if its empty on enter
- * @return {Object}        the config
+ * @returns {Object}        the config
  */
 export default {
 	create: (

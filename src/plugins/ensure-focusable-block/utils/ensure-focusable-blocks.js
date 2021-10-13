@@ -7,7 +7,7 @@ import {
 	SelectionState,
 } from 'draft-js';
 //We don't really need immutable its just something draft needs so let draft depend on it
-import { List, Map as ImmutableMap } from 'immutable'; //eslint-disable-line import/no-extraneous-dependencies
+import { List, Map as ImmutableMap } from 'immutable';  
 
 import { BLOCKS } from '../../../Constants';
 
