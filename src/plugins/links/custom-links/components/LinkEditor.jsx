@@ -1,10 +1,10 @@
-import React from 'react';
+import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
 import { scoped } from '@nti/lib-locale';
 import { Form, Input } from '@nti/web-commons';
-import { Button } from "@nti/web-core";
+import { Button } from '@nti/web-core';
 
 import Styles from './Styles.css';
 
@@ -30,9 +30,9 @@ LinkEditor.propTypes = {
 	onSave: PropTypes.func,
 };
 export default function LinkEditor({ entityData, onSave, onCancel }) {
-	const formRef = React.useRef();
-	const mousedownRef = React.useRef();
-	const blurTimeoutRef = React.useRef();
+	const formRef = useRef();
+	const mousedownRef = useRef();
+	const blurTimeoutRef = useRef();
 
 	const { href, decoratedText } = entityData;
 

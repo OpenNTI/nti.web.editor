@@ -1,5 +1,5 @@
 import './Editor.scss';
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import UserAgent from 'fbjs/lib/UserAgent';
@@ -540,7 +540,7 @@ function isNestedFocusEvent(editor, e) {
 const DraftCoreEditorWrapper = React.forwardRef(
 	({ onFocus, onBlur, ...otherProps }, ref) => {
 		const editorGroup = EditorGroup.useGroup();
-		const blurTimeout = React.useRef();
+		const blurTimeout = useRef();
 
 		const onInnerFocus = (editor, e) => {
 			if (e && isNestedFocusEvent(editor, e)) {

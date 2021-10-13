@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
@@ -29,10 +29,10 @@ export default function LinkWrapper({
 	decoratedText,
 	store,
 }) {
-	const linkRef = React.useRef();
+	const linkRef = useRef();
 	const forceUpdate = useForceUpdate();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const existing = store.getItem(entityKey) || [];
 		const entityDesc = {
 			linkRef,
@@ -55,7 +55,7 @@ export default function LinkWrapper({
 		};
 	}, [entityKey, offsetKey, decoratedText]);
 
-	React.useEffect(
+	useEffect(
 		() =>
 			store.subscribeTo(
 				[store.EditingKey, store.SelectedKey],

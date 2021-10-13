@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import IdRegistry from './IdRegistry';
@@ -9,7 +9,7 @@ export default class ContextProvider extends React.Component {
 	static Consumer = Context.Consumer;
 
 	static useContext() {
-		return React.useContext(Context);
+		return useContext(Context);
 	}
 
 	static register(id, editor) {
@@ -29,6 +29,7 @@ export default class ContextProvider extends React.Component {
 
 		/**
 		 * Flag this instance as internal to Core. External ContextProviders add references to this one.
+		 *
 		 * @type {boolean}
 		 */
 		internal: PropTypes.bool,

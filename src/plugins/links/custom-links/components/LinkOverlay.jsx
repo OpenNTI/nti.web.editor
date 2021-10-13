@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
@@ -44,14 +44,14 @@ export default function CustomLinkWrapper({
 	store,
 }) {
 	const forceUpdate = useForceUpdate();
-	const [entityDesc, setEntityDesc] = React.useState();
+	const [entityDesc, setEntityDesc] = useState();
 
 	const selectedEntityKey = store.getItem(store.SelectedEntityKey);
 	const editingKey = store.getItem(store.EditingKey);
 
 	const entityKey = selectedEntityKey ?? editingKey;
 
-	React.useEffect(
+	useEffect(
 		() =>
 			store.subscribeTo(
 				[store.SelectedEntityKey, store.EditingKey],
@@ -60,7 +60,7 @@ export default function CustomLinkWrapper({
 		[store]
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const bestEntityDesc = getBestEntityDesc(
 			store.getItem(entityKey),
 			getEditorState()

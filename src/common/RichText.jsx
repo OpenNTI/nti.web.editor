@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
@@ -42,20 +42,20 @@ export default function RichTextEditor({
 	onContentChange: onContentChangeProp,
 	...otherProps
 }) {
-	const [editorRef, setEditorRef] = React.useState();
+	const [editorRef, setEditorRef] = useState();
 
-	const contentRef = React.useRef(Initial);
-	const [editorState, setEditorState] = React.useState(null);
-	const [plugins, setPlugins] = React.useState(null);
+	const contentRef = useRef(Initial);
+	const [editorState, setEditorState] = useState(null);
+	const [plugins, setPlugins] = useState(null);
 	const settingUp = !editorState || !plugins;
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (contentRef.current === Initial || value !== contentRef.current) {
 			setEditorState(toDraftState(value));
 		}
 	}, [value]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setPlugins(getEditorPlugins());
 	}, []);
 

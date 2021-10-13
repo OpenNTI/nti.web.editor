@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
@@ -47,7 +47,7 @@ export default function CustomBlock({
 		</div>
 	);
 
-	React.useEffect(
+	useEffect(
 		() => onRemoval && blockProps.subscribeToRemoval(onRemoval),
 		[block, onRemoval]
 	);

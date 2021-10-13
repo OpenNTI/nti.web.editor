@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { v4 as uuid } from 'uuid';
@@ -24,7 +24,7 @@ function isAllowedIn(editor = {}, type) {
 }
 
 function useInsertionId() {
-	const id = React.useRef();
+	const id = useRef();
 
 	if (!id.current) {
 		id.current = uuid();

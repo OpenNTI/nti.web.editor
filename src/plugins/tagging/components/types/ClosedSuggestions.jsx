@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Flyout } from '@nti/web-commons';
@@ -33,14 +33,14 @@ export default function ClosedSuggestionTag(props) {
 		setEditorState,
 	} = props;
 
-	const [selection, setSelection] = React.useState(null);
-	const [focused, setFocused] = React.useState(null);
+	const [selection, setSelection] = useState(null);
+	const [focused, setFocused] = useState(null);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		return subscribeToSelection(setSelection);
 	}, []);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		return subscribeToFocused(setFocused);
 	}, []);
 
