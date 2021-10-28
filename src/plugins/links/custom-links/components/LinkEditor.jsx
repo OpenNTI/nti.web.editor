@@ -99,11 +99,7 @@ export default function LinkEditor({ entityData, onSave, onCancel }) {
 				>
 					{t('cancel')}
 				</Button>
-				<Button
-					component={Form.SubmitButton}
-					className={cx('save')}
-					rounded
-				>
+				<Button as={Form.SubmitButton} className={cx('save')} rounded>
 					{t('save')}
 				</Button>
 			</div>
