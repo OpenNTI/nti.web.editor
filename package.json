@@ -32,7 +32,7 @@
     "draft-js": "^0.11.0",
     "@draft-js-plugins/editor": "^4.0.0",
     "fbjs": "^3.0.0",
-    "linkify-it": "^3.0.2",
+    "linkify-it": "^5.0.0",
     "punycode": "^2.1.0",
     "tlds": "^1.207.0",
     "uuid": "^8.3.0"
